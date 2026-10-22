@@ -1038,23 +1038,44 @@ header {{ display: flex; justify-content: space-between; align-items: flex-end;
 
   /* ── 页面目录 ────────────────── */
   .page-directory {{ position: fixed;
-    left: max(12px, calc((100vw - 1180px) / 2 - 132px)); top: 28px;
-    width: 112px; max-height: calc(100vh - 56px); overflow-y: auto;
-    padding: 9px 10px; border-left: 2px solid #B23B32;
-    background: rgba(251, 250, 247, .96); z-index: 10; }}
+    left: max(12px, calc((100vw - 1180px) / 2 - 142px)); top: 50%;
+    transform: translateY(-50%);
+    width: 122px; max-height: calc(100vh - 56px); overflow-y: auto;
+    padding: 12px 10px; border: 1px solid rgba(227, 225, 216, .9);
+    border-left: 2px solid #B23B32; border-radius: 0 10px 10px 0;
+    background: rgba(251, 250, 247, .94); box-shadow: 0 12px 30px rgba(33, 36, 39, .08);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 10; }}
   .page-directory strong {{ display: block; margin-bottom: 5px;
     font-family: "Songti SC", "Noto Serif SC", serif; font-size: 13px; }}
-  .page-directory a {{ display: block; padding: 2px 0; color: #6b6862;
-    font-size: 11px; text-decoration: none; white-space: nowrap; }}
-  .page-directory a:hover, .page-directory a[aria-current="location"] {{
-    color: #B23B32; font-weight: 600; }}
+  .page-directory a {{ position: relative; display: block; padding: 3px 7px 3px 12px;
+    border-radius: 5px; color: #77736b; font-size: 11px; text-decoration: none;
+    white-space: nowrap; transform-origin: left center;
+    transition: color .18s ease, transform .18s ease, font-size .18s ease,
+      background-color .18s ease; }}
+  .page-directory a::before {{ content: ""; position: absolute; left: 2px; top: 50%;
+    width: 4px; height: 4px; border-radius: 50%; background: #B23B32;
+    opacity: 0; transform: translateY(-50%) scale(.5);
+    transition: opacity .18s ease, transform .18s ease; }}
+  .page-directory a:hover {{ color: #31586E; background: rgba(49, 88, 110, .06);
+    transform: translateX(2px); }}
+  .page-directory a[aria-current="location"] {{ color: #B23B32; font-size: 13px;
+    font-weight: 700; background: rgba(178, 59, 50, .07); transform: translateX(4px); }}
+  .page-directory a[aria-current="location"]::before {{ opacity: 1;
+    transform: translateY(-50%) scale(1); }}
+  @media (prefers-reduced-motion: reduce) {{
+    .page-directory, .page-directory a, .page-directory a::before {{ transition: none; }}
+  }}
   @media (max-width: 1400px) {{
     .page-directory {{ position: sticky; left: auto; top: 0; width: 100%;
-      max-height: none; margin-top: 10px; padding: 7px 0;
+      transform: none; max-height: none; margin-top: 10px; padding: 7px 0;
       display: flex; align-items: center; gap: 12px;
-      border-left: 0; border-bottom: 1px solid #E3E1D8; overflow-x: auto; }}
+      border: 0; border-bottom: 1px solid #E3E1D8; border-radius: 0;
+      box-shadow: 0 5px 14px rgba(33, 36, 39, .05); overflow-x: auto; }}
     .page-directory strong {{ display: none; }}
     .page-directory a {{ flex: none; padding: 2px 0; }}
+    .page-directory a::before {{ display: none; }}
+    .page-directory a:hover {{ transform: none; }}
+    .page-directory a[aria-current="location"] {{ transform: none; background: transparent; }}
   }}
 
   /* ── 区块标题 ────────────────── */
@@ -1230,17 +1251,36 @@ def _read_json_file(path: Path) -> dict:
         return {}
 
 
+def page_directory(links: list[tuple[str, str]], aria_label: str = "页面目录") -> str:
+    items = "".join(
+        f'<a href="#{escape(anchor, quote=True)}">{escape(label)}</a>'
+        for anchor, label in links
+    )
+    return (
+        f'<nav class="page-directory" aria-label="{escape(aria_label, quote=True)}">'
+        f'<strong>快速跳转</strong>{items}</nav>'
+    )
+
+
 def community_view(community_data: dict, community_status: dict = None) -> str:
     records = community_data.get("records", []) if community_data.get("status") == "success" else []
     status = community_status or community_data
     generated_at = escape(str(community_data.get("generated_at") or status.get("generated_at") or "未知"))
     if not records:
         return (
-            '<section id="community-view" hidden><h2>社区信源</h2>'
+            '<section id="community-view" hidden>'
+            + page_directory([("community-overview", "概览")], "社区页面目录")
+            + '<h2 id="community-overview">社区信源</h2>'
             '<p class="community-notice">社区内容仅用于发现线索和观察家长反馈，未经官方核验，不等同于官方信息。</p>'
             '<p class="community-meta">社区数据暂不可用；官方信源看板不受影响。</p></section>'
         )
     phase_order = ("小学", "中学", "高中", "其他阶段")
+    phase_anchors = {
+        "小学": "community-phase-primary",
+        "中学": "community-phase-middle",
+        "高中": "community-phase-high",
+        "其他阶段": "community-phase-other",
+    }
     stage_to_phase = {
         "幼升小": "小学",
         "小升初": "小学",
@@ -1274,6 +1314,7 @@ def community_view(community_data: dict, community_status: dict = None) -> str:
             groups[phase][content_type].append((record, stage))
 
     phase_html = []
+    directory_links = [("community-overview", "概览")]
     for phase in phase_order:
         type_html = []
         for content_type in type_order:
@@ -1304,11 +1345,16 @@ def community_view(community_data: dict, community_status: dict = None) -> str:
             )
         if type_html:
             total = sum(len(groups[phase][content_type]) for content_type in type_order)
+            anchor = phase_anchors[phase]
+            directory_links.append((anchor, phase))
             phase_html.append(
-                f'<section class="community-stage"><h3>{escape(phase)} · {total} 条</h3>{"".join(type_html)}</section>'
+                f'<section id="{anchor}" class="community-stage">'
+                f'<h3>{escape(phase)} · {total} 条</h3>{"".join(type_html)}</section>'
             )
     return (
-        '<section id="community-view" hidden><h2>社区信源</h2>'
+        '<section id="community-view" hidden>'
+        + page_directory(directory_links, "社区页面目录")
+        + '<h2 id="community-overview">社区信源</h2>'
         '<p class="community-notice">社区内容仅用于发现线索和观察家长反馈，未经教育部门、考试院或学校官方页面核验，不等同于官方信息。</p>'
         f'<p class="community-meta">最近成功采集：{generated_at} · 当前展示：{len(records)} 条</p>'
         f'<div class="community-groups">{"".join(phase_html)}</div></section>'
@@ -1319,20 +1365,14 @@ def build_page(data: dict, prev_keys: set, built_at: str, community_data: dict =
     jw, moe = data["市教委"], data["教育部"]
     city_school_info = data.get("市级学校信息", [])
 
-    parts = [HTML_HEAD.format(built_at=built_at)]
+    parts = [HTML_HEAD.format(built_at=built_at), '<div id="official-view">']
 
-    directory_links = ['<a href="#city">市级</a>']
+    directory_links = [("city", "市级")]
     directory_links.extend(
-        f'<a href="#district-{index:02d}">{district}</a>'
+        (f"district-{index:02d}", district)
         for index, district in enumerate(DISTRICTS, start=1)
     )
-    parts.append(
-        '<nav class="page-directory" aria-label="页面目录">'
-        '<strong>快速跳转</strong>'
-        + "".join(directory_links)
-        + "</nav>"
-    )
-    parts.append('<div id="official-view">')
+    parts.append(page_directory(directory_links))
 
     # 市级头条
     parts.append('<h2 id="city">市级</h2><div class="city">')
@@ -1353,8 +1393,6 @@ def build_page(data: dict, prev_keys: set, built_at: str, community_data: dict =
         else:
             parts.append(f'<div><h3>{name_link}</h3><ul><li class="empty">拉取失败</li></ul></div>')
     parts.append("</div>")
-    parts.append("</div>")
-    parts.append(community_view(community_data or {}, community_status))
 
     # 区台账
     parts.append('<h2>分区台账</h2><div class="ledger">')
@@ -1414,6 +1452,8 @@ def build_page(data: dict, prev_keys: set, built_at: str, community_data: dict =
         + "<br>仅已确认的学校官网提供点击与动态抓取；没有独立官网的学校只显示名称。"
         + "微信公众号 ID 仅作人工检索入口，不作为自动抓取源。</footer>"
     )
+    parts.append("</div>")
+    parts.append(community_view(community_data or {}, community_status))
     parts.append("""<script>
   (() => {
     const selector = document.getElementById('source-view');
@@ -1432,21 +1472,24 @@ def build_page(data: dict, prev_keys: set, built_at: str, community_data: dict =
     setSourceView(new URLSearchParams(window.location.search).get('view') || 'official');
   })();
   (() => {
-    const links = [...document.querySelectorAll('.page-directory a')];
-    const targets = links.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
-    const activate = id => links.forEach(link => {
-      if (link.getAttribute('href') === `#${id}`) link.setAttribute('aria-current', 'location');
-      else link.removeAttribute('aria-current');
+    document.querySelectorAll('.page-directory').forEach(directory => {
+      const links = [...directory.querySelectorAll('a')];
+      const targets = links.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+      const activate = id => links.forEach(link => {
+        if (link.getAttribute('href') === `#${id}`) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+      if (targets.length && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(entries => {
+          const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+          if (visible) activate(visible.target.id);
+        }, { rootMargin: '-15% 0px -70% 0px', threshold: [0, .1, .5] });
+        targets.forEach(target => observer.observe(target));
+      }
+      links.forEach(link => link.addEventListener('click', () => activate(link.hash.slice(1))));
+      const hashTarget = targets.find(target => target.id === location.hash.slice(1));
+      activate(hashTarget ? hashTarget.id : targets[0]?.id);
     });
-    if (targets.length && 'IntersectionObserver' in window) {
-      const observer = new IntersectionObserver(entries => {
-        const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible) activate(visible.target.id);
-      }, { rootMargin: '-15% 0px -70% 0px', threshold: [0, .1, .5] });
-      targets.forEach(target => observer.observe(target));
-    }
-    links.forEach(link => link.addEventListener('click', () => activate(link.hash.slice(1))));
-    activate(location.hash.slice(1) || 'city');
   })();
 </script>""")
     return "".join(parts) + "</div></body></html>"

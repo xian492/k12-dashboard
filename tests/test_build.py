@@ -291,6 +291,18 @@ class DashboardLayoutTests(unittest.TestCase):
         self.assertIn(".page-directory { position: sticky;", html)
         self.assertIn("overflow-x: auto;", html)
 
+    def test_sidebar_directory_is_centered_and_enlarges_the_active_link(self):
+        html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")
+
+        self.assertIn("top: 50%;", html)
+        self.assertIn("transform: translateY(-50%);", html)
+        self.assertIn('.page-directory a[aria-current="location"] {', html)
+        self.assertIn("font-size: 13px;", html)
+        self.assertIn("transform: translateX(4px);", html)
+        self.assertIn("transition: color .18s ease", html)
+        self.assertIn("@media (prefers-reduced-motion: reduce)", html)
+        self.assertIn("transform: none;", html)
+
     def test_admission_season_timeline_is_not_rendered(self):
         html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")
 
@@ -648,6 +660,48 @@ class RssFeedTests(unittest.TestCase):
         self.assertIn("学段标签：小升初", html)
         self.assertIn("学段标签：中考", html)
         self.assertIn("学段标签：高考", html)
+
+    def test_community_view_has_a_matching_directory_for_rendered_phases(self):
+        community = {
+            "status": "success",
+            "generated_at": "2026-10-22T12:00:00+08:00",
+            "records": [
+                {
+                    "title": "小升初政策",
+                    "link": "https://community.example/primary",
+                    "source": "社区甲",
+                    "content_type": "政策与流程",
+                    "stage": ["小升初"],
+                },
+                {
+                    "title": "中考经验",
+                    "link": "https://community.example/middle",
+                    "source": "社区乙",
+                    "content_type": "家长经验",
+                    "stage": ["中考"],
+                },
+                {
+                    "title": "高考动态",
+                    "link": "https://community.example/high",
+                    "source": "社区丙",
+                    "content_type": "学校动态",
+                    "stage": ["高考"],
+                },
+            ],
+        }
+
+        html = build.community_view(community)
+
+        self.assertIn('<nav class="page-directory" aria-label="社区页面目录">', html)
+        self.assertIn('<a href="#community-overview">概览</a>', html)
+        self.assertIn('<h2 id="community-overview">社区信源</h2>', html)
+        for anchor, label in (
+            ("community-phase-primary", "小学"),
+            ("community-phase-middle", "中学"),
+            ("community-phase-high", "高中"),
+        ):
+            self.assertIn(f'<a href="#{anchor}">{label}</a>', html)
+            self.assertIn(f'<section id="{anchor}" class="community-stage">', html)
 
     def test_page_tolerates_missing_community_snapshot(self):
         html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")
