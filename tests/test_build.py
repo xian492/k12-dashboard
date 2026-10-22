@@ -1,5 +1,6 @@
 import importlib.util
 import re
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -43,15 +44,9 @@ class SchoolFeedTests(unittest.TestCase):
 
         self.assertEqual(result["北京市第九中学"], [])
 
-    def test_official_fallback_sources_cover_missing_and_unreliable_districts(self):
-        expected = {
-            "东城区", "西城区", "石景山区", "门头沟区", "房山区", "通州区",
-            "大兴区", "平谷区", "怀柔区", "密云区", "延庆区", "燕山地区",
-            "经济技术开发区",
-        }
-
-        covered = set(build.SCHOOL_GOV_FEEDS) | set(build.SCHOOL_OFFICIAL_SEEDS)
-        self.assertTrue(expected.issubset(covered))
+    def test_catalog_keeps_at_least_three_schools_per_district(self):
+        for district in build.DISTRICTS:
+            self.assertGreaterEqual(len(build.SCHOOL_CATALOG[district]), 3, district)
 
     def test_merges_official_items_and_removes_pending_placeholder(self):
         schools = {
@@ -85,9 +80,27 @@ class SchoolFeedTests(unittest.TestCase):
         self.assertIsNotNone(match)
         self.assertIn("房山中学", match.group("title"))
 
+    def test_parser_discards_footer_and_navigation_links(self):
+        markup = """
+        <a href="news.html">学校举办科技节活动</a>
+        <a href="javascript:;">版权所有 北京市示例中学</a>
+        <a href="https://beian.miit.gov.cn/">京ICP备12345678号</a>
+        <a href="admission.html">义务教育入学</a>
+        """
+        with tempfile.TemporaryDirectory() as directory:
+            page = Path(directory) / "index.html"
+            page.write_text(markup, encoding="utf-8")
+            items = build.parse_spec({
+                "url": page.as_uri(),
+                "pattern": r'<a href="(?P<link>[^"]+)">(?P<title>[^<]+)</a>',
+                "base": "https://school.example/",
+            })
+
+        self.assertEqual([item["title"] for item in items], ["学校举办科技节活动"])
+
     def test_seed_items_fill_empty_school_without_overwriting_live_items(self):
         live = {"title": "实时动态", "link": "https://example/live"}
-        seed = {"title": "官方学校信息", "link": "https://example/seed"}
+        seed = {"title": "学校甲举办科技节活动", "link": "https://example/seed"}
         schools = {
             "学校甲": {"学校信息": [{"title": "待接入", "link": "https://example"}]},
             "学校乙": {"校园动态": [live]},
@@ -99,21 +112,23 @@ class SchoolFeedTests(unittest.TestCase):
         self.assertNotIn("学校信息", schools["学校甲"])
         self.assertEqual(schools["学校乙"], {"校园动态": [live]})
 
-    def test_official_seeds_cover_districts_without_reliable_live_results(self):
-        expected = {
-            "东城区", "西城区", "石景山区", "门头沟区", "房山区", "通州区",
-            "大兴区", "平谷区", "怀柔区", "密云区", "延庆区", "经济技术开发区",
+    def test_generic_official_seed_does_not_create_a_school_update(self):
+        schools = {"学校甲": {}, "学校乙": {}}
+        generic = {
+            "学校甲": [build._official_seed(
+                "北京市2026年具有招生资格的学校名单",
+                "https://www.beijing.gov.cn/school-list.html",
+            )],
+            "学校乙": [build._official_seed(
+                "官方学校信息",
+                "https://example.gov.cn/general-school-info.html",
+            )],
         }
 
-        self.assertTrue(expected.issubset(build.SCHOOL_OFFICIAL_SEEDS))
+        build.merge_school_seed_items(schools, generic)
 
-    def test_every_catalog_school_has_a_real_source_path(self):
-        for district, catalog in build.SCHOOL_CATALOG.items():
-            direct = {school for school, _ in build.SCHOOL_SPECS.get(district, [])}
-            aggregate = set(build.SCHOOL_GOV_FEEDS.get(district, {}).get("aliases", {}))
-            seeds = set(build.SCHOOL_OFFICIAL_SEEDS.get(district, {}))
-
-            self.assertTrue(set(catalog).issubset(direct | aggregate | seeds), district)
+        self.assertEqual(schools["学校甲"], {})
+        self.assertEqual(schools["学校乙"], {})
 
 
 class DashboardLayoutTests(unittest.TestCase):
@@ -134,7 +149,8 @@ class DashboardLayoutTests(unittest.TestCase):
                     "校园动态": [
                         {"title": "学校动态示例", "link": "https://example/school"}
                     ]
-                }
+                },
+                "待更新中学": {},
             },
         }
         return {"市教委": [], "教育部": [], "区级": districts}
@@ -153,6 +169,7 @@ class DashboardLayoutTests(unittest.TestCase):
         self.assertNotIn("学校动态示例", official_column)
         self.assertIn('<h3 class="column-title">学校动态</h3>', school_column)
         self.assertIn("学校动态示例", school_column)
+        self.assertIn("待更新中学 · 暂无有效动态", school_column)
 
     def test_district_columns_stack_at_the_mobile_breakpoint(self):
         html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")

@@ -278,70 +278,20 @@ def _official_seed(title: str, link: str) -> dict:
     return {"title": title, "link": link, "tag": "官方信息", "kp": "官方信源", "src": "区级官方"}
 
 
-# 实时列表暂无匹配时的官方兜底条目；仅用于避免学校栏目长期为空。
+# 实时列表暂无匹配时，仅保留明确指向具体学校的官方条目。
 SCHOOL_OFFICIAL_SEEDS = {
-    "东城区": {
-        school: [_official_seed("东城区2026年学校官方信息", "https://www.bjdch.gov.cn/ztzl/bmyjsgkzl/bmysgkzl/2026nys/qzf2026ys/202602/t20260212_4511006.html")]
-        for school in SCHOOL_CATALOG["东城区"]
-    },
-    "丰台区": {
-        "北京市第十八中学": [_official_seed("北京市2026年具有招生资格的学校名单", "https://www.beijing.gov.cn/fuwu/bmfw/sy/jrts/202605/t20260519_4656965.html")],
-    },
-    "顺义区": {
-        "北京市顺义牛栏山第一中学": [_official_seed("北京市2026年具有招生资格的学校名单", "https://www.beijing.gov.cn/fuwu/bmfw/sy/jrts/202605/t20260519_4656965.html")],
-        "北京市顺义区杨镇第一中学": [_official_seed("北京市2026年具有招生资格的学校名单", "https://www.beijing.gov.cn/fuwu/bmfw/sy/jrts/202605/t20260519_4656965.html")],
-    },
-    "昌平区": {
-        "北京市昌平区实验学校": [_official_seed("北京市2026年具有招生资格的学校名单", "https://www.beijing.gov.cn/fuwu/bmfw/sy/jrts/202605/t20260519_4656965.html")],
-    },
-    "石景山区": {
-        school: [_official_seed("石景山区2026年初中入学学校名单", "https://www.bjsjs.gov.cn/gongkai/zwgkpd/ztzl/2026/sjsywjyzl/xgfw/202605/t20260507_761565.shtml")]
-        for school in SCHOOL_CATALOG["石景山区"]
-    },
-    "西城区": {
-        school: [_official_seed("西城区学校地址及办学信息", "https://www.bjxch.gov.cn/xxgk/xxxq/pnidpv909665.html")]
-        for school in SCHOOL_CATALOG["西城区"]
-    },
-    "门头沟区": {
-        school: [_official_seed("门头沟区初中学校官方名录", "https://www.bjmtg.gov.cn/bjmtg/c103090/202212/30bd097c14d04e30ad619a9eb9062521.shtml")]
-        for school in SCHOOL_CATALOG["门头沟区"]
-    },
-    "房山区": {
-        "北京市房山中学": [_official_seed("2026年房山区高考考点及学校信息", "https://www.bjfsh.gov.cn/zhxw/fsdt/202606/t20260605_40114417_fs.shtml")],
-        "北京市房山区良乡中学": [_official_seed("2026年房山区高考考点及学校信息", "https://www.bjfsh.gov.cn/zhxw/fsdt/202606/t20260605_40114417_fs.shtml")],
-        "首都师范大学附属中学房山学校": [_official_seed("房山区基础教育创新发展动态", "https://www.bjfsh.gov.cn/zhxw/fsb/202604/P020260430584823239425.pdf")],
-    },
-    "通州区": {
-        school: [_official_seed("通州区中小学官方信息及联系电话", "https://www.bjtzh.gov.cn/bjtz/zwgk/tjsj/sjkf/2026052215435127308/index.shtml")]
-        for school in SCHOOL_CATALOG["通州区"]
-    },
     "大兴区": {
-        "北京市大兴区第一中学": [_official_seed("大兴区优质教育集团建设动态", "https://www.bjdx.gov.cn/bjsdxqrmzf/zhyw/bmdt66/2139180/index.html")],
-        "北京市大兴区兴华中学": [_official_seed("大兴区优质教育集团建设动态", "https://www.bjdx.gov.cn/bjsdxqrmzf/zhyw/bmdt66/2139180/index.html")],
         "北京亦庄实验中学": [_official_seed("北京亦庄实验中学2026年教育动态", "https://kfqgw.beijing.gov.cn/zwgkkfq/zfxxgk/fdzdgknr/zdmsxx/jy/202610/t20261009_4894513.html")],
-    },
-    "平谷区": {
-        school: [_official_seed("北京市2026年具有招生资格的学校名单", "https://www.beijing.gov.cn/fuwu/bmfw/sy/jrts/202605/t20260519_4656965.html")]
-        for school in SCHOOL_CATALOG["平谷区"]
     },
     "怀柔区": {
         "北京市怀柔区第一中学": [_official_seed("北京十一学校怀柔实验学校（怀柔一中）官方信息", "https://www.bjhr.gov.cn/zjhr/bxsh/jykj/jyzx/201911/t20191121_517308.html")],
-        "北京市怀柔区第二中学": [_official_seed("怀柔区2026年高中学校教育动态", "https://www.bjhr.gov.cn/zjhr/bxsh/jyzx/202609/t20260904_4850782.html")],
         "北京市怀柔区第五中学": [_official_seed("怀柔五中入选人工智能应用场景标杆学校", "https://www.bjhr.gov.cn/zjhr/bxsh/jyzx/202602/t20260225_4539588.html")],
     },
     "密云区": {
         "北京市密云区第二中学": [_official_seed("密云二中2026年学校动态", "https://www.bjmy.gov.cn/zwgk/ztbd/xymy/xyxx/202609/t20260921_553091.html")],
-        "首都师范大学附属密云中学": [_official_seed("密云区优质学校教育动态", "https://www.bjmy.gov.cn/ywdt/gzdt/202509/t20250911_511910.html")],
-        "北京师范大学密云实验中学": [_official_seed("密云区2026年高考考点学校信息", "https://www.bjmy.gov.cn/zwgk/hygq/202606/t20260603_543905.html")],
-    },
-    "延庆区": {
-        school: [_official_seed("北京市2026年具有招生资格的学校名单", "https://www.beijing.gov.cn/fuwu/bmfw/sy/jrts/202605/t20260519_4656965.html")]
-        for school in SCHOOL_CATALOG["延庆区"]
     },
     "经济技术开发区": {
         "北京亦庄实验中学": [_official_seed("北京亦庄实验中学2026年教育动态", "https://kfqgw.beijing.gov.cn/zwgkkfq/zfxxgk/fdzdgknr/zdmsxx/jy/202610/t20261009_4894513.html")],
-        "北京市第二中学经开区学校": [_official_seed("经开区2026年学校培养实验动态", "https://kfqgw.beijing.gov.cn/zwgkkfq/zfxxgk/fdzdgknr/zdmsxx/jy/202607/t20260722_4777982.html")],
-        "人大附中北京经济技术开发区学校": [_official_seed("经开区2026年教育领域学校信息", "https://kfqgw.beijing.gov.cn/zwgkkfq/tzgg/202608/t20260825_4836554.html")],
     },
 }
 
@@ -394,6 +344,30 @@ def fetch_text(spec: dict) -> str:
     return raw.decode(enc, errors="ignore")
 
 
+_SCHOOL_ITEM_NOISE = re.compile(
+    r"版权所有|copyright|ICP(?:备)?|公网安备|网站备案|"
+    r"^(?:义务教育入学|首页|学校首页|学校概况|学校简介|联系我们|友情链接|"
+    r"通知公告|校园动态|新闻中心|招生信息)$",
+    re.I,
+)
+_GENERIC_SCHOOL_INFO = re.compile(
+    r"具有招生资格|学校名单|学校名录|地址及办学信息|官方信息及联系电话|"
+    r"官方学校信息|学校官方信息$"
+)
+_NOISE_LINK = re.compile(r"javascript:|beian\.miit\.gov\.cn|beian\.mps\.gov\.cn", re.I)
+
+
+def useful_school_item(item: dict) -> bool:
+    """只保留具体学校内容，排除页脚、导航和共享学校目录。"""
+    title = re.sub(r"\s+", " ", item.get("title", "")).strip()
+    link = item.get("link", "")
+    return not (
+        _SCHOOL_ITEM_NOISE.search(title)
+        or _GENERIC_SCHOOL_INFO.search(title)
+        or _NOISE_LINK.search(link)
+    )
+
+
 def parse_spec(spec: dict) -> list:
     """通用列表页解析：按 spec 的正则提取 link/title/date，拼绝对地址。"""
     html = fetch_text(spec)
@@ -421,7 +395,8 @@ def parse_spec(spec: dict) -> list:
               "tag": tag_of(title), "kp": key_point(title), "src": "学校"}
         if m.groupdict().get("date"):
             it["date"] = m.group("date").strip("[] ")
-        items.append(it)
+        if useful_school_item(it):
+            items.append(it)
     return items
 
 
@@ -464,6 +439,9 @@ def merge_school_feed_items(schools: dict, assigned: dict) -> None:
 def merge_school_seed_items(schools: dict, seeds: dict) -> None:
     """仅当学校没有真实动态时，补入已核验的官方信息条目。"""
     for school, items in seeds.items():
+        items = [item for item in items if useful_school_item(item)]
+        if not items:
+            continue
         sections = schools.setdefault(school, {})
         has_live = any(values for name, values in sections.items() if name != "学校信息")
         if has_live:
@@ -786,6 +764,9 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
             official_sections += section(f"{name} · 教育动态", items, prev_keys, max_show=4)
         school_sections = ""
         for 校名, 栏目 in schools.items():
+            if not 栏目:
+                school_sections += section(f"{校名} · 暂无有效动态", [], prev_keys)
+                continue
             for 栏名, items in 栏目.items():
                 school_sections += section(f"{校名} · {栏名}", items, prev_keys, max_show=4)
         if not school_sections:
@@ -843,15 +824,7 @@ def main():
                 except Exception:
                     pass
             动态 = (name, items) if items else None
-        学校 = {}
-        configured = {校名 for 校名, _ in SCHOOL_SPECS.get(区名, [])}
-        for 校名 in SCHOOL_CATALOG.get(区名, []):
-            if 校名 not in configured:
-                学校[校名] = {"学校信息": [{
-                    "title": "学校信息入口（动态栏目待接入）",
-                    "link": "https://yjrx.bjedu.cn/",
-                    "tag": "信源状态", "kp": "待接入", "src": "学校"
-                }]}
+        学校 = {校名: {} for 校名 in SCHOOL_CATALOG.get(区名, [])}
         for 校名, 栏目 in SCHOOL_SPECS.get(区名, []):
             学校[校名] = {}
             for 栏名, spec in 栏目:
