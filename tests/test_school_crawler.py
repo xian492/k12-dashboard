@@ -292,6 +292,29 @@ class SchoolCrawlerAsyncTests(unittest.TestCase):
 
         self.assertEqual([result["status"] for result in results], ["success", "failed"])
 
+    def test_crawl_schools_updates_returns_disabled_report_without_crawling(self):
+        original_factory = school_crawler._make_crawler
+        school_crawler._make_crawler = lambda: _FakeCrawler([])
+        try:
+            results = asyncio.run(
+                school_crawler.crawl_schools_updates(
+                    [
+                        {
+                            "school": "不可用学校",
+                            "district": "海淀区",
+                            "homepage": "",
+                            "allowed_hosts": set(),
+                            "enabled": False,
+                        }
+                    ]
+                )
+            )
+        finally:
+            school_crawler._make_crawler = original_factory
+
+        self.assertEqual(results[0]["status"], "failed")
+        self.assertEqual(results[0]["error"], "disabled")
+
 
 class SchoolCrawlerReportTests(unittest.TestCase):
     def test_probe_cli_uses_full_school_catalog(self):

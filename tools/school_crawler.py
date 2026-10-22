@@ -371,3 +371,26 @@ async def crawl_school_updates(crawler, spec: dict) -> dict:
             seen.add(update["url"])
             result["updates"].append(update)
     return result
+
+
+async def crawl_schools_updates(specs: list[dict]) -> list[dict]:
+    """Crawl all enabled school specs with bounded concurrency."""
+    semaphore = asyncio.Semaphore(3)
+    async with _make_crawler() as crawler:
+        async def run_one(spec: dict) -> dict:
+            if not spec.get("enabled", True):
+                return {
+                    "school": spec["school"],
+                    "district": spec["district"],
+                    "homepage": spec.get("homepage", ""),
+                    "status": "failed",
+                    "updates": [],
+                    "candidate_sections": [],
+                    "items_found": 0,
+                    "error": "disabled",
+                    "checked_at": datetime.now(timezone.utc).isoformat(),
+                }
+            async with semaphore:
+                return await crawl_school_updates(crawler, spec)
+
+        return await asyncio.gather(*(run_one(spec) for spec in specs))

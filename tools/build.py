@@ -9,6 +9,8 @@ v5 布局：按区分组。市级置顶；区卡片 = 区招生政策(yjrx) + �
 """
 import json
 import re
+import asyncio
+import importlib.util
 import ssl
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -798,6 +800,93 @@ def merge_school_feed_items(schools: dict, assigned: dict) -> None:
         schools[school]["区级官方动态"] = unique
 
 
+def merge_crawl4ai_school_updates(schools: dict, updates_by_school: dict) -> None:
+    """Merge normalized Crawl4AI school updates without creating placeholders."""
+    for school, updates in updates_by_school.items():
+        valid = []
+        for update in updates or []:
+            title = (update.get("title") or "").strip()
+            link = (update.get("url") or update.get("link") or "").strip()
+            if not title or not link or not link.startswith(("http://", "https://")):
+                continue
+            item = {
+                "title": title,
+                "link": link,
+                "date": update.get("published_at", ""),
+                "tag": tag_of(title),
+                "kp": key_point(title),
+                "src": "学校官网·Crawl4AI",
+            }
+            if useful_school_item(item):
+                valid.append(item)
+        if not valid:
+            continue
+        sections = schools.setdefault(school, {})
+        sections.pop("学校信息", None)
+        for item in valid:
+            section_name = next(
+                (u.get("category") for u in updates if u.get("url") == item["link"]),
+                "学校动态",
+            ) or "学校动态"
+            current = sections.setdefault(section_name, [])
+            seen = {existing.get("link") or existing.get("title") for existing in current}
+            key = item["link"]
+            if key not in seen:
+                current.append(item)
+
+
+def _load_school_crawler():
+    """Load the optional Crawl4AI module both from CLI and test imports."""
+    try:
+        import school_crawler
+
+        return school_crawler
+    except ImportError:
+        path = ROOT / "tools" / "school_crawler.py"
+        spec = importlib.util.spec_from_file_location("school_crawler", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+
+async def _crawl4ai_batch(specs: list[dict]) -> list[dict]:
+    crawler = _load_school_crawler()
+    return await crawler.crawl_schools_updates(specs)
+
+
+def collect_crawl4ai_school_updates() -> tuple[dict, list[dict]]:
+    """Collect school updates without allowing Crawl4AI to break the build."""
+    try:
+        crawler = _load_school_crawler()
+        specs = crawler.build_school_probe_specs(SCHOOL_CATALOG, SCHOOL_HOMEPAGES)
+        reports = asyncio.run(_crawl4ai_batch(specs))
+    except Exception as exc:
+        return {}, [
+            {
+                "status": "failed",
+                "error": str(exc),
+                "checked_at": datetime.now(timezone.utc).isoformat(),
+            }
+        ]
+
+    updates_by_district = {}
+    health = []
+    for report in reports:
+        district = report.get("district", "")
+        school = report.get("school", "")
+        health.append({
+            key: report.get(key)
+            for key in (
+                "school", "district", "homepage", "final_url", "status",
+                "candidate_sections", "items_found", "error", "checked_at",
+            )
+            if key in report
+        })
+        if report.get("status") == "success" and district and school and report.get("updates"):
+            updates_by_district.setdefault(district, {})[school] = report["updates"]
+    return updates_by_district, health
+
+
 def merge_school_seed_items(schools: dict, seeds: dict) -> None:
     """仅当学校没有真实动态时，补入已核验的官方信息条目。"""
     for school, items in seeds.items():
@@ -1216,6 +1305,7 @@ def build_feed(data: dict, built_at: str) -> str:
 def main():
     built_at = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M")
     prev_keys = load_prev_keys()
+    crawl_updates, crawl_health = collect_crawl4ai_school_updates()
 
     区级 = {}
     for 区名, fid in DISTRICTS.items():
@@ -1257,6 +1347,7 @@ def main():
                 merge_school_feed_items(学校, assigned)
             except Exception:
                 pass
+        merge_crawl4ai_school_updates(学校, crawl_updates.get(区名, {}))
         merge_school_seed_items(学校, SCHOOL_OFFICIAL_SEEDS.get(区名, {}))
         区级[区名] = {
             "政策": 政策,
@@ -1278,6 +1369,7 @@ def main():
         "市教委": 市教委,
         "教育部": 教育部,
         "市级学校信息": CITY_SCHOOL_INFO,
+        "学校官网健康": crawl_health,
         "区级": 区级,
     }
 
@@ -1288,6 +1380,10 @@ def main():
     )
     (DOCS / "index.html").write_text(build_page(data, prev_keys, built_at), encoding="utf-8")
     (DOCS / "feed.xml").write_text(build_feed(data, built_at), encoding="utf-8")
+    (DOCS / "school-crawler-health.json").write_text(
+        json.dumps(crawl_health, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
 
     d_online = sum(1 for d in 区级.values() if d["政策"])
     g_online = sum(1 for d in 区级.values() if d["动态"])

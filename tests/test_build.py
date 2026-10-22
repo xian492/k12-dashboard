@@ -1,18 +1,79 @@
 import importlib.util
+import asyncio
 import re
 import tempfile
 import unittest
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location("dashboard_build", ROOT / "tools" / "build.py")
 build = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(build)
+COMMUNITY_SPEC = importlib.util.spec_from_file_location(
+    "community_crawler", ROOT / "tools" / "community_crawler.py"
+)
+community = importlib.util.module_from_spec(COMMUNITY_SPEC)
+COMMUNITY_SPEC.loader.exec_module(community)
 
 
 class SchoolFeedTests(unittest.TestCase):
+    def test_collects_crawl4ai_updates_by_district_and_health(self):
+        original_batch = getattr(build, "_crawl4ai_batch", None)
+
+        async def fake_batch(specs):
+            return [
+                {
+                    "school": "测试学校",
+                    "district": "海淀区",
+                    "status": "success",
+                    "updates": [{"title": "校园新闻", "url": "https://school.example/news/1.html"}],
+                    "candidate_sections": [{"title": "校园新闻", "url": "https://school.example/news/"}],
+                    "items_found": 1,
+                    "error": "",
+                    "checked_at": "2026-10-22T00:00:00+00:00",
+                }
+            ]
+
+        build._crawl4ai_batch = fake_batch
+        try:
+            updates, health = build.collect_crawl4ai_school_updates()
+        finally:
+            if original_batch is None:
+                del build._crawl4ai_batch
+            else:
+                build._crawl4ai_batch = original_batch
+
+        self.assertEqual(updates["海淀区"]["测试学校"][0]["title"], "校园新闻")
+        self.assertEqual(health[0]["status"], "success")
+
+    def test_merges_crawl4ai_updates_into_school_sections(self):
+        schools = {
+            "测试学校": {"学校信息": [{"title": "入口", "link": "https://school.example/"}]}
+        }
+        updates = {
+            "测试学校": [
+                {
+                    "title": "校园新闻",
+                    "url": "https://school.example/news/1.html",
+                    "published_at": "2026-10-22",
+                    "category": "校园新闻",
+                }
+            ]
+        }
+
+        build.merge_crawl4ai_school_updates(schools, updates)
+
+        self.assertNotIn("学校信息", schools["测试学校"])
+        self.assertEqual(schools["测试学校"]["校园新闻"][0]["link"], "https://school.example/news/1.html")
+
+    def test_failed_crawl_does_not_create_school_placeholder(self):
+        schools = {"失败学校": {}}
+
+        build.merge_crawl4ai_school_updates(schools, {"失败学校": []})
+
+        self.assertEqual(schools, {"失败学校": {}})
+
     def test_assigns_list_item_to_school_by_title_alias(self):
         items = [{"title": "怀柔五中入选人工智能标杆学校", "link": "https://example/a"}]
         aliases = {"北京市怀柔区第五中学": ["怀柔五中"]}
@@ -20,6 +81,7 @@ class SchoolFeedTests(unittest.TestCase):
         result = build.assign_school_feed_items(items, aliases, detail_loader=lambda _: "")
 
         self.assertEqual(result["北京市怀柔区第五中学"], items)
+
 
     def test_assigns_item_when_school_only_appears_in_detail(self):
         items = [{"title": "全区高中新生军训圆满完成", "link": "https://example/b"}]
@@ -133,6 +195,57 @@ class SchoolFeedTests(unittest.TestCase):
 
         self.assertEqual(schools["学校甲"], {})
         self.assertEqual(schools["学校乙"], {})
+
+
+class BeijingCommunityCrawlerTests(unittest.TestCase):
+    def test_defines_public_beijing_sources(self):
+        ids = {source["id"] for source in community.BEIJING_SOURCES}
+
+        self.assertEqual(
+            ids,
+            {
+                "xschu",
+                "newsmth-child-education",
+                "xscxx",
+                "hlgnet",
+                "shaoyaojuwang",
+                "xiaoshengchu-index",
+            },
+        )
+        self.assertTrue(all(source["url"].startswith("https://") for source in community.BEIJING_SOURCES))
+
+    def test_keeps_local_education_link_and_normalizes_fields(self):
+        item = community.normalize_link(
+            {
+                "text": "海淀区小升初报名政策和入学材料说明",
+                "href": "https://example.com/article-1",
+            },
+            community.BEIJING_SOURCES[0],
+        )
+
+        self.assertEqual(item["title"], "海淀区小升初报名政策和入学材料说明")
+        self.assertEqual(item["link"], "https://example.com/article-1")
+        self.assertEqual(item["region"], "北京")
+        self.assertEqual(item["source"], "北京小升初网")
+        self.assertIn("小升初", item["tags"])
+
+    def test_discards_ads_and_unrelated_links(self):
+        links = [
+            {"text": "海淀区小升初报名政策", "href": "https://www.xschu.com/policy"},
+            {"text": "家长分享孩子今年的学习体验", "href": "https://www.xschu.com/experience"},
+            {"text": "小升初免费资料领取加微信", "href": "https://www.xschu.com/ad"},
+            {"text": "北京小升初家长交流群", "href": "https://www.xschu.com/group"},
+            {"text": "北京二手房学区房出售", "href": "https://www.xschu.com/house"},
+            {"text": "学校简介", "href": "https://www.xschu.com/about"},
+            {"text": "联系我们", "href": "https://www.xschu.com/contact"},
+        ]
+
+        result = community.extract_candidate_links(links, community.BEIJING_SOURCES[0])
+
+        self.assertEqual(
+            [item["link"] for item in result],
+            ["https://www.xschu.com/policy", "https://www.xschu.com/experience"],
+        )
 
 
 class DashboardLayoutTests(unittest.TestCase):
