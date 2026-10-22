@@ -1,0 +1,125 @@
+"""Crawl4AI-based probing for public Beijing school websites."""
+
+from __future__ import annotations
+
+import re
+from urllib.parse import urldefrag, urljoin, urlparse, urlunparse
+
+
+SCHOOL_PROBE_SPECS = [
+    {
+        "school": "人大附中",
+        "district": "海淀区",
+        "homepage": "https://www.rdfz.cn/",
+        "allowed_hosts": {"www.rdfz.cn", "rdfz.cn"},
+    },
+    {
+        "school": "清华附中",
+        "district": "海淀区",
+        "homepage": "https://www.qhfz.edu.cn/",
+        "allowed_hosts": {"www.qhfz.edu.cn", "qhfz.edu.cn"},
+    },
+    {
+        "school": "首师大附中",
+        "district": "海淀区",
+        "homepage": "https://www.cnuhs.cn/",
+        "allowed_hosts": {"www.cnuhs.cn", "cnuhs.cn"},
+    },
+    {
+        "school": "一零一中学",
+        "district": "海淀区",
+        "homepage": "https://www.beijing101.com/",
+        "allowed_hosts": {"www.beijing101.com", "beijing101.com"},
+    },
+    {
+        "school": "八一学校",
+        "district": "海淀区",
+        "homepage": "https://byxx.bjhdedu.cn/",
+        "allowed_hosts": {"byxx.bjhdedu.cn"},
+    },
+    {
+        "school": "交大附中",
+        "district": "海淀区",
+        "homepage": "https://jdfz.bjhdedu.cn/",
+        "allowed_hosts": {"jdfz.bjhdedu.cn"},
+    },
+]
+
+SECTION_TERMS = (
+    "新闻",
+    "通知",
+    "公告",
+    "招生",
+    "校园动态",
+    "校园新闻",
+    "学校新闻",
+    "信息公开",
+)
+
+EXCLUDED_TERMS = (
+    "首页",
+    "学校简介",
+    "学校概况",
+    "联系我们",
+    "友情链接",
+    "备案",
+    "登录",
+    "招聘",
+    "版权",
+)
+
+_SPACE_RE = re.compile(r"\s+")
+
+
+def _clean_text(value: str | None) -> str:
+    return _SPACE_RE.sub(" ", value or "").strip()
+
+
+def normalize_url(raw_url: str, base_url: str) -> str:
+    """Resolve a link and remove fragments while retaining query parameters."""
+    resolved = urljoin(base_url, (raw_url or "").strip())
+    resolved, _ = urldefrag(resolved)
+    parsed = urlparse(resolved)
+    return urlunparse((parsed.scheme, parsed.netloc, parsed.path, "", parsed.query, ""))
+
+
+def _is_allowed_host(url: str, allowed_hosts: set[str]) -> bool:
+    parsed = urlparse(url)
+    return parsed.scheme in {"http", "https"} and parsed.netloc.lower() in allowed_hosts
+
+
+def _is_excluded_title(title: str) -> bool:
+    return any(term in title for term in EXCLUDED_TERMS)
+
+
+def extract_internal_links(
+    links: list[dict], base_url: str, allowed_hosts: set[str]
+) -> list[dict]:
+    """Return unique, public, same-site links with usable titles."""
+    results = []
+    seen = set()
+    normalized_hosts = {host.lower() for host in allowed_hosts}
+    for link in links:
+        title = _clean_text(link.get("text") or link.get("title"))
+        url = normalize_url(link.get("href") or link.get("url") or "", base_url)
+        if not title or not _is_allowed_host(url, normalized_hosts):
+            continue
+        if _is_excluded_title(title) or url in seen:
+            continue
+        seen.add(url)
+        results.append({"title": title, "url": url})
+    return results
+
+
+def rank_section_candidates(links: list[dict]) -> list[dict]:
+    """Keep likely content sections and order stronger keyword matches first."""
+    candidates = []
+    for index, link in enumerate(links):
+        title = _clean_text(link.get("title") or link.get("text"))
+        if not title or _is_excluded_title(title):
+            continue
+        score = sum(1 for term in SECTION_TERMS if term in title)
+        if score:
+            candidates.append((score, index, {"title": title, "url": link["url"]}))
+    candidates.sort(key=lambda item: (-item[0], item[1]))
+    return [item[2] for item in candidates]
