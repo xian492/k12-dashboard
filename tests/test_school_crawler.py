@@ -26,6 +26,11 @@ CLI_SPEC.loader.exec_module(probe_cli)
 
 
 class SchoolCrawlerPureFunctionTests(unittest.TestCase):
+    def test_make_crawler_does_not_depend_on_a_file_logger(self):
+        crawler = school_crawler._make_crawler()
+
+        self.assertIsNone(crawler.logger.log_file)
+
     def test_build_school_probe_specs_covers_catalog_homepages(self):
         specs = school_crawler.build_school_probe_specs(
             dashboard_build.SCHOOL_CATALOG,

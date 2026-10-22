@@ -250,9 +250,14 @@ def _make_crawler():
     cache_root.mkdir(parents=True, exist_ok=True)
     (cache_root / ".crawl4ai").mkdir(parents=True, exist_ok=True)
     os.environ.setdefault("CRAWL4_AI_BASE_DIRECTORY", str(cache_root))
-    from crawl4ai import AsyncWebCrawler
+    from crawl4ai import AsyncLogger, AsyncWebCrawler
 
-    return AsyncWebCrawler(base_directory=str(cache_root))
+    # Crawl4AI's file logger can lose its parent directory during a long batch,
+    # which turns otherwise valid school requests into local filesystem errors.
+    return AsyncWebCrawler(
+        base_directory=str(cache_root),
+        logger=AsyncLogger(log_file=None, verbose=False),
+    )
 
 
 async def probe_school(crawler, spec: dict) -> dict:

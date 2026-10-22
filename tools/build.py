@@ -314,7 +314,7 @@ TAIXING_SCHOOL_DIRECTORY = {
     },
     "通州区": {
         "首都师范大学附属中学通州校区": _school("http://www.cnuschool.org/tz/", "gh_4dab6e6f5bec"),
-        "北京市通州区潞河中学": _school("http://www.luhe.net/", "gh_7149f8b3d49d"),
+        "北京市通州区潞河中学": _school("https://www.luhe.cn/", "gh_7149f8b3d49d"),
         "人大附中通州校区": _school("http://www.rdfztzxq.cn/", "rtxchh"),
         "北京理工大学附属中学通州校区": _school("http://www.lgfztzschool.cn/", "gh_0a29a4c2d678"),
     },
@@ -487,10 +487,10 @@ SCHOOL_HOMEPAGES = {
     # 房山
     "首都师范大学附属中学房山学校": "https://www.cnuhs.cn/",
     # 通州
-    "北京市通州区潞河中学": "http://www.luhe.net/",
+    "北京市通州区潞河中学": "https://www.luhe.cn/",
     "人大附中通州校区": "http://www.rdfztzxq.cn/",
     # 顺义
-    "北京市顺义牛栏山第一中学": "https://www.nlsyz.com.cn/",
+    "北京市顺义牛栏山第一中学": "http://www.nlsyz.com.cn/",
     "北京市顺义区第一中学": "https://bjsyyz.cn/",
     "北京市顺义区杨镇第一中学": "http://www.bjyzyz.net/",
     # 昌平
@@ -1002,7 +1002,7 @@ HTML_HEAD = """<!DOCTYPE html>
 <title>北京 K12 官方信源看板</title>
 <style>
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-  html {{ font-variant-numeric: tabular-nums; }}
+  html {{ font-variant-numeric: tabular-nums; scroll-behavior: smooth; }}
   body {{
     font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
     background: #FBFAF7; color: #212427;
@@ -1016,6 +1016,27 @@ HTML_HEAD = """<!DOCTYPE html>
   h1 {{ font-family: "Songti SC", "Noto Serif SC", "SimSun", serif;
     font-size: 22px; font-weight: 700; letter-spacing: .02em; }}
   .meta {{ font-size: 12px; color: #8a877e; }}
+
+  /* ── 页面目录 ────────────────── */
+  .page-directory {{ position: fixed;
+    left: max(12px, calc((100vw - 1180px) / 2 - 132px)); top: 28px;
+    width: 112px; max-height: calc(100vh - 56px); overflow-y: auto;
+    padding: 9px 10px; border-left: 2px solid #B23B32;
+    background: rgba(251, 250, 247, .96); z-index: 10; }}
+  .page-directory strong {{ display: block; margin-bottom: 5px;
+    font-family: "Songti SC", "Noto Serif SC", serif; font-size: 13px; }}
+  .page-directory a {{ display: block; padding: 2px 0; color: #6b6862;
+    font-size: 11px; text-decoration: none; white-space: nowrap; }}
+  .page-directory a:hover, .page-directory a[aria-current="location"] {{
+    color: #B23B32; font-weight: 600; }}
+  @media (max-width: 1400px) {{
+    .page-directory {{ position: sticky; left: auto; top: 0; width: 100%;
+      max-height: none; margin-top: 10px; padding: 7px 0;
+      display: flex; align-items: center; gap: 12px;
+      border-left: 0; border-bottom: 1px solid #E3E1D8; overflow-x: auto; }}
+    .page-directory strong {{ display: none; }}
+    .page-directory a {{ flex: none; padding: 2px 0; }}
+  }}
 
   /* ── 区块标题 ────────────────── */
   h2 {{
@@ -1140,8 +1161,8 @@ def section(title: str, items: list, prev_keys: set, max_show: int = 5) -> str:
 
 
 def school_homepage_link(school_name: str) -> str:
-    """把学校名渲染为官网/官方目录入口；链接不属于动态条目。"""
-    url = SCHOOL_HOMEPAGES.get(school_name) or SCHOOL_NAVIGATION_FALLBACKS.get(school_name)
+    """仅在确认有学校官网时渲染链接；区级目录不冒充学校官网。"""
+    url = SCHOOL_HOMEPAGES.get(school_name)
     if not url:
         return school_name
     return (
@@ -1181,8 +1202,20 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
 
     parts = [HTML_HEAD.format(built_at=built_at)]
 
+    directory_links = ['<a href="#city">市级</a>']
+    directory_links.extend(
+        f'<a href="#district-{index:02d}">{district}</a>'
+        for index, district in enumerate(DISTRICTS, start=1)
+    )
+    parts.append(
+        '<nav class="page-directory" aria-label="页面目录">'
+        '<strong>快速跳转</strong>'
+        + "".join(directory_links)
+        + "</nav>"
+    )
+
     # 市级头条
-    parts.append('<h2>市级</h2><div class="city">')
+    parts.append('<h2 id="city">市级</h2><div class="city">')
     for name, items in (
         ("北京市教委 · 通知公告", jw),
         ("教育部 · 公告公示", moe),
@@ -1203,7 +1236,7 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
 
     # 区台账
     parts.append('<h2>分区台账</h2><div class="ledger">')
-    for 区名, fid in DISTRICTS.items():
+    for district_index, (区名, fid) in enumerate(DISTRICTS.items(), start=1):
         d = data["区级"][区名]
         policies = d["政策"]
         gov = d["动态"]
@@ -1231,7 +1264,8 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
             school_sections = '<p class="column-empty">暂无学校动态</p>'
 
         parts.append(
-            f'<details class="row"{" open" if (schools or n_new) else ""}><summary>'
+            f'<details id="district-{district_index:02d}" class="row"'
+            f'{" open" if (schools or n_new) else ""}><summary>'
             f'<span class="d-name">{official_homepage_link(区名, DISTRICT_HOMEPAGES[区名])}</span>'
             f'<span class="d-count">{len(policies)} 条</span>'
             f'<span class="d-latest">{latest}</span>'
@@ -1255,9 +1289,28 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
         "<footer>信源：yjrx.bjedu.cn（18 区招生政策）｜ jw.beijing.gov.cn ｜ moe.gov.cn ｜ "
         "rdfz.cn ｜ qhfz.edu.cn ｜ bjsdfz.com ｜ cnuhs.cn"
         + (f" ｜ 区教委：{' ｜ '.join(src_domains)}" if src_domains else "")
-        + "<br>学校名称可点击进入学校官网；名称下方的微信公众号 ID 仅作人工检索入口。"
-        + "学校官网由 Crawl4AI 自动探测并抓取；公众号仅作人工检索入口，不作为自动抓取源。</footer>"
+        + "<br>仅已确认的学校官网提供点击与动态抓取；没有独立官网的学校只显示名称。"
+        + "微信公众号 ID 仅作人工检索入口，不作为自动抓取源。</footer>"
     )
+    parts.append("""<script>
+  (() => {
+    const links = [...document.querySelectorAll('.page-directory a')];
+    const targets = links.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+    const activate = id => links.forEach(link => {
+      if (link.getAttribute('href') === `#${id}`) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+    if (targets.length && 'IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(entries => {
+        const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) activate(visible.target.id);
+      }, { rootMargin: '-15% 0px -70% 0px', threshold: [0, .1, .5] });
+      targets.forEach(target => observer.observe(target));
+    }
+    links.forEach(link => link.addEventListener('click', () => activate(link.hash.slice(1))));
+    activate(location.hash.slice(1) || 'city');
+  })();
+</script>""")
     return "".join(parts) + "</div></body></html>"
 
 

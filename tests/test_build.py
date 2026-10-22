@@ -273,6 +273,24 @@ class DashboardLayoutTests(unittest.TestCase):
         self.assertIn("@media (max-width: 760px)", html)
         self.assertIn(".district-columns { grid-template-columns: 1fr;", html)
 
+    def test_sidebar_directory_links_to_city_and_every_district(self):
+        html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")
+
+        self.assertIn('<nav class="page-directory" aria-label="页面目录">', html)
+        self.assertIn('<a href="#city">市级</a>', html)
+        self.assertIn('<h2 id="city">市级</h2>', html)
+        for index, district in enumerate(build.DISTRICTS, start=1):
+            anchor = f"district-{index:02d}"
+            self.assertIn(f'<a href="#{anchor}">{district}</a>', html)
+            self.assertIn(f'<details id="{anchor}" class="row"', html)
+
+    def test_sidebar_directory_becomes_horizontal_navigation_on_mobile(self):
+        html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")
+
+        self.assertIn(".page-directory { position: fixed;", html)
+        self.assertIn(".page-directory { position: sticky;", html)
+        self.assertIn("overflow-x: auto;", html)
+
     def test_admission_season_timeline_is_not_rendered(self):
         html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")
 
@@ -362,16 +380,13 @@ class SchoolHomepageTests(unittest.TestCase):
 
         self.assertEqual(missing, [])
 
-    def test_district_directory_is_navigation_only(self):
+    def test_district_directory_is_not_presented_as_a_school_homepage(self):
         self.assertNotIn("北京市第二中学", build.SCHOOL_HOMEPAGES)
         self.assertEqual(
             build.SCHOOL_NAVIGATION_FALLBACKS["北京市第二中学"],
             build._DONGCHENG_SCHOOLS,
         )
-        self.assertIn(
-            'href="https://www.bjdch.gov.cn/',
-            build.school_homepage_link("北京市第二中学"),
-        )
+        self.assertEqual(build.school_homepage_link("北京市第二中学"), "北京市第二中学")
 
     def test_school_name_links_to_its_official_homepage(self):
         districts = {
@@ -393,6 +408,10 @@ class SchoolHomepageTests(unittest.TestCase):
             'target="_blank" rel="noopener" title="打开学校官方入口">人大附中</a>',
             html,
         )
+
+    def test_replaced_school_domains_use_current_reachable_homepages(self):
+        self.assertEqual(build.SCHOOL_HOMEPAGES["北京市通州区潞河中学"], "https://www.luhe.cn/")
+        self.assertEqual(build.SCHOOL_HOMEPAGES["北京市顺义牛栏山第一中学"], "http://www.nlsyz.com.cn/")
 
     def test_school_wechat_ids_render_below_the_school_name(self):
         districts = {
@@ -451,6 +470,21 @@ class SchoolHomepageTests(unittest.TestCase):
 
         self.assertNotIn("rdfz.cn", feed)
         self.assertNotIn("rdfz1950", feed)
+
+    def test_footer_distinguishes_school_crawling_from_wechat_navigation(self):
+        data = {
+            "市教委": [],
+            "教育部": [],
+            "市级学校信息": [],
+            "区级": {
+                name: {"政策": [], "动态": None, "通用信息": [], "学校": {}}
+                for name in build.DISTRICTS
+            },
+        }
+        html = build.build_page(data, set(), "2026-10-22 12:00")
+
+        self.assertIn("仅已确认的学校官网提供点击与动态抓取", html)
+        self.assertIn("微信公众号 ID 仅作人工检索入口", html)
 
 
 class OfficialHomepageTests(unittest.TestCase):
