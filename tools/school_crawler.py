@@ -47,6 +47,48 @@ SCHOOL_PROBE_SPECS = [
     },
 ]
 
+
+def _allowed_hosts_for_homepage(homepage: str) -> set[str]:
+    parsed = urlparse(homepage)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        return set()
+    host = parsed.netloc.lower()
+    hosts = {host}
+    if host.startswith("www."):
+        hosts.add(host[4:])
+    elif "." in host and host.count(".") == 1:
+        hosts.add(f"www.{host}")
+    return hosts
+
+
+def build_school_probe_specs(catalog: dict, homepages: dict) -> list[dict]:
+    """Build one Crawl4AI spec per district/school catalog entry."""
+    specs = []
+    seen = set()
+    for district, schools in catalog.items():
+        for school in schools:
+            key = (district, school)
+            if key in seen:
+                continue
+            seen.add(key)
+            homepage = (homepages.get(school) or "").strip()
+            enabled = bool(
+                homepage
+                and not homepage.lower().startswith("javascript:")
+                and urlparse(homepage).scheme in {"http", "https"}
+                and bool(urlparse(homepage).netloc)
+            )
+            specs.append(
+                {
+                    "school": school,
+                    "district": district,
+                    "homepage": homepage,
+                    "allowed_hosts": _allowed_hosts_for_homepage(homepage),
+                    "enabled": enabled,
+                }
+            )
+    return specs
+
 SECTION_TERMS = (
     "新闻",
     "通知",

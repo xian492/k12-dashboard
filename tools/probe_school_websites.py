@@ -8,7 +8,11 @@ import asyncio
 import json
 from pathlib import Path
 
-from school_crawler import SCHOOL_PROBE_SPECS, probe_schools
+from build import SCHOOL_CATALOG, SCHOOL_HOMEPAGES
+from school_crawler import build_school_probe_specs, probe_schools
+
+
+SCHOOL_PROBE_SPECS = build_school_probe_specs(SCHOOL_CATALOG, SCHOOL_HOMEPAGES)
 
 
 def write_probe_report(report: list[dict], output: Path) -> None:

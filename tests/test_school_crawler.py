@@ -15,6 +15,9 @@ SPEC = importlib.util.spec_from_file_location(
 )
 school_crawler = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(school_crawler)
+BUILD_SPEC = importlib.util.spec_from_file_location("dashboard_build", ROOT / "tools" / "build.py")
+dashboard_build = importlib.util.module_from_spec(BUILD_SPEC)
+BUILD_SPEC.loader.exec_module(dashboard_build)
 CLI_SPEC = importlib.util.spec_from_file_location(
     "probe_school_websites", ROOT / "tools" / "probe_school_websites.py"
 )
@@ -23,6 +26,35 @@ CLI_SPEC.loader.exec_module(probe_cli)
 
 
 class SchoolCrawlerPureFunctionTests(unittest.TestCase):
+    def test_build_school_probe_specs_covers_catalog_homepages(self):
+        specs = school_crawler.build_school_probe_specs(
+            dashboard_build.SCHOOL_CATALOG,
+            dashboard_build.SCHOOL_HOMEPAGES,
+        )
+
+        self.assertGreaterEqual(len(specs), 100)
+        self.assertTrue(all(spec["school"] and spec["district"] for spec in specs))
+        self.assertTrue(all("allowed_hosts" in spec and "enabled" in spec for spec in specs))
+        self.assertEqual(
+            len({(spec["district"], spec["school"]) for spec in specs}),
+            len(specs),
+        )
+
+    def test_build_school_probe_specs_ignores_empty_and_javascript_homepages(self):
+        specs = school_crawler.build_school_probe_specs(
+            {"测试区": ["有效学校", "空链接学校", "脚本学校"]},
+            {
+                "有效学校": "https://school.example.edu.cn/",
+                "空链接学校": "",
+                "脚本学校": "javascript:void(0)",
+            },
+        )
+
+        self.assertEqual([spec["school"] for spec in specs], ["有效学校", "空链接学校", "脚本学校"])
+        self.assertTrue(specs[0]["enabled"])
+        self.assertFalse(specs[1]["enabled"])
+        self.assertFalse(specs[2]["enabled"])
+
     def test_normalize_url_resolves_relative_path(self):
         result = school_crawler.normalize_url("../news/1.html", "https://school.example.edu.cn/list/")
 
@@ -185,6 +217,9 @@ class SchoolCrawlerAsyncTests(unittest.TestCase):
 
 
 class SchoolCrawlerReportTests(unittest.TestCase):
+    def test_probe_cli_uses_full_school_catalog(self):
+        self.assertGreaterEqual(len(probe_cli.SCHOOL_PROBE_SPECS), 100)
+
     def test_write_probe_report_preserves_success_failure_and_timestamp(self):
         report = [
             {"school": "成功学校", "status": "success", "checked_at": "2026-10-22T00:00:00+00:00"},
