@@ -107,13 +107,54 @@ class SchoolCrawlerPureFunctionTests(unittest.TestCase):
             ["校园新闻", "招生通知"],
         )
 
+    def test_extract_article_links_limits_detail_pages_and_filters_navigation(self):
+        links = [
+            {"text": "2026年校园新闻", "href": "/news/202610/t20261022_1.shtml"},
+            {"text": "2026年第二条新闻", "href": "/news/202610/t20261021_2.shtml"},
+            {"text": "下一页", "href": "/news/page/2/"},
+            {"text": "外部文章", "href": "https://other.example.com/a"},
+        ]
+
+        result = school_crawler.extract_article_links(
+            links,
+            "https://school.example.edu.cn/news/",
+            limit=1,
+        )
+
+        self.assertEqual(result, [{
+            "title": "2026年校园新闻",
+            "url": "https://school.example.edu.cn/news/202610/t20261022_1.shtml",
+        }])
+
+    def test_normalize_school_item_extracts_date_and_marks_date_source(self):
+        spec = {"school": "测试学校", "district": "海淀区", "homepage": "https://school.example.edu.cn/"}
+
+        dated = school_crawler.normalize_school_item(
+            {"title": "校园新闻", "url": "https://school.example.edu.cn/news/1.html", "date": "2026-10-22"},
+            spec,
+            "https://school.example.edu.cn/news/",
+        )
+        undated = school_crawler.normalize_school_item(
+            {"title": "没有日期的新闻", "url": "https://school.example.edu.cn/news/2.html"},
+            spec,
+            "https://school.example.edu.cn/news/",
+        )
+
+        self.assertEqual(dated["published_at"], "2026-10-22")
+        self.assertEqual(dated["date_source"], "page")
+        self.assertEqual(undated["date_source"], "crawl")
+        self.assertEqual(undated["school"], "测试学校")
+
 
 class _FakeResult:
-    def __init__(self, *, success=True, url="https://school.example.edu.cn/", links=None, error=""):
+    def __init__(self, *, success=True, url="https://school.example.edu.cn/", links=None, error="", title="", date="", markdown=""):
         self.success = success
         self.url = url
         self.links = links or {"internal": []}
         self.error_message = error
+        self.title = title
+        self.date = date
+        self.markdown = markdown
 
 
 class _FakeCrawler:
@@ -133,6 +174,42 @@ class _FakeCrawler:
 
 
 class SchoolCrawlerAsyncTests(unittest.TestCase):
+    def test_crawl_school_updates_crawls_sections_and_details(self):
+        crawler = _FakeCrawler(
+            [
+                _FakeResult(
+                    links={"internal": [{"text": "校园新闻", "href": "/news/"}]}
+                ),
+                _FakeResult(
+                    links={"internal": [{"text": "2026年校园新闻", "href": "/news/202610/t20261022_1.shtml"}]}
+                ),
+                _FakeResult(
+                    url="https://school.example.edu.cn/news/202610/t20261022_1.shtml",
+                    title="2026年校园新闻",
+                    date="2026-10-22",
+                    markdown="# 2026年校园新闻\n学校活动内容",
+                ),
+            ]
+        )
+
+        result = asyncio.run(
+            school_crawler.crawl_school_updates(
+                crawler,
+                {
+                    "school": "测试学校",
+                    "district": "海淀区",
+                    "homepage": "https://school.example.edu.cn/",
+                    "allowed_hosts": {"school.example.edu.cn"},
+                    "enabled": True,
+                },
+            )
+        )
+
+        self.assertEqual(result["status"], "success")
+        self.assertEqual(len(result["updates"]), 1)
+        self.assertEqual(result["updates"][0]["title"], "2026年校园新闻")
+        self.assertEqual(result["updates"][0]["published_at"], "2026-10-22")
+
     def test_probe_school_returns_normalized_success_report(self):
         crawler = _FakeCrawler(
             [

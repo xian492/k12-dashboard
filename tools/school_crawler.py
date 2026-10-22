@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 import asyncio
+import hashlib
 from datetime import datetime, timezone
 from urllib.parse import urldefrag, urljoin, urlparse, urlunparse
 
@@ -113,6 +114,7 @@ EXCLUDED_TERMS = (
 )
 
 _SPACE_RE = re.compile(r"\s+")
+_DATE_RE = re.compile(r"(?P<year>20\d{2})[-/.年]?(?P<month>\d{1,2})[-/.月]?(?P<day>\d{1,2})日?")
 _DETAIL_PATH_RE = re.compile(
     r"(?:^|/)\d{6,8}(?:/|$)|(?:^|/)t?\d{8}(?:_|\.|/)|/\d{1,4}/\d{3,6}\.(?:html?|shtml)$"
 )
@@ -181,6 +183,64 @@ def rank_section_candidates(links: list[dict]) -> list[dict]:
     return [item[2] for item in candidates]
 
 
+def extract_article_links(links: list[dict], section_url: str, limit: int = 10) -> list[dict]:
+    """Select a bounded set of same-site detail links from a section page."""
+    host = urlparse(section_url).netloc.lower()
+    candidates = extract_internal_links(links, section_url, {host})
+    results = []
+    seen = set()
+    for item in candidates:
+        title = item["title"]
+        if title in {"下一页", "上一页", "更多", "查看详情"}:
+            continue
+        if not _looks_like_detail_url(item["url"], title):
+            continue
+        if item["url"] in seen:
+            continue
+        seen.add(item["url"])
+        results.append(item)
+        if len(results) >= limit:
+            break
+    return results
+
+
+def _normalize_date(value: str) -> str | None:
+    match = _DATE_RE.search(value or "")
+    if not match:
+        return None
+    return f"{int(match['year']):04d}-{int(match['month']):02d}-{int(match['day']):02d}"
+
+
+def normalize_school_item(item: dict, spec: dict, source_url: str) -> dict | None:
+    """Normalize one detail result without retaining full article text."""
+    title = _clean_text(item.get("title") or item.get("text"))
+    url = normalize_url(item.get("url") or item.get("href") or "", source_url)
+    if not title or not url:
+        return None
+    date_value = _normalize_date(item.get("date") or item.get("published_at") or "")
+    date_source = "page"
+    if not date_value:
+        date_value = _normalize_date(url)
+        date_source = "url"
+    if not date_value:
+        date_value = datetime.now(timezone.utc).date().isoformat()
+        date_source = "crawl"
+    summary = _clean_text(item.get("summary") or item.get("markdown") or "")
+    return {
+        "school": spec["school"],
+        "district": spec["district"],
+        "category": item.get("category") or "学校动态",
+        "title": title,
+        "url": url,
+        "published_at": date_value,
+        "date_source": date_source,
+        "source_homepage": spec["homepage"],
+        "source_method": "crawl4ai",
+        "summary": summary[:240],
+        "content_hash": hashlib.sha256(f"{title}\n{url}".encode("utf-8")).hexdigest(),
+    }
+
+
 def _make_crawler():
     from crawl4ai import AsyncWebCrawler
 
@@ -247,3 +307,67 @@ async def probe_schools(specs: list[dict]) -> list[dict]:
                 return await probe_school(crawler, spec)
 
         return await asyncio.gather(*(run_one(spec) for spec in specs))
+
+
+async def crawl_school_updates(crawler, spec: dict) -> dict:
+    """Probe a school, then crawl bounded section and detail pages."""
+    health = await probe_school(crawler, spec)
+    result = {**health, "updates": []}
+    if health["status"] != "success":
+        return result
+    section_items = []
+    for section in health["candidate_sections"][:5]:
+        try:
+            from crawl4ai import CacheMode, CrawlerRunConfig
+
+            section_result = await crawler.arun(
+                url=section["url"],
+                config=CrawlerRunConfig(
+                    cache_mode=CacheMode.BYPASS,
+                    exclude_external_links=True,
+                    exclude_social_media_links=True,
+                    page_timeout=30000,
+                ),
+            )
+            if not getattr(section_result, "success", False):
+                continue
+            raw_links = getattr(section_result, "links", {}) or {}
+            if isinstance(raw_links, dict):
+                raw_links = raw_links.get("internal", [])
+            section_items.extend(
+                (item, section["title"])
+                for item in extract_article_links(raw_links, section["url"], limit=10)
+            )
+        except Exception:
+            continue
+
+    async def crawl_detail(item: dict, category: str) -> dict | None:
+        try:
+            from crawl4ai import CacheMode, CrawlerRunConfig
+
+            detail_result = await crawler.arun(
+                url=item["url"],
+                config=CrawlerRunConfig(cache_mode=CacheMode.BYPASS, page_timeout=30000),
+            )
+            if not getattr(detail_result, "success", False):
+                return normalize_school_item({**item, "category": category}, spec, item["url"])
+            detail_item = {
+                **item,
+                "category": category,
+                "title": getattr(detail_result, "title", "") or item["title"],
+                "date": getattr(detail_result, "date", ""),
+                "markdown": getattr(detail_result, "markdown", ""),
+            }
+            return normalize_school_item(detail_item, spec, item["url"])
+        except Exception:
+            return normalize_school_item({**item, "category": category}, spec, item["url"])
+
+    updates = await asyncio.gather(
+        *(crawl_detail(item, category) for item, category in section_items)
+    )
+    seen = set()
+    for update in updates:
+        if update and update["url"] not in seen:
+            seen.add(update["url"])
+            result["updates"].append(update)
+    return result
