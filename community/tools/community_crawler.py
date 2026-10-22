@@ -198,7 +198,7 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("docs/community_beijing.json"),
+        default=Path("community/data/community_beijing.json"),
         help="output JSON path",
     )
     args = parser.parse_args()

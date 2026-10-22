@@ -421,11 +421,41 @@ _YANQING_EDU = "https://www.bjyq.gov.cn/"
 _YANSHAN_EDU = "https://www.bjfsh.gov.cn/zwgk/qmzqb/ghjh_2674/index_bm.shtml"
 _BDA_EDU = "https://kfqgw.beijing.gov.cn/zwgkkfq/zfxxgk/fdzdgknr/zdmsxx/jy/"
 
+# 这些地址是学校缺少独立官网时提供的官方导航入口，不是学校官网。
+# 它们可以用于页面跳转，但不得交给学校爬虫，否则区政府综合信息会被误归到具体学校。
+SCHOOL_NAVIGATION_FALLBACKS = {
+    "北京市第二中学": _DONGCHENG_SCHOOLS,
+    "北京市第五中学": _DONGCHENG_SCHOOLS,
+    "北京市大峪中学": _MENTOUGOU_SCHOOLS,
+    "北京市门头沟区实验中学": _MENTOUGOU_SCHOOLS,
+    "首都师范大学附属中学永定分校": _MENTOUGOU_SCHOOLS,
+    "北京市房山中学": _FANGSHAN_EDU,
+    "北京市房山区良乡中学": _FANGSHAN_EDU,
+    "北京学校": _TONGZHOU_SCHOOLS,
+    "北京市昌平区实验学校": _CHANGPING_EDU,
+    "北京市大兴区第一中学": _DAXING_EDU,
+    "北京市大兴区兴华中学": _DAXING_EDU,
+    "北京市平谷区第五中学": _PINGGU_EDU,
+    "北京市平谷区马坊实验中学": _PINGGU_EDU,
+    "北京市怀柔区第一中学": _HUAIROU_EDU,
+    "北京市怀柔区第二中学": _HUAIROU_EDU,
+    "北京市怀柔区第五中学": _HUAIROU_EDU,
+    "北京市密云区第二中学": _MIYUN_EDU,
+    "首都师范大学附属密云中学": _MIYUN_EDU,
+    "北京师范大学密云实验中学": _MIYUN_EDU,
+    "北京市延庆区第一中学": _YANQING_EDU,
+    "北京市延庆区第二中学": _YANQING_EDU,
+    "北京市延庆区第五中学": _YANQING_EDU,
+    "北京市房山区燕山前进中学": _YANSHAN_EDU,
+    "北京市房山区燕山向阳中学": _YANSHAN_EDU,
+    "北京师范大学燕化附属中学": _YANSHAN_EDU,
+    "北京市第二中学经开区学校": _BDA_EDU,
+    "人大附中北京经济技术开发区学校": _BDA_EDU,
+}
+
 SCHOOL_HOMEPAGES = {
     # 东城
-    "北京市第二中学": _DONGCHENG_SCHOOLS,
     "北京汇文中学": "http://www.pka.edu.cn/",
-    "北京市第五中学": _DONGCHENG_SCHOOLS,
     # 西城
     "北京市第四中学": "https://bhsf.lezhiyun.com/",
     "北京市第八中学": "http://www.no8ms.bj.cn/",
@@ -454,17 +484,10 @@ SCHOOL_HOMEPAGES = {
     "北京市第九中学": "http://9z.sjsedu.cn/",
     "北京市京源学校": "https://jyxx.sjsedu.cn/",
     "北京市十一学校石景山实验中学": "https://www.bndssjs.cn/",
-    # 门头沟
-    "北京市大峪中学": _MENTOUGOU_SCHOOLS,
-    "北京市门头沟区实验中学": _MENTOUGOU_SCHOOLS,
-    "首都师范大学附属中学永定分校": _MENTOUGOU_SCHOOLS,
     # 房山
-    "北京市房山中学": _FANGSHAN_EDU,
-    "北京市房山区良乡中学": _FANGSHAN_EDU,
     "首都师范大学附属中学房山学校": "https://www.cnuhs.cn/",
     # 通州
     "北京市通州区潞河中学": "http://www.luhe.net/",
-    "北京学校": _TONGZHOU_SCHOOLS,
     "人大附中通州校区": "http://www.rdfztzxq.cn/",
     # 顺义
     "北京市顺义牛栏山第一中学": "https://www.nlsyz.com.cn/",
@@ -473,34 +496,10 @@ SCHOOL_HOMEPAGES = {
     # 昌平
     "北京市昌平区第一中学": "http://www.cpyz.org.cn/",
     "北京市昌平区第二中学": "https://bjcpez.com.cn/",
-    "北京市昌平区实验学校": _CHANGPING_EDU,
     # 大兴
-    "北京市大兴区第一中学": _DAXING_EDU,
-    "北京市大兴区兴华中学": _DAXING_EDU,
     "北京亦庄实验中学": "https://www.bjeaedu.com/",
     # 平谷
     "北京市平谷中学": "http://www.pgzx.net/",
-    "北京市平谷区第五中学": _PINGGU_EDU,
-    "北京市平谷区马坊实验中学": _PINGGU_EDU,
-    # 怀柔
-    "北京市怀柔区第一中学": _HUAIROU_EDU,
-    "北京市怀柔区第二中学": _HUAIROU_EDU,
-    "北京市怀柔区第五中学": _HUAIROU_EDU,
-    # 密云
-    "北京市密云区第二中学": _MIYUN_EDU,
-    "首都师范大学附属密云中学": _MIYUN_EDU,
-    "北京师范大学密云实验中学": _MIYUN_EDU,
-    # 延庆
-    "北京市延庆区第一中学": _YANQING_EDU,
-    "北京市延庆区第二中学": _YANQING_EDU,
-    "北京市延庆区第五中学": _YANQING_EDU,
-    # 燕山
-    "北京市房山区燕山前进中学": _YANSHAN_EDU,
-    "北京市房山区燕山向阳中学": _YANSHAN_EDU,
-    "北京师范大学燕化附属中学": _YANSHAN_EDU,
-    # 经开区
-    "北京市第二中学经开区学校": _BDA_EDU,
-    "人大附中北京经济技术开发区学校": _BDA_EDU,
 }
 
 SCHOOL_WECHATS = {}
@@ -1142,7 +1141,7 @@ def section(title: str, items: list, prev_keys: set, max_show: int = 5) -> str:
 
 def school_homepage_link(school_name: str) -> str:
     """把学校名渲染为官网/官方目录入口；链接不属于动态条目。"""
-    url = SCHOOL_HOMEPAGES.get(school_name)
+    url = SCHOOL_HOMEPAGES.get(school_name) or SCHOOL_NAVIGATION_FALLBACKS.get(school_name)
     if not url:
         return school_name
     return (

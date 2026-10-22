@@ -40,6 +40,20 @@ class SchoolCrawlerPureFunctionTests(unittest.TestCase):
             len(specs),
         )
 
+    def test_district_directory_fallbacks_are_not_school_crawl_targets(self):
+        specs = school_crawler.build_school_probe_specs(
+            dashboard_build.SCHOOL_CATALOG,
+            dashboard_build.SCHOOL_HOMEPAGES,
+        )
+        by_school = {
+            (spec["district"], spec["school"]): spec
+            for spec in specs
+        }
+
+        self.assertFalse(by_school[("东城区", "北京市第二中学")]["enabled"])
+        self.assertEqual(by_school[("东城区", "北京市第二中学")]["homepage"], "")
+        self.assertTrue(by_school[("海淀区", "人大附中")]["enabled"])
+
     def test_build_school_probe_specs_ignores_empty_and_javascript_homepages(self):
         specs = school_crawler.build_school_probe_specs(
             {"测试区": ["有效学校", "空链接学校", "脚本学校"]},

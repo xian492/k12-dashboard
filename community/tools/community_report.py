@@ -326,11 +326,11 @@ def render_report(results: list[dict], source_doc: str, generated_at: str) -> st
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Audit all public community links in a Markdown source document")
-    parser.add_argument("--source", type=Path, default=Path("docs/论坛与社区信源.md"))
+    parser.add_argument("--source", type=Path, default=Path("community/sources/论坛与社区信源.md"))
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("docs/community-source-report-2026-10-22.md"),
+        default=Path("community/reports/community-source-report-2026-10-22.md"),
     )
     parser.add_argument("--concurrency", type=int, default=4)
     args = parser.parse_args()

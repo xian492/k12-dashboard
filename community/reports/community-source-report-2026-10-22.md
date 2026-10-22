@@ -1,6 +1,6 @@
 # 社区信源一次性巡检报告
 
-> 生成时间：2026-10-22 17:04:29 +0800。本报告对《docs/论坛与社区信源.md》中的公开入口各抓取一次，重点判断入口是否可访问、页面是否有可读内容、是否暴露内部链接，以及后续是否值得继续做分页和详情页抓取。
+> 生成时间：2026-10-22 17:04:29 +0800。本报告对《community/sources/论坛与社区信源.md》中的公开入口各抓取一次，重点判断入口是否可访问、页面是否有可读内容、是否暴露内部链接，以及后续是否值得继续做分页和详情页抓取。
 
 ## 一、结论摘要
 
@@ -59,7 +59,7 @@
 
 ## 三、来源明细
 
-以下按原信源文档的章节归类。名称本身就是可点击的原始入口，便于直接回到社区页面。
+以下按原信源文档的章节归类。每行同时保留社区名称、页面名称和可点击的原始链接，便于直接回到社区页面。
 
 ### 二、全国性入口
 
@@ -95,59 +95,59 @@
 
 | 社区/名称 | 原始链接 | 状态 | 页面字符数 | 内部链接 | 抓取耗时 | 说明 |
 |---|---|---|---:|---:|---:|---|
-| 首页 | [https://www.qianfanedu.cn/](https://www.qianfanedu.cn/) | 成功 | 15590 | 103 | 7.25s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
-| 小学教育 | [https://www.qianfanedu.cn/forum-2-7.html](https://www.qianfanedu.cn/forum-2-7.html) | 成功 | 45694 | 333 | 7.36s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
-| 中学教育 | [https://qianfanedu.cn/forum.php?fid=36&filter=typeid&mobile=no&mod=forumdisplay&typeid=13](https://qianfanedu.cn/forum.php?fid=36&filter=typeid&mobile=no&mod=forumdisplay&typeid=13) | 成功 | 44393 | 314 | 7.80s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
-| 初中与小升初择校 | [https://ww123.net/forumdisplay.php?fid=36](https://ww123.net/forumdisplay.php?fid=36) | 请求失败 | 0 | 0 | 67.30s | Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py): Error: Failed on navigating AC |
+| 千帆育儿 / 首页 | [https://www.qianfanedu.cn/](https://www.qianfanedu.cn/) | 成功 | 15590 | 103 | 7.25s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
+| 千帆育儿 / 小学教育 | [https://www.qianfanedu.cn/forum-2-7.html](https://www.qianfanedu.cn/forum-2-7.html) | 成功 | 45694 | 333 | 7.36s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
+| 千帆育儿 / 中学教育 | [https://qianfanedu.cn/forum.php?fid=36&filter=typeid&mobile=no&mod=forumdisplay&typeid=13](https://qianfanedu.cn/forum.php?fid=36&filter=typeid&mobile=no&mod=forumdisplay&typeid=13) | 成功 | 44393 | 314 | 7.80s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
+| 旺旺网 / 初中与小升初择校 | [https://ww123.net/forumdisplay.php?fid=36](https://ww123.net/forumdisplay.php?fid=36) | 请求失败 | 0 | 0 | 67.30s | Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py): Error: Failed on navigating AC |
 
 ### 三、地方论坛与城市社区 / 广州与广东
 
 | 社区/名称 | 原始链接 | 状态 | 页面字符数 | 内部链接 | 抓取耗时 | 说明 |
 |---|---|---|---:|---:|---:|---|
-| 家有小学生 | [https://www.gzmama.com/forum-42-1.html](https://www.gzmama.com/forum-42-1.html) | 成功 | 2513 | 36 | 8.72s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
-| 学龄教育 | [https://bbs.szhome.com/580030.html](https://bbs.szhome.com/580030.html) | 成功 | 40851 | 621 | 8.95s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
-| 学龄教育 | [https://m.szmama.com/forum-506-1.html](https://m.szmama.com/forum-506-1.html) | 请求失败 | 109 | 0 | 9.49s | Blocked by anti-bot protection: Structural: no_content_elements on small page (147 bytes, 108 chars visible) |
+| 广州妈妈网 / 家有小学生 | [https://www.gzmama.com/forum-42-1.html](https://www.gzmama.com/forum-42-1.html) | 成功 | 2513 | 36 | 8.72s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
+| 家在深圳 / 学龄教育 | [https://bbs.szhome.com/580030.html](https://bbs.szhome.com/580030.html) | 成功 | 40851 | 621 | 8.95s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
+| 深圳妈妈网 / 学龄教育 | [https://m.szmama.com/forum-506-1.html](https://m.szmama.com/forum-506-1.html) | 请求失败 | 109 | 0 | 9.49s | Blocked by anti-bot protection: Structural: no_content_elements on small page (147 bytes, 108 chars visible) |
 
 ### 三、地方论坛与城市社区 / 成都与四川
 
 | 社区/名称 | 原始链接 | 状态 | 页面字符数 | 内部链接 | 抓取耗时 | 说明 |
 |---|---|---|---:|---:|---:|---|
-| 16jzq.com | [https://www.16jzq.com/](https://www.16jzq.com/) | 成功 | 25232 | 153 | 53.70s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
-| wokaowang.com | [https://wokaowang.com/](https://wokaowang.com/) | 成功 | 12552 | 48 | 10.92s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
+| 壹牛家长圈 / 首页 | [https://www.16jzq.com/](https://www.16jzq.com/) | 成功 | 25232 | 153 | 53.70s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
+| 我考网 / 首页 | [https://wokaowang.com/](https://wokaowang.com/) | 成功 | 12552 | 48 | 10.92s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
 
 ### 三、地方论坛与城市社区 / 武汉与湖北
 
 | 社区/名称 | 原始链接 | 状态 | 页面字符数 | 内部链接 | 抓取耗时 | 说明 |
 |---|---|---|---:|---:|---:|---|
-| 教育板块 | [https://www.deyi.com/forum-79-1.html](https://www.deyi.com/forum-79-1.html) | 成功 | 44590 | 394 | 52.98s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
-| wuhanyuelai.com | [https://www.wuhanyuelai.com/](https://www.wuhanyuelai.com/) | 成功 | 11487 | 80 | 14.72s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
+| 得意生活 / 教育板块 | [https://www.deyi.com/forum-79-1.html](https://www.deyi.com/forum-79-1.html) | 成功 | 44590 | 394 | 52.98s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
+| 悦来教育 / 首页 | [https://www.wuhanyuelai.com/](https://www.wuhanyuelai.com/) | 成功 | 11487 | 80 | 14.72s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
 
 ### 三、地方论坛与城市社区 / 杭州与浙江
 
 | 社区/名称 | 原始链接 | 状态 | 页面字符数 | 内部链接 | 抓取耗时 | 说明 |
 |---|---|---|---:|---:|---:|---|
-| 中学教育论坛 | [https://www.19lou.com/theme-thread-15-36938-1](https://www.19lou.com/theme-thread-15-36938-1) | 成功 | 15852 | 104 | 15.55s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
+| 杭州19楼 / 中学教育论坛 | [https://www.19lou.com/theme-thread-15-36938-1](https://www.19lou.com/theme-thread-15-36938-1) | 成功 | 15852 | 104 | 15.55s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
 
 ### 三、地方论坛与城市社区 / 重庆
 
 | 社区/名称 | 原始链接 | 状态 | 页面字符数 | 内部链接 | 抓取耗时 | 说明 |
 |---|---|---|---:|---:|---:|---|
-| 重庆初升高话题 | [https://go.cqmmgo.com/newtag-thread-782852-1](https://go.cqmmgo.com/newtag-thread-782852-1) | 成功 | 8223 | 36 | 16.24s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
+| 重庆妈妈网 / 重庆初升高话题 | [https://go.cqmmgo.com/newtag-thread-782852-1](https://go.cqmmgo.com/newtag-thread-782852-1) | 成功 | 8223 | 36 | 16.24s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
 
 ### 三、地方论坛与城市社区 / 苏州与江苏
 
 | 社区/名称 | 原始链接 | 状态 | 页面字符数 | 内部链接 | 抓取耗时 | 说明 |
 |---|---|---|---:|---:|---:|---|
-| suzhoutong.cc | [https://www.suzhoutong.cc/](https://www.suzhoutong.cc/) | 成功 | 38490 | 175 | 40.07s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
+| 苏州通论坛 / 首页 | [https://www.suzhoutong.cc/](https://www.suzhoutong.cc/) | 成功 | 38490 | 175 | 40.07s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
 
 ### 三、地方论坛与城市社区 / 南京、西安、沈阳、天津、郑州、长沙、济南与青岛
 
 | 社区/名称 | 原始链接 | 状态 | 页面字符数 | 内部链接 | 抓取耗时 | 说明 |
 |---|---|---|---:|---:|---:|---|
-| 沈阳 e 度论坛介绍 | [https://sy.zhongkao.com/e/20121130/50b85f6b7d5da.shtml](https://sy.zhongkao.com/e/20121130/50b85f6b7d5da.shtml) | 请求失败 | 28 | 0 | 40.38s | Blocked by anti-bot protection: Structural: minimal_text on small page (160 bytes, 19 chars visible) |
-| 西安 e 度论坛介绍 | [https://xa.zhongkao.com/e/20130225/512adab084bfb.shtml](https://xa.zhongkao.com/e/20130225/512adab084bfb.shtml) | 请求失败 | 28 | 0 | 40.65s | Blocked by anti-bot protection: Structural: minimal_text on small page (160 bytes, 19 chars visible) |
-| 江阴论坛招生讨论 | [https://bbs.jysq.net/thread-14100935-1-1.html](https://bbs.jysq.net/thread-14100935-1-1.html) | 成功 | 34521 | 175 | 41.34s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
-| 綦江在线教育板块 | [https://www.qj023.com/forum-164-2.html](https://www.qj023.com/forum-164-2.html) | 成功 | 30310 | 195 | 42.29s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
+| 沈阳 e 度论坛 / 论坛介绍 | [https://sy.zhongkao.com/e/20121130/50b85f6b7d5da.shtml](https://sy.zhongkao.com/e/20121130/50b85f6b7d5da.shtml) | 请求失败 | 28 | 0 | 40.38s | Blocked by anti-bot protection: Structural: minimal_text on small page (160 bytes, 19 chars visible) |
+| 西安 e 度论坛 / 论坛介绍 | [https://xa.zhongkao.com/e/20130225/512adab084bfb.shtml](https://xa.zhongkao.com/e/20130225/512adab084bfb.shtml) | 请求失败 | 28 | 0 | 40.65s | Blocked by anti-bot protection: Structural: minimal_text on small page (160 bytes, 19 chars visible) |
+| 江阴论坛 / 招生讨论 | [https://bbs.jysq.net/thread-14100935-1-1.html](https://bbs.jysq.net/thread-14100935-1-1.html) | 成功 | 34521 | 175 | 41.34s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
+| 綦江在线 / 教育板块 | [https://www.qj023.com/forum-164-2.html](https://www.qj023.com/forum-164-2.html) | 成功 | 30310 | 195 | 42.29s | 入口有可见正文或内部链接，可继续做分页/详情页抓取。 |
 
 ## 四、后续建议
 
