@@ -1,27 +1,31 @@
 # K12 官方信源看板
 
-**在线地址**：https://xian492.github.io/k12-dashboard/
+[在线查看](https://xian492.github.io/k12-dashboard/)
 
-监控北京 K12 官方信源的自动看板，GitHub Actions 每 6 小时拉取一次，GitHub Pages 托管。
+北京 K12 信息入口与动态看板，每 6 小时自动更新，GitHub Pages 托管。
 
-## 信源（20 路）
+当前覆盖：
 
-- 市级（2）：北京市教委通知公告、教育部公告公示
-- 区级（18）：北京义务教育入学服务平台（yjrx）全区招生政策
+- 北京市教委、教育部及北京 18 个区的官方信息
+- 区教委与学校动态
+- 149 个学校官网或官方入口
+- 学校及区级微信公众号 ID
 
-构建逻辑：`tools/build.py` 直接拉各信源原始接口（yjrx JSON / 官网列表页解析），零第三方依赖，生成 `docs/index.html`。
+学校官网和公众号仅作导航，不参与自动抓取或 RSS 生成。
 
-## 本地开发
+## 本地构建
 
 ```bash
-python3 tools/build.py   # 生成看板，浏览器打开 docs/index.html
+python3 tools/build.py
 ```
 
-## 结构
+构建产物位于 `docs/`。
 
-```
-.github/workflows/build.yml   # 定时构建 + 部署 Pages
-tools/build.py                # 构建脚本（纯标准库）
-docs/index.html               # 看板产物
-docs/data.json                # 数据快照（留痕/回溯）
+## 主要文件
+
+```text
+.github/workflows/build.yml  定时构建与 Pages 部署
+tools/build.py               信源、学校目录与构建逻辑
+docs/index.html              看板页面
+docs/data.json               数据快照
 ```

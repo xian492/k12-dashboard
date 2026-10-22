@@ -11,7 +11,9 @@ import json
 import re
 import ssl
 import urllib.request
+import xml.etree.ElementTree as ET
 from datetime import datetime, timezone, timedelta
+from email.utils import format_datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -178,8 +180,174 @@ SCHOOL_SPECS["昌平区"] = [
         exclude=r"首页|学校简介|联系我们|友情链接"))]),
 ]
 
+def _school(homepage: str, *wechats: str) -> dict:
+    """学校导航元数据；仅用于页面入口，不参与抓取。"""
+    return {"homepage": homepage, "wechats": tuple(wechat.strip() for wechat in wechats)}
+
+
+# 太星网络“北京小升初 · 关注网站”页面中的学校网站（2026-10-22 核对）。
+# 名称按当前看板做了少量规范化；被来源页相对地址包裹的链接已还原为学校域名。
+TAIXING_SCHOOL_DIRECTORY = {
+    "海淀区": {
+        "北京市上地实验学校": _school("http://www.shd101.com/", "SHD-101"),
+        "北京市清河中学": _school("http://www.qhzhx.com/cms/", "gh_602f6abe1511"),
+        "北京市十一学校龙樾实验中学": _school("http://www.shiyilongyue.com/", "shiyilongyue"),
+        "人大附中北大附小联合实验学校": _school("http://www.bjkedi.com/", "gh_2d9df47d6711"),
+        "交大附中": _school("http://www.bfjdfz.net/", "bfjdfz62116381"),
+        "海淀教师进修学校附属实验学校": _school("http://www.eshttc.cn/index.html", "eshttc1998"),
+        "北京理工大学附属中学分校": _school("http://www.lgfzfx.com.cn/", "bjlgfzfx"),
+        "北京市第十九中学": _school("http://www.bj19zx.cn/Domain/1", "bj19zx"),
+        "清华附中": _school("http://www.qhfz.edu.cn/", "qhfz1915"),
+        "北京外国语大学附属中学": _school("http://www.bjwgydxfszx.com/", "bwfzwx"),
+        "北京市十一学校": _school("http://www.bnds.cn/", "BNDS11", "BNDSOpenDay"),
+        "人大附中": _school("http://www.rdfz.cn/", "rdfz1950"),
+        "北京市第二十中学": _school("https://www.bj20zx.com/", "bj20zxchuzhongbu"),
+        "北京市北达资源中学": _school("http://bdzy.pku.edu.cn/", "bjbdzyzx"),
+        "北京市育英中学": _school("http://www.yyzx.org/", "gh_6f16daf5de56"),
+        "人大附中翠微学校": _school("http://www.rdfzcw.cn/", "rdfzcwxx"),
+        "北京市第五十七中学": _school("http://www.57class.net/", "Beijing57HighSchool"),
+        "首都师范大学第二附属中学": _school("http://www.cnu2school.bjedu.cn/cms/home/", "ssdefz"),
+        "北京市海淀实验中学": _school("http://www.hdsyzx.com/", "hd_syzx"),
+        "首师大附中": _school("http://www.cnuschool.org/", "shoudushidafuzhong"),
+        "北京科技大学附属中学": _school("http://www.bjgyfz.bjedu.cn/"),
+        "北京市中关村中学": _school("http://www.hdzgczx.bjedu.cn/", "bj_zgczx"),
+        "北京大学附属中学": _school("http://www.pkuschool.edu.cn/", "bdfz_czb"),
+        "中国人民大学附属中学分校": _school("http://www.fx.rdfz.cn/", "rdfz_fx"),
+        "一零一中学": _school("http://www.beijing101.com/", "gh_370ef0e1df58"),
+        "人大附中西山学校": _school("http://www.rdfzxishan.cn/site/default.aspx?PageID=1", "rdfzxsxx"),
+        "北京市师达中学": _school("http://www.bjsdschool.cn/", "bjsdschool"),
+        "清华大学附属中学永丰学校": _school("http://www.qhfzyf.cn/cms/cms/index.jsp", "qhfzyf"),
+        "北京航空航天大学实验学校": _school("http://www.bhfz.com/", "gh_47986a3ab603"),
+        "北京市建华实验学校": _school("http://www.bjjh.org.cn/", "jianhuaxuexiao"),
+        "北京市海淀外国语学校": _school("https://www.bjfles.com/", "bjfles"),
+        "清华大学附属实验学校": _school("http://www.qhfz.edu.cn/"),
+        "北京市中关村外国语学校": _school("http://www.zgcschool.cn/", "zgcschool"),
+        "北京市21世纪国际学校": _school("http://www.21cis.com.cn/", "beijing21CIS"),
+        "北京市十一学校一分校": _school("http://www.bndsyfx.cn/", "gh_6c980402807c"),
+        "北京理工大学附属中学": _school("http://www.lgfz.com.cn/", "gh_b10333b941dd"),
+        "北外附属外国语学校": _school("https://www.bwfx.com.cn/", "gh_dece8e1310f5"),
+        "北京市育英学校": _school("http://www.yuying.org.cn/", "mini-yyxx"),
+        "八一学校": _school("http://www.bayims.cn/", "jizhezhan-81", "weixin81xsh"),
+    },
+    "朝阳区": {
+        "北京师范大学朝阳附属中学": _school("http://www.bsdcyfz.com/", "bsdcyfz"),
+        "北京市第八十中学管庄分校": _school("http://www.bj80gz.com/"),
+        "东北师范大学附属中学朝阳学校": _school("http://www.msannucy.com/", "msannucy"),
+        "北京中学": _school("http://www.beijingacademy.com.cn/cms/", "BeijingAcademy"),
+        "北京市第八十中学": _school("http://www.bj80.com/", "beijing80zx"),
+        "中国人民大学附属中学朝阳学校": _school("http://www.rdfzcy.cn/SitePages/Home.aspx", "rdfzcy2010"),
+        "北京师范大学三帆中学朝阳学校": _school("http://career.bnu.edu.cn/front/zpxx.jspa?tid=103970", "sanfancy2012"),
+        "北京市陈经纶中学分校": _school("http://cjlfx.bjchyedu.cn/"),
+        "北京市陈经纶中学分校实验学校": _school("http://cfsyxx.bjchyedu.cn/", "cjlfxsyxx"),
+        "北京市和平街第一中学": _school("http://www.phs.bj.cn/", "hepingjieyizhong"),
+        "北京市朝阳区人大附中朝阳分校": _school("http://www.rdfzcygj.cn/", "rdfzcygj-dy"),
+        "陈经纶中学": _school("http://www.bjcjl.net/", "bjcjl_dyh"),
+        "日坛中学": _school("http://rtzx.bjchyedu.cn/", "rtjyjt"),
+        "工大附中": _school("http://www.bjgdfz.com/", "bjgdfz"),
+        "清华大学附属中学朝阳学校": _school("http://qhfzcyxx.bjchyedu.cn/index.shtml", "qhfzcyxx"),
+        "朝阳外国语学校": _school("http://www.cyfls.net/", "chaoyangwaiguoyu"),
+        "北京拔萃双语学校": _school("http://www.bacui.cn/", "bacuichuzhongbu"),
+    },
+    "西城区": {
+        "北京市第十三中学分校": _school("http://www.bj13zfx.com/cms/", "bj13zfx"),
+        "北师大附属实验中学分校": _school("http://www.sdsz.com.cn/", "SDSZer"),
+        "北京市三帆中学": _school("http://www.sanfan.cn/", "sanfanzhongxue"),
+        "北京市第一六一中学": _school("http://www.bj161zhx.org/", "bj161hs"),
+        "北京市第四中学": _school("http://bhsf.lezhiyun.com/cms/bjsz/index.htm", "bhsf-cn"),
+        "北京市第一五六中学": _school("http://bj156.xchjw.cn/homepage/index.jsp"),
+        "北京市第八中学": _school("http://www.no8ms.bj.cn/cms/home/", "bjno8ms"),
+        "北京市第三十五中学": _school("http://www.bj35.com/site/default.aspx?PageID=1", "bj35czb"),
+        "北京市铁路第二中学": _school("http://www.bjt2z.cn/", "gh_b8296095ddd8"),
+        "北京市第五十六中学": _school("http://www.bj56zhx.org/"),
+        "北京市西城外国语学校": _school("http://www.xjfls.org/index.aspx"),
+        "北师大附中": _school("http://www.bjsdfz.com/", "gh_2abce13e7fca"),
+        "北京市第十五中学": _school("http://www.bj15.cn/index.php/Home/Index/index", "bj15middleschool"),
+        "北京市第十四中学": _school("http://www.bj14.com.cn/", "bj14zx"),
+        "北京市回民学校": _school("https://www.bjhmxx.com/", "bjhmxxx"),
+        "北京市华夏女子中学": _school("http://www.hxgs.net/", "gh_cccd3a87bc87"),
+        "北京市宣武外国语实验学校": _school("http://www.flesedu.com/", "flesedu"),
+        "北京师范大学亚太实验学校": _school("http://www.yataischool.net/sportal17/gotoHome.do", "bnuaps"),
+        "北京市正泽学校": _school("http://www.bjzzschool.com/"),
+    },
+    "东城区": {
+        "北京市第二中学分校": _school("http://www.2zfx.com/", "gh_e58623c6777c"),
+        "北京市第五中学分校": _school("http://www.bjwzfx.com.cn/", "bjwzfx_wxpt"),
+        "北京市文汇中学": _school("http://www.wenhui1997.com/", "wenhuizhongxue"),
+        "北京市第十一中学分校": _school("http://www.bjsdsyf.com/", "gh_f93e0b56510d"),
+        "北京市第二十二中学": _school("http://www.bj22z.com/", "gh_be67aa40fc21"),
+        "北京市第一六六中学": _school("http://www.bj166z.cn/", "bj166z"),
+        "北京市东直门中学": _school("http://www.dzmzx.com.cn/", "bjsdzmzx"),
+        "北京市第六十五中学": _school("http://www.bj65z.com/"),
+        "北京市第二十五中学": _school("http://www.bj25schooledu.com.cn/", "bj25schooledu"),
+        "北京市第一七一中学": _school("http://www.171sch.com/", "bjsdyqyzx"),
+        "北京市第五十五中学": _school("http://www.bj55.cn/", "bj55hs"),
+        "中央工艺美术学院附属中学": _school("http://www.gmfzh.com/", "gmfzhong"),
+        "北京市广渠门中学": _school("http://www.gqmms.com/", "BJGQMMS"),
+        "北京市第五十中学": _school("http://www.bj50.com/"),
+        "北京汇文中学": _school("http://www.pka.edu.cn/", "bjhwzx"),
+        "北京市景山学校": _school("http://www.bjjsschool.net/", "bjjsschool"),
+    },
+    "丰台区": {
+        "北京市第十二中学": _school("http://www.bj12hs.com.cn/", "gh_1093c15cd389"),
+        "北京市丰台第二中学": _school("http://www.bjf2.ftedu.cn/bxn-cms/cms/", "bjft2z"),
+        "首都师范大学附属丽泽中学": _school("http://www.lzms.cn/", "lizejunpeng"),
+        "北京市第八中学怡海分校": _school("http://yhjyzx.ftbj.net/", "BJBZYHFX"),
+        "北京市第十中学": _school("http://www.bj10z.com.cn/", "bjd10z"),
+        "北京市第十八中学": _school("http://www.bj18.net/cms/", "bjd18z"),
+        "中国人民大学附属中学丰台学校": _school("http://www.rdfzftxx.cn/", "gh_31b5c4aa5d7c"),
+    },
+    "昌平区": {
+        "北京王府学校": _school("http://www.brs.edu.cn/", "BRS2003"),
+        "北京市昌平区第一中学": _school("http://www.cpyz.org.cn/"),
+        "北京市昌平区第二中学": _school("http://www.bjcpez.net/", "bjcpez"),
+        "北京市昌平区回龙观中学": _school("http://www.hlgzhx.net/"),
+    },
+    "大兴区": {
+        "北京亦庄实验中学": _school("http://www.bjeaedu.com/", "gh_63b555440ff4"),
+        "北京市大兴区第七中学": _school("http://www.bjdxqz.cn/cms/"),
+        "北京市大兴区第三中学": _school("http://www.dxqdszx.cn/cms/"),
+    },
+    "顺义区": {
+        "牛栏山一中实验学校": _school("http://syxx.nlsyz.com.cn/", "gh_434358b22e4e"),
+    },
+    "通州区": {
+        "首都师范大学附属中学通州校区": _school("http://www.cnuschool.org/tz/", "gh_4dab6e6f5bec"),
+        "北京市通州区潞河中学": _school("http://www.luhe.net/", "gh_7149f8b3d49d"),
+        "人大附中通州校区": _school("http://www.rdfztzxq.cn/", "rtxchh"),
+        "北京理工大学附属中学通州校区": _school("http://www.lgfztzschool.cn/", "gh_0a29a4c2d678"),
+    },
+    "石景山区": {
+        "北京市第九中学分校": _school("http://fz.sjsedu.cn/", "bjjzjyjt"),
+        "北京景山学校远洋分校": _school("http://jsyy.sjsedu.cn/", "bjjsyy2007"),
+        "北京市京源学校": _school("http://jyxx.sjsedu.cn/", "jyxxedu"),
+        "北大附中石景山学校": _school("http://bdfz.sjsedu.cn/"),
+    },
+}
+
+
+DISTRICT_WECHATS = {
+    "东城区": (("东教印象", "dcedunews"), ("东城区教育招生考试中心", "dckszx"), ("东城区教育工会", "gh_ba83f782a257")),
+    "西城区": (("西城区教育考试中心", "gh_a45720a76f9a"),),
+    "朝阳区": (("北京朝阳教育", "educhaoyang"),),
+    "海淀区": (("海淀教育", "jybxwb"),),
+    "丰台区": (("丰台教育", "ftjyxw"), ("丰台招生考试中心", "gh_cbba2ffc7b6b")),
+    "石景山区": (("石景山教育", "bj-sjsjw"),),
+    "门头沟区": (("门头沟教育", "mtgjy2014"),),
+    "房山区": (("房山教育", "gh_1515f1b7b399"),),
+    "通州区": (("通州区教委", "tongzhoujiaowei"),),
+    "顺义区": (("顺义教委", "shunyijiaowei"), ("顺义区教育招生考试中心", "syjyzskszx")),
+    "昌平区": (("昌平教育", "cpqjywyh"),),
+    "大兴区": (("兴教时讯", "dxjyxcxjsx"),),
+    "平谷区": (("平谷教育", "pinggujiaoyu"),),
+    "怀柔区": (("怀柔教育", "huairoujiaoyu"),),
+    "密云区": (("密云教育", "miyunjiaowei"),),
+    "延庆区": (("延庆教育", "yanqingjiaoyu"),),
+    "燕山地区": (("北京燕山教育", "beijingyanshanjiaoyu"),),
+}
+
+
 # 学校目录：先保证每个区有代表性学校入口；有稳定官网解析规则的学校
-# 继续使用 SCHOOL_SPECS，只有目录入口的学校会显示“动态待接入”。
+# 继续使用 SCHOOL_SPECS，太星目录只增加导航入口，不增加抓取任务。
 SCHOOL_CATALOG = {
     "东城区": ["北京市第二中学", "北京汇文中学", "北京市第五中学"],
     "西城区": ["北京市第四中学", "北京市第八中学", "北京市第十五中学"],
@@ -200,6 +368,117 @@ SCHOOL_CATALOG = {
     "燕山地区": ["北京市房山区燕山前进中学", "北京市房山区燕山向阳中学", "北京师范大学燕化附属中学"],
     "经济技术开发区": ["北京亦庄实验中学", "北京市第二中学经开区学校", "人大附中北京经济技术开发区学校"],
 }
+
+for _district, _schools in TAIXING_SCHOOL_DIRECTORY.items():
+    for _school_name in _schools:
+        if _school_name not in SCHOOL_CATALOG[_district]:
+            SCHOOL_CATALOG[_district].append(_school_name)
+
+# 学校名点击入口。优先使用学校独立官网；没有稳定独立站的学校，使用
+# 所属区政府/教委的官方学校目录或教育专题页，保证目录中的每所学校都有官方入口。
+# 这些链接只用于导航，不参与新闻抓取，也不写入 RSS。
+_DONGCHENG_SCHOOLS = "https://www.bjdch.gov.cn/zwgk/sjgk/sjxz/jyws/202303/t20230302_3030150.html"
+_MENTOUGOU_SCHOOLS = "https://www.bjmtg.gov.cn/bjmtg/c103090/202212/98ad071c7593457fb0c202a9a0b7353d.shtml"
+_FANGSHAN_EDU = "https://www.bjfsh.gov.cn/zhxw/bmdt/index.shtml"
+_TONGZHOU_SCHOOLS = "https://www.bjtzh.gov.cn/bjtz/zwgk/tjsj/sjkf/2026052215435127308/index.shtml"
+_SHUNYI_EDU = "https://www.bjshy.gov.cn/"
+_CHANGPING_EDU = "https://www.bjchp.gov.cn/"
+_DAXING_EDU = "https://www.bjdx.gov.cn/bjsdxqrmzf/zhyw/bmdt66/index.html"
+_PINGGU_EDU = "https://www.bjpg.gov.cn/"
+_HUAIROU_EDU = "https://www.bjhr.gov.cn/zjhr/bxsh/jykj/jyzx/"
+_MIYUN_EDU = "https://www.bjmy.gov.cn/ywdt/gzdt/"
+_YANQING_EDU = "https://www.bjyq.gov.cn/"
+_YANSHAN_EDU = "https://www.bjfsh.gov.cn/zwgk/qmzqb/ghjh_2674/index_bm.shtml"
+_BDA_EDU = "https://kfqgw.beijing.gov.cn/zwgkkfq/zfxxgk/fdzdgknr/zdmsxx/jy/"
+
+SCHOOL_HOMEPAGES = {
+    # 东城
+    "北京市第二中学": _DONGCHENG_SCHOOLS,
+    "北京汇文中学": "http://www.pka.edu.cn/",
+    "北京市第五中学": _DONGCHENG_SCHOOLS,
+    # 西城
+    "北京市第四中学": "https://bhsf.lezhiyun.com/",
+    "北京市第八中学": "http://www.no8ms.bj.cn/",
+    "北京市第十五中学": "http://www.bj15.cn/",
+    "北师大附中": "https://www.bjsdfz.com/",
+    # 朝阳
+    "北京市第八十中学": "http://www.bj80.com/",
+    "陈经纶中学": "http://www.bjcjl.net/",
+    "北京中学": "https://www.beijingacademy.com.cn/",
+    "朝阳外国语学校": "http://www.cyfls.net/",
+    "日坛中学": "http://rtzx.bjchyedu.cn/",
+    "工大附中": "http://www.bjgdfz.com/",
+    # 海淀
+    "人大附中": "https://www.rdfz.cn/",
+    "清华附中": "https://www.qhfz.edu.cn/",
+    "北京大学附属中学": "https://www.pkuschool.edu.cn/",
+    "首师大附中": "https://www.cnuhs.cn/",
+    "一零一中学": "https://www.beijing101.com/",
+    "八一学校": "https://byxx.bjhdedu.cn/",
+    "交大附中": "https://jdfz.bjhdedu.cn/",
+    # 丰台
+    "北京市第十二中学": "https://www2.bj12hs.com.cn/",
+    "北京市第十八中学": "http://www.bj18.net/",
+    "北京市丰台第二中学": "https://bjf2.ftedu.cn/ftez/",
+    # 石景山
+    "北京市第九中学": "http://9z.sjsedu.cn/",
+    "北京市京源学校": "https://jyxx.sjsedu.cn/",
+    "北京市十一学校石景山实验中学": "https://www.bndssjs.cn/",
+    # 门头沟
+    "北京市大峪中学": _MENTOUGOU_SCHOOLS,
+    "北京市门头沟区实验中学": _MENTOUGOU_SCHOOLS,
+    "首都师范大学附属中学永定分校": _MENTOUGOU_SCHOOLS,
+    # 房山
+    "北京市房山中学": _FANGSHAN_EDU,
+    "北京市房山区良乡中学": _FANGSHAN_EDU,
+    "首都师范大学附属中学房山学校": "https://www.cnuhs.cn/",
+    # 通州
+    "北京市通州区潞河中学": "http://www.luhe.net/",
+    "北京学校": _TONGZHOU_SCHOOLS,
+    "人大附中通州校区": "http://www.rdfztzxq.cn/",
+    # 顺义
+    "北京市顺义牛栏山第一中学": "https://www.nlsyz.com.cn/",
+    "北京市顺义区第一中学": "https://bjsyyz.cn/",
+    "北京市顺义区杨镇第一中学": "http://www.bjyzyz.net/",
+    # 昌平
+    "北京市昌平区第一中学": "http://www.cpyz.org.cn/",
+    "北京市昌平区第二中学": "https://bjcpez.com.cn/",
+    "北京市昌平区实验学校": _CHANGPING_EDU,
+    # 大兴
+    "北京市大兴区第一中学": _DAXING_EDU,
+    "北京市大兴区兴华中学": _DAXING_EDU,
+    "北京亦庄实验中学": "https://www.bjeaedu.com/",
+    # 平谷
+    "北京市平谷中学": "http://www.pgzx.net/",
+    "北京市平谷区第五中学": _PINGGU_EDU,
+    "北京市平谷区马坊实验中学": _PINGGU_EDU,
+    # 怀柔
+    "北京市怀柔区第一中学": _HUAIROU_EDU,
+    "北京市怀柔区第二中学": _HUAIROU_EDU,
+    "北京市怀柔区第五中学": _HUAIROU_EDU,
+    # 密云
+    "北京市密云区第二中学": _MIYUN_EDU,
+    "首都师范大学附属密云中学": _MIYUN_EDU,
+    "北京师范大学密云实验中学": _MIYUN_EDU,
+    # 延庆
+    "北京市延庆区第一中学": _YANQING_EDU,
+    "北京市延庆区第二中学": _YANQING_EDU,
+    "北京市延庆区第五中学": _YANQING_EDU,
+    # 燕山
+    "北京市房山区燕山前进中学": _YANSHAN_EDU,
+    "北京市房山区燕山向阳中学": _YANSHAN_EDU,
+    "北京师范大学燕化附属中学": _YANSHAN_EDU,
+    # 经开区
+    "北京市第二中学经开区学校": _BDA_EDU,
+    "人大附中北京经济技术开发区学校": _BDA_EDU,
+}
+
+SCHOOL_WECHATS = {}
+for _schools in TAIXING_SCHOOL_DIRECTORY.values():
+    for _school_name, _metadata in _schools.items():
+        SCHOOL_HOMEPAGES[_school_name] = _metadata["homepage"]
+        if _metadata["wechats"]:
+            SCHOOL_WECHATS[_school_name] = _metadata["wechats"]
 
 # 学校官网不可达或动态渲染时，使用区政府/教委公开教育动态作为官方替代源。
 # 列表页只抓有限条目；学校名未出现在标题时，再检查详情正文。
@@ -723,6 +1002,18 @@ HTML_HEAD = """<!DOCTYPE html>
   }}
   .school-sec {{ margin-top: 12px; }}
   .school-sec h4 {{ font-size: 12px; font-weight: 600; color: #31586E; margin-bottom: 2px; }}
+  .school-homepage {{ color: #31586E; text-decoration: none; }}
+  .school-homepage::after {{ content: " ↗"; font-size: 10px; color: #8a877e; }}
+  .school-homepage:hover {{ color: #B23B32; text-decoration: underline;
+    text-underline-offset: 3px; }}
+  .school-wechat {{ display: block; margin-top: 2px; color: #8a877e;
+    font-size: 11px; font-weight: 400; }}
+  .school-wechat code, .district-wechat code {{ font-family: ui-monospace, SFMono-Regular,
+    Menlo, Consolas, monospace; font-size: 10.5px; color: #6b6862; }}
+  .school-entry {{ padding: 5px 0 7px; border-bottom: 1px solid #EDEBE3; }}
+  .district-wechat {{ margin: 5px 0 10px; color: #8a877e; font-size: 11px;
+    line-height: 1.8; }}
+  .district-wechat b {{ color: #31586E; font-weight: 600; margin-right: 5px; }}
   .open-hint {{ font-size: 11px; color: #a5a29a; padding: 2px 2px 0; }}
 
   footer {{ margin-top: 40px; padding-top: 12px; border-top: 1px solid #E3E1D8;
@@ -772,6 +1063,35 @@ def section(title: str, items: list, prev_keys: set, max_show: int = 5) -> str:
         rest_lis = "".join(item_li(it, prev_keys) for it in items[max_show:])
         more = f'<li style="display:block"><details><summary class="open-hint" style="cursor:pointer">其余 {len(items) - max_show} 条</summary><ul style="margin-top:4px">{rest_lis}</ul></details></li>'
     return f'<div class="school-sec"><h4>{title} · {len(items)} 条</h4><ul>{top_lis}{more}</ul></div>'
+
+
+def school_homepage_link(school_name: str) -> str:
+    """把学校名渲染为官网/官方目录入口；链接不属于动态条目。"""
+    url = SCHOOL_HOMEPAGES.get(school_name)
+    if not url:
+        return school_name
+    return (
+        f'<a class="school-homepage" href="{url}" target="_blank" rel="noopener" '
+        f'title="打开学校官方入口">{school_name}</a>'
+    )
+
+
+def school_identity(school_name: str) -> str:
+    """学校官网入口及来源页列出的微信公众号。"""
+    identity = school_homepage_link(school_name)
+    wechats = SCHOOL_WECHATS.get(school_name, ())
+    if not wechats:
+        return identity
+    ids = " · ".join(f"<code>{wechat}</code>" for wechat in wechats)
+    return f'{identity}<span class="school-wechat">微信公众号：{ids}</span>'
+
+
+def district_wechat_note(district_name: str) -> str:
+    accounts = DISTRICT_WECHATS.get(district_name, ())
+    if not accounts:
+        return ""
+    labels = " · ".join(f'{name} <code>{wechat}</code>' for name, wechat in accounts)
+    return f'<div class="district-wechat"><b>官方公众号</b>{labels}</div>'
 
 
 def build_page(data: dict, prev_keys: set, built_at: str) -> str:
@@ -827,11 +1147,12 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
             official_sections += section("区级学校信息", general, prev_keys, max_show=4)
         school_sections = ""
         for 校名, 栏目 in schools.items():
+            校名入口 = school_identity(校名)
             if not 栏目:
-                school_sections += section(f"{校名} · 暂无有效动态", [], prev_keys)
+                school_sections += f'<div class="school-sec school-entry"><h4>{校名入口}</h4></div>'
                 continue
             for 栏名, items in 栏目.items():
-                school_sections += section(f"{校名} · {栏名}", items, prev_keys, max_show=4)
+                school_sections += section(f"{校名入口} · {栏名}", items, prev_keys, max_show=4)
         if not school_sections:
             school_sections = '<p class="column-empty">暂无学校动态</p>'
 
@@ -844,9 +1165,9 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
             f"</summary>"
             f'<div class="row-body"><div class="district-columns">'
             f'<section class="district-column district-column--official">'
-            f'<h3 class="column-title">区级信息</h3>{official_sections}</section>'
+            f'<h3 class="column-title">区级信息</h3>{district_wechat_note(区名)}{official_sections}</section>'
             f'<section class="district-column district-column--schools">'
-            f'<h3 class="column-title">学校动态</h3>{school_sections}</section>'
+            f'<h3 class="column-title">学校入口与动态</h3>{school_sections}</section>'
             f'</div></div></details>'
         )
     parts.append("</div>")
@@ -860,9 +1181,50 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
         "<footer>信源：yjrx.bjedu.cn（18 区招生政策）｜ jw.beijing.gov.cn ｜ moe.gov.cn ｜ "
         "rdfz.cn ｜ qhfz.edu.cn ｜ bjsdfz.com ｜ cnuhs.cn"
         + (f" ｜ 区教委：{' ｜ '.join(src_domains)}" if src_domains else "")
-        + "<br>多数学校无独立官网或页面动态渲染，公众号渠道经 wewe-rss 另行接入，不在本台账。</footer>"
+        + "<br>学校名称可点击进入学校官网；名称下方的微信公众号 ID 仅作人工检索入口。"
+        + "官网与公众号均不作为本页自动抓取源。</footer>"
     )
     return "".join(parts) + "</div></body></html>"
+
+
+def build_feed(data: dict, built_at: str) -> str:
+    """生成 OPML 使用的增量 RSS；排除已有独立订阅的市级通知和区招生政策。"""
+    rss = ET.Element("rss", {"version": "2.0"})
+    channel = ET.SubElement(rss, "channel")
+    ET.SubElement(channel, "title").text = "K12 官方信源看板 · 区教委与学校动态"
+    ET.SubElement(channel, "link").text = "https://xian492.github.io/k12-dashboard/"
+    ET.SubElement(channel, "description").text = "北京各区教委、学校动态及市区学校综合信息"
+    ET.SubElement(channel, "language").text = "zh-cn"
+    built_dt = datetime.strptime(built_at, "%Y-%m-%d %H:%M").replace(
+        tzinfo=timezone(timedelta(hours=8))
+    )
+    ET.SubElement(channel, "lastBuildDate").text = format_datetime(built_dt)
+
+    scoped_items = [("全市学校信息", data.get("市级学校信息", []))]
+    for district_name, district in data.get("区级", {}).items():
+        if district.get("动态"):
+            source_name, items = district["动态"]
+            scoped_items.append((f"{district_name} · {source_name}", items))
+        scoped_items.append((f"{district_name} · 区级学校信息", district.get("通用信息", [])))
+        for school_name, sections in district.get("学校", {}).items():
+            for section_name, items in sections.items():
+                scoped_items.append((f"{school_name} · {section_name}", items))
+
+    seen = set()
+    for category, items in scoped_items:
+        for source_item in items:
+            link = source_item.get("link", "")
+            if not link or link in seen:
+                continue
+            seen.add(link)
+            item = ET.SubElement(channel, "item")
+            ET.SubElement(item, "title").text = source_item.get("title", "")
+            ET.SubElement(item, "link").text = link
+            ET.SubElement(item, "guid", {"isPermaLink": "true"}).text = link
+            ET.SubElement(item, "category").text = category
+
+    ET.indent(rss, space="  ")
+    return ET.tostring(rss, encoding="unicode", xml_declaration=True)
 
 
 def main():
@@ -939,6 +1301,7 @@ def main():
         encoding="utf-8",
     )
     (DOCS / "index.html").write_text(build_page(data, prev_keys, built_at), encoding="utf-8")
+    (DOCS / "feed.xml").write_text(build_feed(data, built_at), encoding="utf-8")
 
     d_online = sum(1 for d in 区级.values() if d["政策"])
     g_online = sum(1 for d in 区级.values() if d["动态"])

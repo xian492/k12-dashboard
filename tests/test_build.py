@@ -2,6 +2,7 @@ import importlib.util
 import re
 import tempfile
 import unittest
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 
@@ -181,9 +182,10 @@ class DashboardLayoutTests(unittest.TestCase):
         self.assertIn("区级动态示例", official_column)
         self.assertIn("本区学校名录", official_column)
         self.assertNotIn("学校动态示例", official_column)
-        self.assertIn('<h3 class="column-title">学校动态</h3>', school_column)
+        self.assertIn('<h3 class="column-title">学校入口与动态</h3>', school_column)
         self.assertIn("学校动态示例", school_column)
-        self.assertIn("待更新中学 · 暂无有效动态", school_column)
+        self.assertIn("待更新中学", school_column)
+        self.assertNotIn("待更新中学 · 暂无有效动态", school_column)
 
     def test_citywide_school_information_is_rendered_at_city_level(self):
         html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")
@@ -202,6 +204,203 @@ class DashboardLayoutTests(unittest.TestCase):
         self.assertIn("grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);", html)
         self.assertIn("@media (max-width: 760px)", html)
         self.assertIn(".district-columns { grid-template-columns: 1fr;", html)
+
+
+class SchoolHomepageTests(unittest.TestCase):
+    def test_taixing_directory_contains_every_school_website(self):
+        directory = getattr(build, "TAIXING_SCHOOL_DIRECTORY", {})
+
+        self.assertEqual(
+            {district: len(schools) for district, schools in directory.items()},
+            {
+                "海淀区": 39,
+                "朝阳区": 17,
+                "西城区": 19,
+                "东城区": 16,
+                "丰台区": 7,
+                "昌平区": 4,
+                "大兴区": 3,
+                "顺义区": 1,
+                "通州区": 4,
+                "石景山区": 4,
+            },
+        )
+        self.assertEqual(
+            sum(len(schools) for schools in directory.values()),
+            114,
+        )
+        self.assertEqual(
+            directory["东城区"]["北京市第二中学分校"]["homepage"],
+            "http://www.2zfx.com/",
+        )
+        self.assertEqual(
+            directory["东城区"]["北京市第一七一中学"]["homepage"],
+            "http://www.171sch.com/",
+        )
+        self.assertNotIn(
+            "xschu.com/qhy/wordBox/",
+            " ".join(
+                school["homepage"]
+                for schools in directory.values()
+                for school in schools.values()
+            ),
+        )
+
+    def test_taixing_schools_are_added_to_the_dashboard_catalog(self):
+        directory = getattr(build, "TAIXING_SCHOOL_DIRECTORY", {})
+
+        missing = [
+            f"{district} / {school}"
+            for district, schools in directory.items()
+            for school in schools
+            if school not in build.SCHOOL_CATALOG.get(district, [])
+        ]
+
+        self.assertEqual(missing, [])
+
+    def test_every_catalog_school_has_an_official_entry(self):
+        configured = getattr(build, "SCHOOL_HOMEPAGES", {})
+        expected = {
+            district: set(schools)
+            for district, schools in build.SCHOOL_CATALOG.items()
+        }
+        for district, school_specs in build.SCHOOL_SPECS.items():
+            expected.setdefault(district, set()).update(
+                school for school, _ in school_specs
+            )
+        missing = [
+            f"{district} / {school}"
+            for district, schools in expected.items()
+            for school in schools
+            if school not in configured
+        ]
+
+        self.assertEqual(missing, [])
+
+    def test_school_name_links_to_its_official_homepage(self):
+        districts = {
+            name: {"政策": [], "动态": None, "通用信息": [], "学校": {}}
+            for name in build.DISTRICTS
+        }
+        districts["海淀区"]["学校"] = {"人大附中": {}}
+        data = {
+            "市教委": [],
+            "教育部": [],
+            "市级学校信息": [],
+            "区级": districts,
+        }
+
+        html = build.build_page(data, set(), "2026-10-22 12:00")
+
+        self.assertIn(
+            '<a class="school-homepage" href="http://www.rdfz.cn/" '
+            'target="_blank" rel="noopener" title="打开学校官方入口">人大附中</a>',
+            html,
+        )
+
+    def test_school_wechat_ids_render_below_the_school_name(self):
+        districts = {
+            name: {"政策": [], "动态": None, "通用信息": [], "学校": {}}
+            for name in build.DISTRICTS
+        }
+        districts["海淀区"]["学校"] = {"人大附中": {}}
+        data = {
+            "市教委": [],
+            "教育部": [],
+            "市级学校信息": [],
+            "区级": districts,
+        }
+
+        html = build.build_page(data, set(), "2026-10-22 12:00")
+
+        self.assertIn("微信公众号", html)
+        self.assertIn("rdfz1950", html)
+        self.assertNotIn("人大附中 · 暂无有效动态", html)
+
+    def test_district_wechat_ids_render_in_the_official_column(self):
+        districts = {
+            name: {"政策": [], "动态": None, "通用信息": [], "学校": {}}
+            for name in build.DISTRICTS
+        }
+        data = {
+            "市教委": [],
+            "教育部": [],
+            "市级学校信息": [],
+            "区级": districts,
+        }
+
+        html = build.build_page(data, set(), "2026-10-22 12:00")
+
+        self.assertIn("海淀教育", html)
+        self.assertIn("jybxwb", html)
+        self.assertIn("北京朝阳教育", html)
+        self.assertIn("educhaoyang", html)
+
+    def test_navigation_metadata_does_not_enter_the_rss(self):
+        data = {
+            "市教委": [],
+            "教育部": [],
+            "市级学校信息": [],
+            "区级": {
+                "海淀区": {
+                    "政策": [],
+                    "动态": None,
+                    "通用信息": [],
+                    "学校": {"人大附中": {}},
+                }
+            },
+        }
+
+        feed = build.build_feed(data, "2026-10-22 12:00")
+
+        self.assertNotIn("rdfz.cn", feed)
+        self.assertNotIn("rdfz1950", feed)
+
+
+class RssFeedTests(unittest.TestCase):
+    def test_feed_contains_new_dashboard_sources_without_existing_policy_feeds(self):
+        shared = {"title": "区校联合活动", "link": "https://example/shared"}
+        data = {
+            "市教委": [{"title": "已有市教委订阅", "link": "https://example/jw"}],
+            "教育部": [{"title": "已有教育部订阅", "link": "https://example/moe"}],
+            "市级学校信息": [
+                {"title": "全市招生资格名单", "link": "https://example/city-schools"}
+            ],
+            "区级": {
+                "示例区": {
+                    "政策": [{"title": "已有区级政策订阅", "link": "https://example/policy"}],
+                    "动态": ("示例区教委", [shared]),
+                    "通用信息": [
+                        {"title": "示例区学校名录", "link": "https://example/district-schools"}
+                    ],
+                    "学校": {
+                        "示例中学": {
+                            "校园动态": [
+                                shared,
+                                {"title": "示例中学校园开放日", "link": "https://example/school"},
+                            ]
+                        }
+                    },
+                }
+            },
+        }
+
+        self.assertTrue(hasattr(build, "build_feed"), "build_feed must generate the dashboard RSS")
+        root = ET.fromstring(build.build_feed(data, "2026-10-22 14:00"))
+        titles = [item.findtext("title") for item in root.findall("./channel/item")]
+
+        self.assertEqual(
+            titles,
+            ["全市招生资格名单", "区校联合活动", "示例区学校名录", "示例中学校园开放日"],
+        )
+        self.assertEqual(titles.count("区校联合活动"), 1)
+        self.assertNotIn("已有市教委订阅", titles)
+        self.assertNotIn("已有教育部订阅", titles)
+        self.assertNotIn("已有区级政策订阅", titles)
+        self.assertEqual(
+            root.findtext("./channel/link"),
+            "https://xian492.github.io/k12-dashboard/",
+        )
 
 
 if __name__ == "__main__":
