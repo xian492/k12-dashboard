@@ -80,12 +80,15 @@ class SchoolFeedTests(unittest.TestCase):
         self.assertIsNotNone(match)
         self.assertIn("房山中学", match.group("title"))
 
-    def test_parser_discards_footer_and_navigation_links(self):
+    def test_parser_discards_non_education_administrative_links(self):
         markup = """
         <a href="news.html">学校举办科技节活动</a>
         <a href="javascript:;">版权所有 北京市示例中学</a>
         <a href="https://beian.miit.gov.cn/">京ICP备12345678号</a>
         <a href="admission.html">义务教育入学</a>
+        <a href="budget.html">北京市示例中学2025年度部门决算</a>
+        <a href="purchase.html">学校大宗食材采购项目招标公告</a>
+        <a href="bid.html">学校空调采购项目比选公告</a>
         """
         with tempfile.TemporaryDirectory() as directory:
             page = Path(directory) / "index.html"
@@ -134,7 +137,7 @@ class SchoolFeedTests(unittest.TestCase):
 class DashboardLayoutTests(unittest.TestCase):
     def make_data(self):
         districts = {
-            name: {"政策": [], "动态": None, "学校": {}}
+            name: {"政策": [], "动态": None, "通用信息": [], "学校": {}}
             for name in build.DISTRICTS
         }
         first_district = next(iter(build.DISTRICTS))
@@ -144,6 +147,9 @@ class DashboardLayoutTests(unittest.TestCase):
                 "区教委",
                 [{"title": "区级动态示例", "link": "https://example/district"}],
             ),
+            "通用信息": [
+                {"title": "本区学校名录", "link": "https://example/district-schools"}
+            ],
             "学校": {
                 "示例中学": {
                     "校园动态": [
@@ -153,7 +159,14 @@ class DashboardLayoutTests(unittest.TestCase):
                 "待更新中学": {},
             },
         }
-        return {"市教委": [], "教育部": [], "区级": districts}
+        return {
+            "市教委": [],
+            "教育部": [],
+            "市级学校信息": [
+                {"title": "北京市具有招生资格的学校名单", "link": "https://example/city-schools"}
+            ],
+            "区级": districts,
+        }
 
     def test_district_and_school_information_are_rendered_in_separate_columns(self):
         html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")
@@ -166,10 +179,21 @@ class DashboardLayoutTests(unittest.TestCase):
         self.assertIn('<h3 class="column-title">区级信息</h3>', official_column)
         self.assertIn("区级政策示例", official_column)
         self.assertIn("区级动态示例", official_column)
+        self.assertIn("本区学校名录", official_column)
         self.assertNotIn("学校动态示例", official_column)
         self.assertIn('<h3 class="column-title">学校动态</h3>', school_column)
         self.assertIn("学校动态示例", school_column)
         self.assertIn("待更新中学 · 暂无有效动态", school_column)
+
+    def test_citywide_school_information_is_rendered_at_city_level(self):
+        html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")
+
+        city_section = html[:html.index("<h2>分区台账</h2>")]
+        district_section = html[html.index("<h2>分区台账</h2>"):]
+
+        self.assertIn("全市学校信息", city_section)
+        self.assertIn("北京市具有招生资格的学校名单", city_section)
+        self.assertNotIn("北京市具有招生资格的学校名单", district_section)
 
     def test_district_columns_stack_at_the_mobile_breakpoint(self):
         html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")

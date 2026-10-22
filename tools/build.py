@@ -295,6 +295,59 @@ SCHOOL_OFFICIAL_SEEDS = {
     },
 }
 
+# 不指向单一学校的名单、名录等信息按发布范围单独展示，避免误归入学校动态。
+CITY_SCHOOL_INFO = [
+    _official_seed(
+        "北京市2026年具有招生资格的学校名单",
+        "https://www.beijing.gov.cn/fuwu/bmfw/sy/jrts/202605/t20260519_4656965.html",
+    ),
+]
+
+DISTRICT_SCHOOL_INFO = {
+    "西城区": [_official_seed(
+        "西城区学校地址及办学信息",
+        "https://www.bjxch.gov.cn/xxgk/xxxq/pnidpv909665.html",
+    )],
+    "石景山区": [_official_seed(
+        "石景山区2026年初中入学学校名单",
+        "https://www.bjsjs.gov.cn/gongkai/zwgkpd/ztzl/2026/sjsywjyzl/xgfw/202605/t20260507_761565.shtml",
+    )],
+    "门头沟区": [_official_seed(
+        "门头沟区初中学校官方名录",
+        "https://www.bjmtg.gov.cn/bjmtg/c103090/202212/30bd097c14d04e30ad619a9eb9062521.shtml",
+    )],
+    "房山区": [_official_seed(
+        "2026年房山区高考考点及学校信息",
+        "https://www.bjfsh.gov.cn/zhxw/fsdt/202606/t20260605_40114417_fs.shtml",
+    )],
+    "通州区": [_official_seed(
+        "通州区中小学官方信息及联系电话",
+        "https://www.bjtzh.gov.cn/bjtz/zwgk/tjsj/sjkf/2026052215435127308/index.shtml",
+    )],
+    "大兴区": [_official_seed(
+        "大兴区优质教育集团建设动态",
+        "https://www.bjdx.gov.cn/bjsdxqrmzf/zhyw/bmdt66/2139180/index.html",
+    )],
+    "怀柔区": [_official_seed(
+        "怀柔区2026年高中学校教育动态",
+        "https://www.bjhr.gov.cn/zjhr/bxsh/jyzx/202609/t20260904_4850782.html",
+    )],
+    "密云区": [
+        _official_seed(
+            "密云区优质学校教育动态",
+            "https://www.bjmy.gov.cn/ywdt/gzdt/202509/t20250911_511910.html",
+        ),
+        _official_seed(
+            "密云区2026年高考考点学校信息",
+            "https://www.bjmy.gov.cn/zwgk/hygq/202606/t20260603_543905.html",
+        ),
+    ],
+    "经济技术开发区": [_official_seed(
+        "经开区2026年教育领域学校信息",
+        "https://kfqgw.beijing.gov.cn/zwgkkfq/tzgg/202608/t20260825_4836554.html",
+    )],
+}
+
 # 区级教育动态信源：区 -> (机构名, [源配置 spec])；spec 结构同上
 DISTRICT_GOV_SPECS = {
     "海淀区": ("海淀教育网", [
@@ -346,6 +399,8 @@ def fetch_text(spec: dict) -> str:
 
 _SCHOOL_ITEM_NOISE = re.compile(
     r"版权所有|copyright|ICP(?:备)?|公网安备|网站备案|"
+    r"部门预算|部门决算|财务|审计|经费|政府采购|大宗食材采购|采购项目|"
+    r"招标|比选|中标|成交公告|"
     r"^(?:义务教育入学|首页|学校首页|学校概况|学校简介|联系我们|友情链接|"
     r"通知公告|校园动态|新闻中心|招生信息)$",
     re.I,
@@ -721,6 +776,7 @@ def section(title: str, items: list, prev_keys: set, max_show: int = 5) -> str:
 
 def build_page(data: dict, prev_keys: set, built_at: str) -> str:
     jw, moe = data["市教委"], data["教育部"]
+    city_school_info = data.get("市级学校信息", [])
 
     # 时间轴：今天在学年周期里的位置（1月=0%，12月≈92%）
     now = datetime.now(timezone(timedelta(hours=8)))
@@ -734,7 +790,11 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
 
     # 市级头条
     parts.append('<h2>市级</h2><div class="city">')
-    for name, items in (("北京市教委 · 通知公告", jw), ("教育部 · 公告公示", moe)):
+    for name, items in (
+        ("北京市教委 · 通知公告", jw),
+        ("教育部 · 公告公示", moe),
+        ("全市学校信息", city_school_info),
+    ):
         if items:
             top = items[0]
             top_new = '<span class="n-new">NEW</span>' if top["link"] not in prev_keys else ""
@@ -753,6 +813,7 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
         d = data["区级"][区名]
         policies = d["政策"]
         gov = d["动态"]
+        general = d.get("通用信息", [])
         schools = d["学校"]
         n_new = sum(1 for it in policies if (it.get("id") or it.get("link")) not in prev_keys)
         latest = policies[0]["title"] if policies else "（无数据）"
@@ -762,6 +823,8 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
         if gov:
             name, items = gov
             official_sections += section(f"{name} · 教育动态", items, prev_keys, max_show=4)
+        if general:
+            official_sections += section("区级学校信息", general, prev_keys, max_show=4)
         school_sections = ""
         for 校名, 栏目 in schools.items():
             if not 栏目:
@@ -847,7 +910,12 @@ def main():
             except Exception:
                 pass
         merge_school_seed_items(学校, SCHOOL_OFFICIAL_SEEDS.get(区名, {}))
-        区级[区名] = {"政策": 政策, "动态": 动态, "学校": 学校}
+        区级[区名] = {
+            "政策": 政策,
+            "动态": 动态,
+            "通用信息": DISTRICT_SCHOOL_INFO.get(区名, []),
+            "学校": 学校,
+        }
 
     # 单一路信源短暂不可达时，不应让整次构建失败；页面会以空列表展示该路。
     try:
@@ -861,6 +929,7 @@ def main():
     data = {
         "市教委": 市教委,
         "教育部": 教育部,
+        "市级学校信息": CITY_SCHOOL_INFO,
         "区级": 区级,
     }
 
