@@ -911,7 +911,7 @@ HTML_HEAD = """<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>K12 官方信源看板</title>
+<title>北京 K12 官方信源看板</title>
 <style>
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
   html {{ font-variant-numeric: tabular-nums; }}
@@ -928,39 +928,6 @@ HTML_HEAD = """<!DOCTYPE html>
   h1 {{ font-family: "Songti SC", "Noto Serif SC", "SimSun", serif;
     font-size: 22px; font-weight: 700; letter-spacing: .02em; }}
   .meta {{ font-size: 12px; color: #8a877e; }}
-
-  /* ── 招生季时间轴 ─────────────── */
-  .season {{ margin: 26px 0 6px; }}
-  .track {{
-    position: relative; height: 34px; margin: 10px 2px 0;
-    border-bottom: 1px solid #E3E1D8;
-  }}
-  .hot {{
-    position: absolute; top: 0; bottom: -1px;
-    background: #F0E4DE; opacity: .6;
-  }}
-  .stop {{
-    position: absolute; top: 0; width: 34%; max-width: 120px;
-    transform: translateX(-4px); padding-top: 10px;
-  }}
-  .stop i {{ position: absolute; top: 20px; left: 4px; width: 7px; height: 7px;
-    border-radius: 50%; background: #B23B32; display: block; }}
-  .stop b {{ font-size: 12px; font-weight: 600; color: #212427; display: block; line-height: 1.3; }}
-  .stop em {{ font-style: normal; font-size: 11px; color: #8a877e; }}
-  .today {{
-    position: absolute; top: 6px; text-align: center;
-    animation: mark .5s ease-out .25s backwards;
-  }}
-  .today b {{
-    font-size: 11px; color: #B23B32; font-weight: 600; display: block;
-  }}
-  .today i {{
-    position: absolute; left: -2px; top: 17px; width: 5px; height: 5px;
-    border: 1.5px solid #B23B32; border-radius: 50%; background: #FBFAF7;
-    display: block;
-  }}
-  @keyframes mark {{ from {{ opacity: 0; transform: translateY(4px); }} }}
-  .season-note {{ font-size: 12px; color: #8a877e; margin-top: 8px; }}
 
   /* ── 区块标题 ────────────────── */
   h2 {{
@@ -1050,28 +1017,15 @@ HTML_HEAD = """<!DOCTYPE html>
 
   footer {{ margin-top: 40px; padding-top: 12px; border-top: 1px solid #E3E1D8;
     font-size: 12px; color: #a5a29a; line-height: 1.9; }}
-  @media (prefers-reduced-motion: reduce) {{ .today {{ animation: none; }} }}
 </style>
 </head>
 <body>
 <div class="page">
 <header>
-  <h1>北京小升初 · 官方信源台账</h1>
+  <h1>北京 K12 · 官方信源看板</h1>
   <div class="meta">构建于 {built_at}，每 6 小时自动更新</div>
 </header>
 
-<div class="season">
-  <div class="track">
-    <div class="hot" style="left:31%;width:28%"></div>
-    <div class="stop" style="left:31%"><i></i><b>市政策</b><em>4 月中</em></div>
-    <div class="stop" style="left:36%"><i></i><b>区细则</b><em>4 月底</em></div>
-    <div class="stop" style="left:42%"><i></i><b>信息采集</b><em>5 月</em></div>
-    <div class="stop" style="left:47%"><i></i><b>派位</b><em>6 月</em></div>
-    <div class="stop" style="left:55%"><i></i><b>录取</b><em>7 月</em></div>
-    <div class="today" style="left:{today_pct:.0f}%"><b>今天</b><i></i></div>
-  </div>
-  <div class="season-note">{season_note}</div>
-</div>
 """
 
 
@@ -1137,15 +1091,7 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
     jw, moe = data["市教委"], data["教育部"]
     city_school_info = data.get("市级学校信息", [])
 
-    # 时间轴：今天在学年周期里的位置（1月=0%，12月≈92%）
-    now = datetime.now(timezone(timedelta(hours=8)))
-    today_pct = (now.month + now.day / 31) / 12 * 100
-    if 8 <= now.month <= 12 or now.month <= 3:
-        season_note = "当前处于招生季空窗期。政策集中发布于每年 4 至 7 月，届时本页各区行的更新徽章即为信号。"
-    else:
-        season_note = "招生季进行中，政策更新频繁，注意各区 NEW 标记。"
-
-    parts = [HTML_HEAD.format(built_at=built_at, today_pct=today_pct, season_note=season_note)]
+    parts = [HTML_HEAD.format(built_at=built_at)]
 
     # 市级头条
     parts.append('<h2>市级</h2><div class="city">')

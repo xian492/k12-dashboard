@@ -205,6 +205,20 @@ class DashboardLayoutTests(unittest.TestCase):
         self.assertIn("@media (max-width: 760px)", html)
         self.assertIn(".district-columns { grid-template-columns: 1fr;", html)
 
+    def test_admission_season_timeline_is_not_rendered(self):
+        html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")
+
+        self.assertNotIn('<div class="season">', html)
+        self.assertNotIn("招生季空窗期", html)
+        self.assertNotIn('<div class="today"', html)
+
+    def test_dashboard_title_covers_all_k12_stages(self):
+        html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")
+
+        self.assertIn("<title>北京 K12 官方信源看板</title>", html)
+        self.assertIn("<h1>北京 K12 · 官方信源看板</h1>", html)
+        self.assertNotIn("北京小升初 · 官方信源台账", html)
+
 
 class SchoolHomepageTests(unittest.TestCase):
     def test_taixing_directory_contains_every_school_website(self):
