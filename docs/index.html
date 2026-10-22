@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>K12 官方信源看板</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "PingFang SC", sans-serif; background: #f5f6f7; color: #1c1e21; padding: 24px; }
+  header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px; flex-wrap: wrap; gap: 8px; }
+  h1 { font-size: 20px; }
+  .meta { font-size: 12px; color: #888; }
+  h2 { font-size: 15px; margin: 24px 0 12px; color: #444; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .card { background: #fff; border-radius: 10px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.08); border-left: 3px solid #2f7d32; }
+  .card.err { border-left-color: #d93025; opacity: .7; }
+  .card-head { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .card-head .name { font-weight: 600; font-size: 14px; }
+  .card-head .count { font-size: 12px; color: #2f7d32; background: #e8f5e9; padding: 2px 8px; border-radius: 10px; }
+  .card.err .count { color: #d93025; background: #fce8e6; }
+  ul { list-style: none; }
+  li { font-size: 13px; line-height: 1.6; border-bottom: 1px solid #f0f0f0; padding: 4px 0; }
+  li:last-child { border-bottom: none; }
+  li a { color: #1a5fb4; text-decoration: none; }
+  li a:hover { text-decoration: underline; }
+  li.empty { color: #999; }
+  .summary { font-size: 13px; color: #555; background: #eef3fb; border-radius: 8px; padding: 10px 14px; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>K12 官方信源看板</h1>
+  <div class="meta">构建时间：2026-10-22 10:15 ｜ GitHub Actions 每 6 小时自动更新</div>
+</header>
+<div class="summary">市级 2 路 ｜ 区级 18 路（在线 18/18）｜ 区级政策合计 66 条</div>
+
+<h2>市级</h2>
+<div class="grid">
+  <div class="card">
+    <div class="card-head"><span class="name">北京市教委 · 通知公告</span><span class="count">20 条</span></div>
+    <ul><li><a href="https://jw.beijing.gov.cn/tzgg/202610/t20261021_4912964.html" target="_blank">关于全国学生“学宪法 讲宪法”之法治素养能力大赛拟推荐参赛人选的公示</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202610/t20261019_4909993.html" target="_blank">北京市教育委员会关于公布第二批北京市人工智能应用场景标杆学校培育名单的通知</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202610/t20261019_4909978.html" target="_blank">北京市教育委员会北京市语言文字工作委员会关于开展2026年北京市中小学生辩论赛的通知</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202610/t20261019_4908633.html" target="_blank">2026年北京市普通高等学校优秀毕业生（春季）名单</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202610/t20261019_4908630.html" target="_blank">2026年北京市普通高等学校优秀毕业生（暑期）名单</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202610/t20261014_4900902.html" target="_blank">北京市教育委员会关于开展2026年北京市学校国防教育系列活动的通知</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202610/t20261008_4892858.html" target="_blank">北京市教育委员会北京市语言文字工作委员会关于开展2026年北京市中小学生辩论赛的通知</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202609/t20260918_4869799.html" target="_blank">北京市教育委员会关于公布2026年北京市大学生书法和广告艺术两项学科竞赛获奖名单的通知</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202609/t20260917_4867778.html" target="_blank">北京市2026年下半年中小学教师资格认定公告</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202609/t20260910_4858568.html" target="_blank">北京市教育委员会北京市语言文字工作委员会关于开展北京市2026年“雅言传承文明经典浸润人生”语言文字系列活动的通知</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202609/t20260910_4858532.html" target="_blank">北京市教育委员会关于举办2026年北京高校音乐教育专业本科学生基本功展示的通知</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202609/t20260910_4858527.html" target="_blank">北京市教育委员会关于举办2026年华北五省（市、自治区） 大学生机器人、计算机应用、 人文知识大赛的通知</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202609/t20260910_4858001.html" target="_blank">北京市教育委员会关于公布2026年北京市大学生生物学和电子设计两项学科竞赛获奖名单的通知</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202609/t20260907_4853620.html" target="_blank">北京市教育委员会关于举办中国国际大学生创新大赛（2026）北京赛区复赛的通知</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202609/t20260903_4849163.html" target="_blank">北京市教育委员会关于开展2026年度教师系列职称评审工作的通知</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202608/t20260812_4820028.html" target="_blank">北京市教育委员会等九部门关于开展北京市2026年国家通用语言文字推广普及宣传周的通知</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202608/t20260812_4819948.html" target="_blank">北京市教育委员会 北京市高级人民法院 北京市人民检察院 北京市公安局 北京市司法局 关于举办2026年北京市学生“学...</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202608/t20260812_4819939.html" target="_blank">北京市教育委员会关于同意王子轩等1242名专科入伍学生退役免试升入本科学习的通知</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202608/t20260803_4806703.html" target="_blank">北京市教育委员会中共北京市委网络安全和信息化委员会办公室关于举办2026年北京市中小学生网络和数据安全知识竞答...</a></li><li><a href="https://jw.beijing.gov.cn/tzgg/202607/t20260728_4795081.html" target="_blank">北京市教育委员会关于公布北京市中小学法治课教师与法治副校长微课比赛结果的通知</a></li></ul>
+  </div>
+  <div class="card">
+    <div class="card-head"><span class="name">教育部 · 公告公示</span><span class="count">11 条</span></div>
+    <ul><li><a href="http://www.moe.gov.cn/" target="_blank">中华人民共和国教育部</a></li><li><a href="./202601/t20260130_1427931.html" target="_blank">教育部政府门户网站工作年度报表（2025年度）</a></li><li><a href="../../../../srcsite/A01/s7048/202601/t20260130_1427916.html" target="_blank">教育部办公厅关于公布《教育部政府网站监管年度报表（2025年度）》的公告</a></li><li><a href="../../../../srcsite/A01/s7048/202501/t20250126_1176890.html" target="_blank">教育部办公厅关于公布《教育部政府网站监管年度报表（2024年度）》的公告</a></li><li><a href="./202501/t20250124_1176797.html" target="_blank">教育部政府门户网站工作年度报表（2024年度）</a></li><li><a href="../../../../srcsite/A01/s7048/202401/t20240131_1113638.html" target="_blank">教育部办公厅关于公布《教育部政府网站监管年度报表（2023年度）》的公告</a></li><li><a href="./202401/t20240131_1113639.html" target="_blank">教育部政府门户网站工作年度报表（2023年度）</a></li><li><a href="./202301/t20230128_1040488.html" target="_blank">教育部政府门户网站工作年度报表（2022年度）</a></li><li><a href="../../../../srcsite/A01/s7048/202301/t20230128_1040487.html" target="_blank">教育部办公厅关于公布《教育部政府网站监管年度报表（2022年度）》的公告</a></li><li><a href="./202201/t20220129_596896.html" target="_blank">教育部政府门户网站工作年度报表（2021年度）</a></li><li><a href="../../../../srcsite/A01/s7048/202201/t20220129_596889.html" target="_blank">教育部办公厅关于公布《教育部政府网站监管年度报表（2021年度）》的公告</a></li></ul>
+  </div>
+</div>
+
+<h2>区级招生政策（yjrx）</h2>
+<div class="grid">
+        <div class="card ok">
+          <div class="card-head"><span class="name">东城区</span><span class="count">5 条政策</span></div>
+          <ul><li><a href="https://yjrx.bjedu.cn/portal_dc/zszc/dc_26_3.html" target="_blank">东城区教育委员会关于印发《东城区2026年义务教育阶段入学工作实施细则》的通知</a></li><li><a href="https://yjrx.bjedu.cn/portal_dc/zszc/dc_26_2.html" target="_blank">北京市东城区人民政府办公室转发区教委关于《东城区2026年非本市户籍适龄儿童少年入学审核实施细则》的通知</a></li><li><a href="https://yjrx.bjedu.cn/portal_dc/zszc/dc_26_1.html" target="_blank">北京市东城区人民政府办公室转发区教委关于《东城区2026年本市户籍无房家庭承租人适龄子女入学审核实施细则》的通知</a></li><li><a href="https://yjrx.bjedu.cn/portal_dc/zszc/dc_26_4.html" target="_blank">东城区2026年义务教育入学问答</a></li><li><a href="https://yjrx.bjedu.cn/portal_dc/zszc/dc_26_5.html" target="_blank">一图看懂东城区2026年义务教育入学流程</a></li></ul>
+        </div>
+        <div class="card ok">
+          <div class="card-head"><span class="name">西城区</span><span class="count">2 条政策</span></div>
+          <ul><li><a href="https://yjrx.bjedu.cn/portal_xc/zszc/xc_26_1.html" target="_blank">北京市西城区教育委员会关于西城区2026年义务教育阶段入学工作的实施意见</a></li><li><a href="https://yjrx.bjedu.cn/portal_xc/zszc/xc_26_2.html" target="_blank">北京市西城区教育委员会关于西城区2026年非本市户籍适龄儿童入学材料的审核办法</a></li></ul>
+        </div>
+        <div class="card ok">
+          <div class="card-head"><span class="name">朝阳区</span><span class="count">3 条政策</span></div>
+          <ul><li><a href="https://yjrx.bjedu.cn/portal_cy/zszc/cy_26_1.html" target="_blank">北京市朝阳区教育委员会关于印发《朝阳区关于2026年义务教育阶段入学工作的意见》的通知</a></li><li><a href="https://yjrx.bjedu.cn/portal_cy/zszc/cy_26_2.html" target="_blank">北京市朝阳区教育委员会关于印发《2026年非本市户籍适龄儿童少年在朝阳区接受义务教育材料审核实施细则》的通知</a></li><li><a href="https://yjrx.bjedu.cn/portal_cy/zszc/cy_26_3.html" target="_blank">北京市朝阳区教育委员会关于印发《2026年本市外区户籍无房家庭适龄儿童在朝阳区接受义务教育材料审核实施细则》的通知</a></li></ul>
+        </div>
+        <div class="card ok">
+          <div class="card-head"><span class="name">海淀区</span><span class="count">6 条政策</span></div>
+          <ul><li><a href="https://yjrx.bjedu.cn/portal_hd/zszc/hd_26_6.html" target="_blank">北京市海淀区人民政府关于2026年义务教育阶段入学工作的实施意见</a></li><li><a href="https://yjrx.bjedu.cn/portal_hd/zszc/hd_26_5.html" target="_blank">2026年非本市户籍适龄儿童少年在海淀区接受义务教育材料审核细则</a></li><li><a href="https://yjrx.bjedu.cn/portal_hd/zszc/hd_26_4.html" target="_blank">2026年本市其他区户籍无房家庭适龄儿童在海淀区接受义务教育材料审核细则</a></li><li><a href="https://yjrx.bjedu.cn/portal_hd/zszc/hd_26_1.html" target="_blank">2026年海淀区小学入学问答</a></li><li><a href="https://yjrx.bjedu.cn/portal_hd/zszc/hd_26_2.html" target="_blank">2026年非本市户籍儿童在海淀区小学入学问答</a></li><li><a href="https://yjrx.bjedu.cn/portal_hd/zszc/hd_26_3.html" target="_blank">2026年学区咨询电话及办公地址</a></li></ul>
+        </div>
+        <div class="card ok">
+          <div class="card-head"><span class="name">丰台区</span><span class="count">8 条政策</span></div>
+          <ul><li><a href="https://yjrx.bjedu.cn/portal_ft/zszc/ft_26_1.html" target="_blank">丰台区2026年义务教育阶段入学工作实施意见</a></li><li><a href="https://yjrx.bjedu.cn/portal_ft/zszc/ft_26_2.html" target="_blank">丰台区2026年本市户籍无房家庭适龄儿童接受义务教育材料审核实施细则</a></li><li><a href="https://yjrx.bjedu.cn/portal_ft/zszc/ft_26_3.html" target="_blank">丰台区2026年非本市户籍适龄儿童少年接受义务教育材料审核实施细则</a></li><li><a href="https://yjrx.bjedu.cn/portal_ft/zszc/ft_26_4.html" target="_blank">2026年丰台区户籍或实际居住在丰台区本市其他区户籍的适龄儿童申请在丰台区小学入学须知</a></li><li><a href="https://yjrx.bjedu.cn/portal_ft/zszc/ft_26_5.html" target="_blank">2026年本市其他区户籍无房家庭适龄儿童申请在丰台区小学入学须知</a></li><li><a href="https://yjrx.bjedu.cn/portal_ft/zszc/ft_26_6.html" target="_blank">2026年按本市户籍对待的适龄儿童申请在丰台区小学入学须知</a></li><li><a href="https://yjrx.bjedu.cn/portal_ft/zszc/ft_26_7.html" target="_blank">2026年非本市户籍适龄儿童申请在丰台区小学入学须知</a></li><li><a href="https://yjrx.bjedu.cn/portal_ft/zszc/ft_26_8.html" target="_blank">2026年外国籍适龄儿童申请在丰台区小学入学须知</a></li></ul>
+        </div>
+        <div class="card ok">
+          <div class="card-head"><span class="name">石景山区</span><span class="count">14 条政策</span></div>
+          <ul><li><a href="https://yjrx.bjedu.cn/portal_sjs/zszc/sjs_26_1.html" target="_blank">石景山区教育委员会关于印发《石景山区2026年义务教育阶段入学工作方案》的通知</a></li><li><a href="https://yjrx.bjedu.cn/portal_sjs/zszc/sjs_26_2.html" target="_blank">石景山区教育委员会关于印发《2026年非本市户籍适龄儿童少年在石景山区接受义务教育证件材料审核标准》的通知</a></li><li><a href="https://yjrx.bjedu.cn/portal_sjs/zszc/sjs_26_8.html" target="_blank">石景山区2026年本市其他区户籍无房家庭适龄子女入学审核实施细则</a></li><li><a href="https://yjrx.bjedu.cn/portal_sjs/zszc/sjs_25_3.html" target="_blank">2026年石景山区义务教育入学咨询问答（本市户籍（含按本市户籍对待）适龄儿童）</a></li><li><a href="https://yjrx.bjedu.cn/portal_sjs/zszc/sjs_26_4.html" target="_blank">2026年石景山区义务教育入学咨询问答（非本市户籍适龄儿童）</a></li><li><a href="https://yjrx.bjedu.cn/portal_sjs/zszc/sjs_26_9.html" target="_blank">2026年石景山区华侨子女、台胞子女入学审核办法</a></li><li><a href="https://yjrx.bjedu.cn/portal_sjs/zszc/sjs_26_11.html" target="_blank">2026年石景山区小学入学超龄儿童审核办法</a></li><li><a href="https://yjrx.bjedu.cn/portal_sjs/zszc/sjs_26_12.html" target="_blank">2026年石景山区小学入学非本市户籍适龄儿童按本市户籍对待审核办法</a></li><li><a href="https://yjrx.bjedu.cn/portal_sjs/zszc/sjs_26_13.html" target="_blank">石景山区2026年小学入学非本市户籍适龄儿童法定监护人持“北京市工作居住证”的审核办法</a></li><li><a href="https://yjrx.bjedu.cn/portal_sjs/zszc/sjs_26_14.html" target="_blank">2026年外籍适龄儿童在石景山区小学入学审核办法</a></li><li><a href="https://yjrx.bjedu.cn/portal_sjs/zszc/sjs_26_10.html" target="_blank">2026年石景山区小学毕业生申请回实际居住地就读初中（区内跨学区）办理办法</a></li><li><a href="https://yjrx.bjedu.cn/portal_sjs/zszc/sjs_26_7.html" target="_blank">2026年本市户籍其他区或外省小学毕业生申请回石景山区就读初中报名工作办法</a></li><li><a href="https://yjrx.bjedu.cn/portal_sjs/zszc/sjs_26_5.html" target="_blank">2026年石景山区义务教育入学咨询问答（初中入学）</a></li><li><a href="https://yjrx.bjedu.cn/portal_sjs/zszc/sjs_26_6.html" target="_blank">2026年石景山区义务教育阶段入学工作各学校咨询电话</a></li></ul>
+        </div>
+        <div class="card ok">
+          <div class="card-head"><span class="name">门头沟区</span><span class="count">2 条政策</span></div>
+          <ul><li><a href="https://yjrx.bjedu.cn/portal_mtg/zszc/mtg_26_1.html" target="_blank">门头沟区教育委员会关于印发《门头沟区2026年义务教育阶段入学工作实施细则》的通知</a></li><li><a href="https://yjrx.bjedu.cn/portal_mtg/zszc/mtg_26_2.html" target="_blank">门头沟区教育委员会关于印发《门头沟区2026年非本市户籍适龄儿童少年接受义务教育材料审核实施细则》的通知</a></li></ul>
+        </div>
+        <div class="card ok">
+          <div class="card-head"><span class="name">房山区</span><span class="count">2 条政策</span></div>
+          <ul><li><a href="https://yjrx.bjedu.cn/portal_fs/zszc/fs_26_3.html" target="_blank">北京市房山区教育委员会关于2026年义务教育阶段入学工作的意见</a></li><li><a href="https://yjrx.bjedu.cn/portal_fs/zszc/fs_26_4.html" target="_blank">2026年房山区非本市户籍适龄儿童少年接受义务教育材料审核实施细则</a></li></ul>
+        </div>
+        <div class="card ok">
+          <div class="card-head"><span class="name">通州区</span><span class="count">2 条政策</span></div>
+          <ul><li><a href="https://yjrx.bjedu.cn/portal_tz/zszc/tz_26_2.html" target="_blank">2026年通州区义务教育阶段入学工作实施细则</a></li><li><a href="https://yjrx.bjedu.cn/portal_tz/zszc/tz_26_1.html" target="_blank">2026年通州区非本市户籍适龄儿童少年接受义务教育材料审核实施细则</a></li></ul>
+        </div>
+        <div class="card ok">
+          <div class="card-head"><span class="name">顺义区</span><span class="count">5 条政策</span></div>
+          <ul><li><a href="https://yjrx.bjedu.cn/portal_sy/zszc/sy_26_5.html" target="_blank">北京市顺义区教育委员会关于2026年义务教育阶段入学工作的意见</a></li><li><a href="https://yjrx.bjedu.cn/portal_sy/zszc/sy_26_2.html" target="_blank">2026年非本市户籍适龄儿童少年在顺义区接受义务教育材料审核实施细则</a></li><li><a href="https://yjrx.bjedu.cn/portal_sy/zszc/sy_26_1.html" target="_blank">2026年本市非顺义区户籍无房家庭适龄儿童入学审核实施细则</a></li><li><a href="https://yjrx.bjedu.cn/portal_sy/zszc/sy_26_4.html" target="_blank">2026年顺义区小学入学工作日程安排</a></li><li><a href="https://yjrx.bjedu.cn/portal_sy/zszc/sy_26_3.html" target="_blank">2026年顺义区初中入学工作日程安排</a></li></ul>
+        </div>
+        <div class="card ok">
+          <div class="card-head"><span class="name">昌平区</span><span class="count">2 条政策</span></div>
+          <ul><li><a href="https://yjrx.bjedu.cn/portal_cp/zszc/cp_26_2.html" target="_blank">昌平区教育委员会关于2026年义务教育阶段入学工作意见</a></li><li><a href="https://yjrx.bjedu.cn/portal_cp/zszc/cp_26_1.html" target="_blank">昌平区2026年义务教育阶段入学相关问题解答</a></li></ul>
+        </div>
+        <div class="card ok">
+          <div class="card-head"><span class="name">大兴区</span><span class="count">2 条政策</span></div>
+          <ul><li><a href="https://yjrx.bjedu.cn/portal_dx/zszc/dx_26_2.html" target="_blank">中共北京市大兴区委教育工作委员会北京市大兴区教育委员会关于2026年义务教育阶段入学工作意见</a></li><li><a href="https://yjrx.bjedu.cn/portal_dx/zszc/dx_26_5.html" target="_blank">北京市大兴区教育委员会关于非本市户籍适龄儿童少年接受义务教育材料审核指导要求</a></li></ul>
+        </div>
+        <div class="card ok">
+          <div class="card-head"><span class="name">平谷区</span><span class="count">2 条政策</span></div>
+          <ul><li><a href="https://yjrx.bjedu.cn/portal_pg/zszc/13_26_21.html" target="_blank">中共北京市平谷区委教育工作委员会北京市平谷区教育委员会关于2026年义务教育阶段入学工作的意见</a></li><li><a href="https://yjrx.bjedu.cn/portal_pg/zszc/13_26_2.html" target="_blank">北京市平谷区教育委员会关于2026年非本市户籍适龄儿童少年接受义务教育材料审核实施细则</a></li></ul>
+        </div>
+        <div class="card ok">
+          <div class="card-head"><span class="name">怀柔区</span><span class="count">1 条政策</span></div>
+          <ul><li><a href="https://yjrx.bjedu.cn/portal_hr/zszc/14_26_1.html" target="_blank">北京市怀柔区教育委员会关于怀柔区2026年义务教育阶段入学工作的意见</a></li></ul>
+        </div>
+        <div class="card ok">
+          <div class="card-head"><span class="name">密云区</span><span class="count">3 条政策</span></div>
+          <ul><li><a href="https://yjrx.bjedu.cn/portal_my/zszc/15_26_1.html" target="_blank">北京市密云区教育委员会关于2026年义务教育阶段入学工作的意见</a></li><li><a href="https://yjrx.bjedu.cn/portal_my/zszc/15_26_2.html" target="_blank">北京市密云区教育委员会关于印发《北京市密云区2026年非本市户籍适龄儿童少年接受义务教育材料审核实施细则》的通知</a></li><li><a href="https://yjrx.bjedu.cn/portal_my/zszc/15_26_3.html" target="_blank">北京市密云区教育委员会关于印发《北京市密云区2026年本市外区户籍无房家庭子女在租住地入学工作实施方案》的通知</a></li></ul>
+        </div>
+        <div class="card ok">
+          <div class="card-head"><span class="name">延庆区</span><span class="count">2 条政策</span></div>
+          <ul><li><a href="https://yjrx.bjedu.cn/portal_yq/zszc/16_26_1.html" target="_blank">北京市延庆区教育委员会关于印发《北京市延庆区2026年义务教育阶段入学工作方案》的通知</a></li><li><a href="https://yjrx.bjedu.cn/portal_yq/zszc/16_26_2.html" target="_blank">北京市延庆区教育委员会关于印发《北京市延庆区2026年非本市户籍适龄儿童少年接受义务教育材料审核实施细则》的通知</a></li></ul>
+        </div>
+        <div class="card ok">
+          <div class="card-head"><span class="name">燕山地区</span><span class="count">2 条政策</span></div>
+          <ul><li><a href="https://yjrx.bjedu.cn/portal_ys/zszc/17_26_1.html" target="_blank">北京市房山区燕山教育委员会关于印发2026年燕山地区义务教育阶段入学工作实施意见的通知</a></li><li><a href="https://yjrx.bjedu.cn/portal_ys/zszc/17_26_2.html" target="_blank">北京市房山区燕山教育委员会关于印发燕山地区2026年非本市户籍适龄儿童少年接受义务教育材料审核实施细则的通知</a></li></ul>
+        </div>
+        <div class="card ok">
+          <div class="card-head"><span class="name">经济技术开发区</span><span class="count">3 条政策</span></div>
+          <ul><li><a href="https://yjrx.bjedu.cn/portal_yz/zszc/18_26_1.html" target="_blank">北京经济技术开发区关于2026年义务教育阶段入学工作的意见</a></li><li><a href="https://yjrx.bjedu.cn/portal_yz/zszc/18_26_2.html" target="_blank">经开区范围2026年义务教育阶段入学工作实施细则</a></li><li><a href="https://yjrx.bjedu.cn/portal_yz/zszc/18_26_4.html" target="_blank">经开区2026年义教入学相关问题解答</a></li></ul>
+        </div>
+</div>
+</body>
+</html>

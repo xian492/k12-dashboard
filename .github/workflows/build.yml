@@ -1,0 +1,50 @@
+name: Build dashboard
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # 每 6 小时（UTC）：北京 02/08/14/20 点
+  workflow_dispatch: {}     # 手动触发
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build dashboard
+        run: python3 tools/build.py
+
+      - name: Commit data snapshot
+        run: |
+          git config user.name "dashboard-bot"
+          git config user.email "actions@github.com"
+          git add docs/
+          git diff --cached --quiet || git commit -m "chore: update dashboard $(date -u +%FT%TZ)"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
