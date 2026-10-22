@@ -180,9 +180,11 @@ class _FakeCrawler:
     def __init__(self, results):
         self.results = iter(results)
         self.urls = []
+        self.configs = []
 
     async def arun(self, *, url, config):
         self.urls.append(url)
+        self.configs.append(config)
         return next(self.results)
 
     async def __aenter__(self):
@@ -193,6 +195,59 @@ class _FakeCrawler:
 
 
 class SchoolCrawlerAsyncTests(unittest.TestCase):
+    def test_probe_school_retries_transient_timeout_and_then_succeeds(self):
+        crawler = _FakeCrawler(
+            [
+                _FakeResult(success=False, error="Page.goto: Timeout 30000ms exceeded."),
+                _FakeResult(links={"internal": [{"text": "招生", "href": "/admissions/"}]}),
+            ]
+        )
+        had_delay = hasattr(school_crawler, "PROBE_RETRY_DELAY_SECONDS")
+        original_delay = getattr(school_crawler, "PROBE_RETRY_DELAY_SECONDS", None)
+        school_crawler.PROBE_RETRY_DELAY_SECONDS = 0
+        try:
+            result = asyncio.run(
+                school_crawler.probe_school(
+                    crawler,
+                    {
+                        "school": "测试学校",
+                        "district": "通州区",
+                        "homepage": "https://school.example.edu.cn/",
+                        "allowed_hosts": {"school.example.edu.cn"},
+                    },
+                )
+            )
+        finally:
+            if had_delay:
+                school_crawler.PROBE_RETRY_DELAY_SECONDS = original_delay
+            else:
+                del school_crawler.PROBE_RETRY_DELAY_SECONDS
+
+        self.assertEqual(result["status"], "success")
+        self.assertEqual(crawler.urls, ["https://school.example.edu.cn/"] * 2)
+        self.assertEqual(
+            [config.page_timeout for config in crawler.configs],
+            [30000, 45000],
+        )
+
+    def test_probe_school_does_not_retry_permanent_failure(self):
+        crawler = _FakeCrawler([_FakeResult(success=False, error="HTTP 403 blocked")])
+
+        result = asyncio.run(
+            school_crawler.probe_school(
+                crawler,
+                {
+                    "school": "测试学校",
+                    "district": "通州区",
+                    "homepage": "https://school.example.edu.cn/",
+                    "allowed_hosts": {"school.example.edu.cn"},
+                },
+            )
+        )
+
+        self.assertEqual(result["status"], "failed")
+        self.assertEqual(crawler.urls, ["https://school.example.edu.cn/"])
+
     def test_crawl_school_updates_crawls_sections_and_details(self):
         crawler = _FakeCrawler(
             [
@@ -264,7 +319,7 @@ class SchoolCrawlerAsyncTests(unittest.TestCase):
     def test_probe_school_returns_failure_report_without_raising(self):
         result = asyncio.run(
             school_crawler.probe_school(
-                _FakeCrawler([_FakeResult(success=False, error="timeout")]),
+                _FakeCrawler([_FakeResult(success=False, error="blocked")]),
                 {
                     "school": "失败学校",
                     "district": "海淀区",
@@ -275,7 +330,7 @@ class SchoolCrawlerAsyncTests(unittest.TestCase):
         )
 
         self.assertEqual(result["status"], "failed")
-        self.assertEqual(result["error"], "timeout")
+        self.assertEqual(result["error"], "blocked")
 
     def test_probe_schools_isolates_one_failed_school(self):
         original_factory = school_crawler._make_crawler

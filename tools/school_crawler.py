@@ -103,6 +103,18 @@ SECTION_TERMS = (
     "信息公开",
 )
 
+PROBE_TIMEOUTS_MS = (30000, 45000)
+PROBE_RETRY_DELAY_SECONDS = 1.0
+TRANSIENT_CRAWL_ERRORS = (
+    "timeout",
+    "timed out",
+    "err_timed_out",
+    "err_connection_reset",
+    "err_connection_closed",
+    "err_network_changed",
+    "temporarily unavailable",
+)
+
 EXCLUDED_TERMS = (
     "首页",
     "学校简介",
@@ -124,6 +136,11 @@ _DETAIL_PATH_RE = re.compile(
 
 def _clean_text(value: str | None) -> str:
     return _SPACE_RE.sub(" ", value or "").strip()
+
+
+def _is_transient_crawl_error(error: str) -> bool:
+    normalized = (error or "").lower()
+    return any(marker in normalized for marker in TRANSIENT_CRAWL_ERRORS)
 
 
 def normalize_url(raw_url: str, base_url: str) -> str:
@@ -277,19 +294,39 @@ async def probe_school(crawler, spec: dict) -> dict:
     try:
         from crawl4ai import CacheMode, CrawlerRunConfig
 
-        crawl_result = await crawler.arun(
-            url=spec["homepage"],
-            config=CrawlerRunConfig(
-                cache_mode=CacheMode.BYPASS,
-                exclude_external_links=True,
-                exclude_social_media_links=True,
-                page_timeout=30000,
-            ),
-        )
-        result["final_url"] = getattr(crawl_result, "url", None) or spec["homepage"]
-        if not getattr(crawl_result, "success", False):
-            result["error"] = getattr(crawl_result, "error_message", "crawl failed") or "crawl failed"
+        crawl_result = None
+        last_error = ""
+        for attempt, timeout_ms in enumerate(PROBE_TIMEOUTS_MS):
+            try:
+                crawl_result = await crawler.arun(
+                    url=spec["homepage"],
+                    config=CrawlerRunConfig(
+                        cache_mode=CacheMode.BYPASS,
+                        exclude_external_links=True,
+                        exclude_social_media_links=True,
+                        page_timeout=timeout_ms,
+                    ),
+                )
+            except Exception as exc:
+                last_error = str(exc)
+                if attempt + 1 < len(PROBE_TIMEOUTS_MS) and _is_transient_crawl_error(last_error):
+                    await asyncio.sleep(PROBE_RETRY_DELAY_SECONDS)
+                    continue
+                raise
+
+            if getattr(crawl_result, "success", False):
+                break
+            last_error = getattr(crawl_result, "error_message", "crawl failed") or "crawl failed"
+            if attempt + 1 < len(PROBE_TIMEOUTS_MS) and _is_transient_crawl_error(last_error):
+                await asyncio.sleep(PROBE_RETRY_DELAY_SECONDS)
+                continue
+            result["error"] = last_error
             return result
+
+        if not crawl_result or not getattr(crawl_result, "success", False):
+            result["error"] = last_error or "crawl failed"
+            return result
+        result["final_url"] = getattr(crawl_result, "url", None) or spec["homepage"]
         raw_links = getattr(crawl_result, "links", {}) or {}
         if isinstance(raw_links, dict):
             raw_links = raw_links.get("internal", [])
