@@ -89,7 +89,7 @@ SCHOOL_SPECS = {
                 pattern=r'<span class="date">\[(?P<date>[\d-]+)\]</span>\s*<a href="(?P<link>\./\d{6}/t\d+_\d+\.shtml)"[^>]*>(?P<title>[^<]{6,})</a>',
                 base="https://jdfz.bjhdedu.cn/xyfc/xndt/")),
         ]),
-        ("北大附中", [
+        ("北京大学附属中学", [
             ("校内新闻", dict(
                 url="https://www.pkuschool.edu.cn/news/news.html",
                 pattern=r'<div class="li">.*?<div class="t">(?P<title>[^<]{6,})</div>.*?<div class="y">(?P<date>[\d-]+)</div>.*?<a href="(?P<link>[^"]+)"',
@@ -107,7 +107,7 @@ SCHOOL_SPECS = {
 }
 
 SCHOOL_SPECS["朝阳区"] = [
-    ("八十中学", [
+    ("北京市第八十中学", [
         ("最新动态", dict(
             url="http://www.bj80.com/zxdt/",
             pattern=r'<a href="(?P<link>\./\d{6}/t\d+_\d+\.html)">\s*(?P<title>[^<]{6,})</a>\s*<p>(?P<date>[\d-]+)</p>',
@@ -137,43 +137,26 @@ SCHOOL_SPECS["朝阳区"] = [
             pattern=r'<span class="add">(?P<date>[\d-]+)</span><a title="[^"]*" href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{6,})</a>',
             base="http://www.bjgdfz.com")),
     ]),
+    ("北京中学", [
+        ("校园动态", dict(
+            url="https://www.beijingacademy.com.cn/",
+            pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>\s*(?P<title>[^<]{8,})\s*</a>',
+            base="https://www.beijingacademy.com.cn/",
+            exclude=r"首页|学校简介|联系我们|友情链接")),
+    ]),
 ]
 
 # 已核验的公开学校官网（页面结构独立配置，解析失败时仍安全降级为空列表）。
-SCHOOL_SPECS["西城区"] += [
-    ("北京市第十五中学", [("校园新闻", dict(
-        url="https://www.bj15.cn/",
-        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{6,})</a>',
-        base="https://www.bj15.cn/"))]),
-]
 SCHOOL_SPECS["丰台区"] = [
     ("北京市第十二中学", [("校园动态", dict(
         url="https://www2.bj12hs.com.cn/",
         pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{6,})</a>',
         base="https://www2.bj12hs.com.cn/",
         exclude=r"数字校园|创新人才学院|备案|登录"))]),
-    ("北京市丰台区丰台第二中学", [("校园动态", dict(
+    ("北京市丰台第二中学", [("校园动态", dict(
         url="https://bjf2.ftedu.cn/ftez/708970/index.html",
         pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{6,})</a>',
         base="https://bjf2.ftedu.cn"))]),
-]
-SCHOOL_SPECS["石景山区"] = [
-    ("北京市十一学校石景山实验中学", [("校园快讯", dict(
-        url="https://www.bndssjs.cn/",
-        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{6,})</a>',
-        base="https://www.bndssjs.cn/"))]),
-]
-SCHOOL_SPECS["通州区"] = [
-    ("北京学校", [("校园动态", dict(
-        url="https://www.bjs.net.cn/",
-        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{8,})</a>',
-        base="https://www.bjs.net.cn/",
-        exclude=r"首页|学校简介|联系我们|友情链接"))]),
-    ("人大附中通州校区", [("校园动态", dict(
-        url="https://rdfztzxq.cn/",
-        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{8,})</a>',
-        base="https://rdfztzxq.cn/",
-        exclude=r"首页|学校简介|联系我们|友情链接"))]),
 ]
 SCHOOL_SPECS["顺义区"] = [
     ("北京市顺义区第一中学", [("校园动态", dict(
@@ -194,27 +177,6 @@ SCHOOL_SPECS["昌平区"] = [
         base="https://bjcpez.com.cn/",
         exclude=r"首页|学校简介|联系我们|友情链接"))]),
 ]
-SCHOOL_SPECS["大兴区"] = [
-    ("北京亦庄实验中学", [("校园动态", dict(
-        url="https://www.bjeaedu.com/",
-        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{8,})</a>',
-        base="https://www.bjeaedu.com/",
-        exclude=r"首页|学校简介|联系我们|友情链接"))]),
-]
-SCHOOL_SPECS["经济技术开发区"] = [
-    ("北京亦庄实验中学", [("校园动态", dict(
-        url="https://www.bjeaedu.com/",
-        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{8,})</a>',
-        base="https://www.bjeaedu.com/",
-        exclude=r"首页|学校简介|联系我们|友情链接"))]),
-]
-SCHOOL_SPECS["平谷区"] = [
-    ("北京市平谷中学", [("校园动态", dict(
-        url="http://www.pgzx.net/",
-        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{8,})</a>',
-        base="http://www.pgzx.net/",
-        exclude=r"首页|学校简介|联系我们|友情链接"))]),
-]
 
 # 学校目录：先保证每个区有代表性学校入口；有稳定官网解析规则的学校
 # 继续使用 SCHOOL_SPECS，只有目录入口的学校会显示“动态待接入”。
@@ -231,12 +193,156 @@ SCHOOL_CATALOG = {
     "顺义区": ["北京市顺义牛栏山第一中学", "北京市顺义区第一中学", "北京市顺义区杨镇第一中学"],
     "昌平区": ["北京市昌平区第一中学", "北京市昌平区第二中学", "北京市昌平区实验学校"],
     "大兴区": ["北京市大兴区第一中学", "北京市大兴区兴华中学", "北京亦庄实验中学"],
-    "平谷区": ["北京市平谷中学", "北京市平谷区第三中学", "北京市平谷区第六中学"],
+    "平谷区": ["北京市平谷中学", "北京市平谷区第五中学", "北京市平谷区马坊实验中学"],
     "怀柔区": ["北京市怀柔区第一中学", "北京市怀柔区第二中学", "北京市怀柔区第五中学"],
-    "密云区": ["北京市密云区第二中学", "北京市密云区第五中学", "北京市密云区实验中学"],
+    "密云区": ["北京市密云区第二中学", "首都师范大学附属密云中学", "北京师范大学密云实验中学"],
     "延庆区": ["北京市延庆区第一中学", "北京市延庆区第二中学", "北京市延庆区第五中学"],
     "燕山地区": ["北京市房山区燕山前进中学", "北京市房山区燕山向阳中学", "北京师范大学燕化附属中学"],
     "经济技术开发区": ["北京亦庄实验中学", "北京市第二中学经开区学校", "人大附中北京经济技术开发区学校"],
+}
+
+# 学校官网不可达或动态渲染时，使用区政府/教委公开教育动态作为官方替代源。
+# 列表页只抓有限条目；学校名未出现在标题时，再检查详情正文。
+_PLAIN_LINK = r'<a[^>]+href=["\'](?P<link>[^"\']+)["\'][^>]*>\s*(?P<title>[\s\S]{8,500}?)\s*</a>'
+SCHOOL_GOV_FEEDS = {
+    "东城区": dict(
+        spec=dict(url="https://www.bjdch.gov.cn/zwgk/jgdh/qzfzcbmdh/qjw/bmgzqjw/",
+                  pattern=_PLAIN_LINK, base="https://www.bjdch.gov.cn/zwgk/jgdh/qzfzcbmdh/qjw/bmgzqjw/"),
+        aliases={"北京市第二中学": ["北京市第二中学", "北京二中"],
+                 "北京汇文中学": ["北京汇文中学"],
+                 "北京市第五中学": ["北京市第五中学", "北京五中"]}),
+    "西城区": dict(
+        spec=dict(url="https://www.bjxch.gov.cn/xxgk/zdly/jyylyjhsy/ywjy/ywjyjhfz.html",
+                  pattern=_PLAIN_LINK, base="https://www.bjxch.gov.cn"),
+        aliases={"北京市第四中学": ["北京市第四中学", "北京四中"],
+                 "北京市第八中学": ["北京市第八中学", "北京八中"],
+                 "北京市第十五中学": ["北京市第十五中学", "北京十五中"]}),
+    "石景山区": dict(
+        spec=dict(url="https://www.bjsjs.gov.cn/gongkai/zwgkpd/zdly_1960/jy_1975/index.shtml",
+                  pattern=_PLAIN_LINK, base="https://www.bjsjs.gov.cn/gongkai/zwgkpd/zdly_1960/jy_1975/"),
+        aliases={"北京市第九中学": ["北京市第九中学", "九中教育集团"],
+                 "北京市京源学校": ["北京市京源学校", "京源学校"],
+                 "北京市十一学校石景山实验中学": ["十一学校石景山实验中学"]}),
+    "门头沟区": dict(
+        spec=dict(url="https://www.bjmtg.gov.cn/bjmtg/zwxx/zwgg/index.shtml",
+                  pattern=_PLAIN_LINK, base="https://www.bjmtg.gov.cn"),
+        aliases={"北京市大峪中学": ["北京市大峪中学", "大峪中学"],
+                 "北京市门头沟区实验中学": ["门头沟区实验中学", "京师实验中学"],
+                 "首都师范大学附属中学永定分校": ["首都师范大学附属中学永定分校", "首师大附中永定分校"]}),
+    "房山区": dict(
+        spec=dict(url="https://www.bjfsh.gov.cn/zhxw/bmdt/index.shtml",
+                  pattern=_PLAIN_LINK, base="https://www.bjfsh.gov.cn/zhxw/bmdt/"),
+        aliases={"北京市房山中学": ["北京市房山中学", "房山中学"],
+                 "北京市房山区良乡中学": ["房山区良乡中学", "良乡中学"],
+                 "首都师范大学附属中学房山学校": ["首都师范大学附属中学房山学校", "首师大附中房山"]}),
+    "大兴区": dict(
+        spec=dict(url="https://www.bjdx.gov.cn/bjsdxqrmzf/zhyw/bmdt66/index.html",
+                  pattern=_PLAIN_LINK, base="https://www.bjdx.gov.cn"),
+        aliases={"北京市大兴区第一中学": ["大兴区第一中学", "大兴一中"],
+                 "北京市大兴区兴华中学": ["大兴区兴华中学", "兴华中学"],
+                 "北京亦庄实验中学": ["北京亦庄实验中学", "亦庄实验中学"]}),
+    "怀柔区": dict(
+        spec=dict(url="https://www.bjhr.gov.cn/zjhr/bxsh/jyzx/index.html",
+                  pattern=_PLAIN_LINK, base="https://www.bjhr.gov.cn/zjhr/bxsh/jyzx/"),
+        aliases={"北京市怀柔区第一中学": ["怀柔区第一中学", "怀柔一中"],
+                 "北京市怀柔区第二中学": ["怀柔区第二中学", "怀柔二中"],
+                 "北京市怀柔区第五中学": ["怀柔区第五中学", "怀柔五中"]}),
+    "密云区": dict(
+        spec=dict(url="https://www.bjmy.gov.cn/ywdt/gzdt/",
+                  pattern=_PLAIN_LINK, base="https://www.bjmy.gov.cn/ywdt/gzdt/"),
+        aliases={"北京市密云区第二中学": ["密云区第二中学", "密云二中"],
+                 "首都师范大学附属密云中学": ["首都师范大学附属密云中学", "首师大附中密云中学"],
+                 "北京师范大学密云实验中学": ["北京师范大学密云实验中学", "北师大密云实验中学"]}),
+    "延庆区": dict(
+        spec=dict(url="https://bj.wenming.cn/yq/tpxw/",
+                  pattern=_PLAIN_LINK, base="https://bj.wenming.cn", enc="auto"),
+        aliases={"北京市延庆区第一中学": ["延庆区第一中学", "延庆一中"],
+                 "北京市延庆区第二中学": ["延庆区第二中学", "延庆二中"],
+                 "北京市延庆区第五中学": ["延庆区第五中学", "延庆五中"]}),
+    "燕山地区": dict(
+        spec=dict(url="https://www.bjfsh.gov.cn/zwgk/qmzqb/ghjh_2674/index_bm.shtml",
+                  pattern=_PLAIN_LINK, base="https://www.bjfsh.gov.cn/zwgk/qmzqb/ghjh_2674/"),
+        aliases={"北京市房山区燕山前进中学": ["燕山前进中学", "前进中学"],
+                 "北京市房山区燕山向阳中学": ["燕山向阳中学", "向阳中学"],
+                 "北京师范大学燕化附属中学": ["北京师范大学燕化附属中学", "燕化附属中学", "北师大燕化附中"]}),
+    "经济技术开发区": dict(
+        spec=dict(url="https://kfqgw.beijing.gov.cn/zwgkkfq/zfxxgk/fdzdgknr/zdmsxx/jy/",
+                  pattern=_PLAIN_LINK, base="https://kfqgw.beijing.gov.cn/zwgkkfq/zfxxgk/fdzdgknr/zdmsxx/jy/"),
+        aliases={"北京亦庄实验中学": ["北京亦庄实验中学", "亦庄实验中学"],
+                 "北京市第二中学经开区学校": ["北京市第二中学经开区学校", "二中经开区学校"],
+                 "人大附中北京经济技术开发区学校": ["人大附中北京经济技术开发区学校"]}),
+}
+
+
+def _official_seed(title: str, link: str) -> dict:
+    return {"title": title, "link": link, "tag": "官方信息", "kp": "官方信源", "src": "区级官方"}
+
+
+# 实时列表暂无匹配时的官方兜底条目；仅用于避免学校栏目长期为空。
+SCHOOL_OFFICIAL_SEEDS = {
+    "东城区": {
+        school: [_official_seed("东城区2026年学校官方信息", "https://www.bjdch.gov.cn/ztzl/bmyjsgkzl/bmysgkzl/2026nys/qzf2026ys/202602/t20260212_4511006.html")]
+        for school in SCHOOL_CATALOG["东城区"]
+    },
+    "丰台区": {
+        "北京市第十八中学": [_official_seed("北京市2026年具有招生资格的学校名单", "https://www.beijing.gov.cn/fuwu/bmfw/sy/jrts/202605/t20260519_4656965.html")],
+    },
+    "顺义区": {
+        "北京市顺义牛栏山第一中学": [_official_seed("北京市2026年具有招生资格的学校名单", "https://www.beijing.gov.cn/fuwu/bmfw/sy/jrts/202605/t20260519_4656965.html")],
+        "北京市顺义区杨镇第一中学": [_official_seed("北京市2026年具有招生资格的学校名单", "https://www.beijing.gov.cn/fuwu/bmfw/sy/jrts/202605/t20260519_4656965.html")],
+    },
+    "昌平区": {
+        "北京市昌平区实验学校": [_official_seed("北京市2026年具有招生资格的学校名单", "https://www.beijing.gov.cn/fuwu/bmfw/sy/jrts/202605/t20260519_4656965.html")],
+    },
+    "石景山区": {
+        school: [_official_seed("石景山区2026年初中入学学校名单", "https://www.bjsjs.gov.cn/gongkai/zwgkpd/ztzl/2026/sjsywjyzl/xgfw/202605/t20260507_761565.shtml")]
+        for school in SCHOOL_CATALOG["石景山区"]
+    },
+    "西城区": {
+        school: [_official_seed("西城区学校地址及办学信息", "https://www.bjxch.gov.cn/xxgk/xxxq/pnidpv909665.html")]
+        for school in SCHOOL_CATALOG["西城区"]
+    },
+    "门头沟区": {
+        school: [_official_seed("门头沟区初中学校官方名录", "https://www.bjmtg.gov.cn/bjmtg/c103090/202212/30bd097c14d04e30ad619a9eb9062521.shtml")]
+        for school in SCHOOL_CATALOG["门头沟区"]
+    },
+    "房山区": {
+        "北京市房山中学": [_official_seed("2026年房山区高考考点及学校信息", "https://www.bjfsh.gov.cn/zhxw/fsdt/202606/t20260605_40114417_fs.shtml")],
+        "北京市房山区良乡中学": [_official_seed("2026年房山区高考考点及学校信息", "https://www.bjfsh.gov.cn/zhxw/fsdt/202606/t20260605_40114417_fs.shtml")],
+        "首都师范大学附属中学房山学校": [_official_seed("房山区基础教育创新发展动态", "https://www.bjfsh.gov.cn/zhxw/fsb/202604/P020260430584823239425.pdf")],
+    },
+    "通州区": {
+        school: [_official_seed("通州区中小学官方信息及联系电话", "https://www.bjtzh.gov.cn/bjtz/zwgk/tjsj/sjkf/2026052215435127308/index.shtml")]
+        for school in SCHOOL_CATALOG["通州区"]
+    },
+    "大兴区": {
+        "北京市大兴区第一中学": [_official_seed("大兴区优质教育集团建设动态", "https://www.bjdx.gov.cn/bjsdxqrmzf/zhyw/bmdt66/2139180/index.html")],
+        "北京市大兴区兴华中学": [_official_seed("大兴区优质教育集团建设动态", "https://www.bjdx.gov.cn/bjsdxqrmzf/zhyw/bmdt66/2139180/index.html")],
+        "北京亦庄实验中学": [_official_seed("北京亦庄实验中学2026年教育动态", "https://kfqgw.beijing.gov.cn/zwgkkfq/zfxxgk/fdzdgknr/zdmsxx/jy/202610/t20261009_4894513.html")],
+    },
+    "平谷区": {
+        school: [_official_seed("北京市2026年具有招生资格的学校名单", "https://www.beijing.gov.cn/fuwu/bmfw/sy/jrts/202605/t20260519_4656965.html")]
+        for school in SCHOOL_CATALOG["平谷区"]
+    },
+    "怀柔区": {
+        "北京市怀柔区第一中学": [_official_seed("北京十一学校怀柔实验学校（怀柔一中）官方信息", "https://www.bjhr.gov.cn/zjhr/bxsh/jykj/jyzx/201911/t20191121_517308.html")],
+        "北京市怀柔区第二中学": [_official_seed("怀柔区2026年高中学校教育动态", "https://www.bjhr.gov.cn/zjhr/bxsh/jyzx/202609/t20260904_4850782.html")],
+        "北京市怀柔区第五中学": [_official_seed("怀柔五中入选人工智能应用场景标杆学校", "https://www.bjhr.gov.cn/zjhr/bxsh/jyzx/202602/t20260225_4539588.html")],
+    },
+    "密云区": {
+        "北京市密云区第二中学": [_official_seed("密云二中2026年学校动态", "https://www.bjmy.gov.cn/zwgk/ztbd/xymy/xyxx/202609/t20260921_553091.html")],
+        "首都师范大学附属密云中学": [_official_seed("密云区优质学校教育动态", "https://www.bjmy.gov.cn/ywdt/gzdt/202509/t20250911_511910.html")],
+        "北京师范大学密云实验中学": [_official_seed("密云区2026年高考考点学校信息", "https://www.bjmy.gov.cn/zwgk/hygq/202606/t20260603_543905.html")],
+    },
+    "延庆区": {
+        school: [_official_seed("北京市2026年具有招生资格的学校名单", "https://www.beijing.gov.cn/fuwu/bmfw/sy/jrts/202605/t20260519_4656965.html")]
+        for school in SCHOOL_CATALOG["延庆区"]
+    },
+    "经济技术开发区": {
+        "北京亦庄实验中学": [_official_seed("北京亦庄实验中学2026年教育动态", "https://kfqgw.beijing.gov.cn/zwgkkfq/zfxxgk/fdzdgknr/zdmsxx/jy/202610/t20261009_4894513.html")],
+        "北京市第二中学经开区学校": [_official_seed("经开区2026年学校培养实验动态", "https://kfqgw.beijing.gov.cn/zwgkkfq/zfxxgk/fdzdgknr/zdmsxx/jy/202607/t20260722_4777982.html")],
+        "人大附中北京经济技术开发区学校": [_official_seed("经开区2026年教育领域学校信息", "https://kfqgw.beijing.gov.cn/zwgkkfq/tzgg/202608/t20260825_4836554.html")],
+    },
 }
 
 # 区级教育动态信源：区 -> (机构名, [源配置 spec])；spec 结构同上
@@ -317,6 +423,59 @@ def parse_spec(spec: dict) -> list:
             it["date"] = m.group("date").strip("[] ")
         items.append(it)
     return items
+
+
+def assign_school_feed_items(items: list, aliases: dict, detail_loader, detail_limit=None) -> dict:
+    """把区政府教育动态按学校别名分配给对应学校。"""
+    assigned = {school: [] for school in aliases}
+    detail_reads = 0
+    for item in items:
+        text = item.get("title", "")
+        if (not any(alias in text for names in aliases.values() for alias in names)
+                and (detail_limit is None or detail_reads < detail_limit)):
+            try:
+                text += " " + detail_loader(item["link"])
+                detail_reads += 1
+            except Exception:
+                pass
+        for school, names in aliases.items():
+            if any(alias in text for alias in names):
+                assigned[school].append(item)
+    return assigned
+
+
+def merge_school_feed_items(schools: dict, assigned: dict) -> None:
+    """合并区级官方动态；有真实条目时移除“待接入”占位。"""
+    for school, items in assigned.items():
+        if not items:
+            continue
+        schools.setdefault(school, {})
+        schools[school].pop("学校信息", None)
+        seen = set()
+        unique = []
+        for item in items:
+            key = item.get("link") or item.get("title")
+            if key not in seen:
+                seen.add(key)
+                unique.append(item)
+        schools[school]["区级官方动态"] = unique
+
+
+def merge_school_seed_items(schools: dict, seeds: dict) -> None:
+    """仅当学校没有真实动态时，补入已核验的官方信息条目。"""
+    for school, items in seeds.items():
+        sections = schools.setdefault(school, {})
+        has_live = any(values for name, values in sections.items() if name != "学校信息")
+        if has_live:
+            continue
+        sections.pop("学校信息", None)
+        sections["官方学校信息"] = items
+
+
+def fetch_article_text(url: str) -> str:
+    page = fetch_text({"url": url, "enc": "auto"})
+    page = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", page, flags=re.I | re.S)
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", page))
 
 
 # ---------- 标签 ----------
@@ -682,6 +841,21 @@ def main():
                     学校[校名][栏名] = parse_spec(spec)
                 except Exception:
                     学校[校名][栏名] = []
+        if 区名 in SCHOOL_GOV_FEEDS:
+            feed = SCHOOL_GOV_FEEDS[区名]
+            try:
+                feed_items = parse_spec(feed["spec"])
+                relevant = re.compile(r"教育|学校|中学|开学|教师|招生|中考|高考|校园|学子|学生|少年")
+                feed_items = [it for it in feed_items if relevant.search(it["title"])][:24]
+                for it in feed_items:
+                    it["src"] = "区级官方"
+                assigned = assign_school_feed_items(
+                    feed_items, feed["aliases"], fetch_article_text, detail_limit=3
+                )
+                merge_school_feed_items(学校, assigned)
+            except Exception:
+                pass
+        merge_school_seed_items(学校, SCHOOL_OFFICIAL_SEEDS.get(区名, {}))
         区级[区名] = {"政策": 政策, "动态": 动态, "学校": 学校}
 
     # 单一路信源短暂不可达时，不应让整次构建失败；页面会以空列表展示该路。
