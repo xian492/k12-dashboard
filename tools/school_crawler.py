@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import re
+import asyncio
+from datetime import datetime, timezone
 from urllib.parse import urldefrag, urljoin, urlparse, urlunparse
 
 
@@ -123,3 +125,67 @@ def rank_section_candidates(links: list[dict]) -> list[dict]:
             candidates.append((score, index, {"title": title, "url": link["url"]}))
     candidates.sort(key=lambda item: (-item[0], item[1]))
     return [item[2] for item in candidates]
+
+
+def _make_crawler():
+    from crawl4ai import AsyncWebCrawler
+
+    return AsyncWebCrawler()
+
+
+async def probe_school(crawler, spec: dict) -> dict:
+    """Probe one school homepage and return a failure-safe health report."""
+    checked_at = datetime.now(timezone.utc).isoformat()
+    result = {
+        "school": spec["school"],
+        "district": spec["district"],
+        "homepage": spec["homepage"],
+        "final_url": spec["homepage"],
+        "status": "failed",
+        "candidate_sections": [],
+        "items_found": 0,
+        "error": "",
+        "checked_at": checked_at,
+    }
+    try:
+        from crawl4ai import CacheMode, CrawlerRunConfig
+
+        crawl_result = await crawler.arun(
+            url=spec["homepage"],
+            config=CrawlerRunConfig(
+                cache_mode=CacheMode.ENABLED,
+                exclude_external_links=True,
+                exclude_social_media_links=True,
+                page_timeout=30000,
+            ),
+        )
+        result["final_url"] = getattr(crawl_result, "url", None) or spec["homepage"]
+        if not getattr(crawl_result, "success", False):
+            result["error"] = getattr(crawl_result, "error_message", "crawl failed") or "crawl failed"
+            return result
+        raw_links = getattr(crawl_result, "links", {}) or {}
+        if isinstance(raw_links, dict):
+            raw_links = raw_links.get("internal", [])
+        links = extract_internal_links(
+            raw_links,
+            result["final_url"],
+            set(spec.get("allowed_hosts", set())),
+        )
+        result["candidate_sections"] = rank_section_candidates(links)[:5]
+        result["items_found"] = len(result["candidate_sections"])
+        result["status"] = "success"
+    except Exception as exc:  # noqa: BLE001 - one bad site must not stop the batch
+        result["error"] = str(exc)
+    return result
+
+
+async def probe_schools(specs: list[dict]) -> list[dict]:
+    """Probe a batch with bounded concurrency and per-school isolation."""
+    semaphore = asyncio.Semaphore(3)
+
+    async with _make_crawler() as crawler:
+        async def run_one(spec: dict) -> dict:
+            async with semaphore:
+                return await probe_school(crawler, spec)
+
+        return await asyncio.gather(*(run_one(spec) for spec in specs))
