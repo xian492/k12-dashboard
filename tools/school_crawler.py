@@ -71,6 +71,9 @@ EXCLUDED_TERMS = (
 )
 
 _SPACE_RE = re.compile(r"\s+")
+_DETAIL_PATH_RE = re.compile(
+    r"(?:^|/)\d{6,8}(?:/|$)|(?:^|/)t?\d{8}(?:_|\.|/)|/\d{1,4}/\d{3,6}\.(?:html?|shtml)$"
+)
 
 
 def _clean_text(value: str | None) -> str:
@@ -92,6 +95,13 @@ def _is_allowed_host(url: str, allowed_hosts: set[str]) -> bool:
 
 def _is_excluded_title(title: str) -> bool:
     return any(term in title for term in EXCLUDED_TERMS)
+
+
+def _looks_like_detail_url(url: str, title: str) -> bool:
+    path = urlparse(url).path.lower()
+    if len(title) >= 28:
+        return True
+    return bool(_DETAIL_PATH_RE.search(path))
 
 
 def extract_internal_links(
@@ -119,6 +129,8 @@ def rank_section_candidates(links: list[dict]) -> list[dict]:
     for index, link in enumerate(links):
         title = _clean_text(link.get("title") or link.get("text"))
         if not title or _is_excluded_title(title):
+            continue
+        if _looks_like_detail_url(link["url"], title):
             continue
         score = sum(1 for term in SECTION_TERMS if term in title)
         if score:
@@ -153,7 +165,7 @@ async def probe_school(crawler, spec: dict) -> dict:
         crawl_result = await crawler.arun(
             url=spec["homepage"],
             config=CrawlerRunConfig(
-                cache_mode=CacheMode.ENABLED,
+                cache_mode=CacheMode.BYPASS,
                 exclude_external_links=True,
                 exclude_social_media_links=True,
                 page_timeout=30000,

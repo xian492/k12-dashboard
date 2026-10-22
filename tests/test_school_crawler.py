@@ -1,15 +1,25 @@
 import importlib.util
 import asyncio
+import json
+import subprocess
+import sys
+import tempfile
 import unittest
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "tools"))
 SPEC = importlib.util.spec_from_file_location(
     "school_crawler", ROOT / "tools" / "school_crawler.py"
 )
 school_crawler = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(school_crawler)
+CLI_SPEC = importlib.util.spec_from_file_location(
+    "probe_school_websites", ROOT / "tools" / "probe_school_websites.py"
+)
+probe_cli = importlib.util.module_from_spec(CLI_SPEC)
+CLI_SPEC.loader.exec_module(probe_cli)
 
 
 class SchoolCrawlerPureFunctionTests(unittest.TestCase):
@@ -47,6 +57,14 @@ class SchoolCrawlerPureFunctionTests(unittest.TestCase):
             {"title": "联系我们", "url": "https://school.example.edu.cn/contact/"},
             {"title": "校园新闻", "url": "https://school.example.edu.cn/news/"},
             {"title": "招生通知", "url": "https://school.example.edu.cn/admission/"},
+            {
+                "title": "2026年招生通知详细内容",
+                "url": "https://school.example.edu.cn/news/202610/t20261022_1.shtml",
+            },
+            {
+                "title": "招生简章详细内容",
+                "url": "https://school.example.edu.cn/AdmissionsInformation/88/16404.html",
+            },
             {"title": "学校简介", "url": "https://school.example.edu.cn/about/"},
         ]
 
@@ -164,6 +182,30 @@ class SchoolCrawlerAsyncTests(unittest.TestCase):
             school_crawler._make_crawler = original_factory
 
         self.assertEqual([result["status"] for result in results], ["success", "failed"])
+
+
+class SchoolCrawlerReportTests(unittest.TestCase):
+    def test_write_probe_report_preserves_success_failure_and_timestamp(self):
+        report = [
+            {"school": "成功学校", "status": "success", "checked_at": "2026-10-22T00:00:00+00:00"},
+            {"school": "失败学校", "status": "failed", "error": "timeout", "checked_at": "2026-10-22T00:00:01+00:00"},
+        ]
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output = Path(temp_dir) / "nested" / "report.json"
+            probe_cli.write_probe_report(report, output)
+            saved = json.loads(output.read_text(encoding="utf-8"))
+
+        self.assertEqual(saved, report)
+
+    def test_cli_requires_output_argument(self):
+        completed = subprocess.run(
+            [sys.executable, str(ROOT / "tools" / "probe_school_websites.py")],
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("--output", completed.stderr)
 
 
 if __name__ == "__main__":
