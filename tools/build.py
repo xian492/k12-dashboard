@@ -139,6 +139,31 @@ SCHOOL_SPECS["朝阳区"] = [
     ]),
 ]
 
+# 已核验的公开学校官网（页面结构独立配置，解析失败时仍安全降级为空列表）。
+SCHOOL_SPECS["西城区"] += [
+    ("北京市第十五中学", [("校园新闻", dict(
+        url="https://www.bj15.cn/",
+        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{6,})</a>',
+        base="https://www.bj15.cn/"))]),
+]
+SCHOOL_SPECS["丰台区"] = [
+    ("北京市第十二中学", [("校园动态", dict(
+        url="https://www2.bj12hs.com.cn/",
+        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{6,})</a>',
+        base="https://www2.bj12hs.com.cn/",
+        exclude=r"数字校园|创新人才学院|备案|登录"))]),
+    ("北京市丰台区丰台第二中学", [("校园动态", dict(
+        url="https://bjf2.ftedu.cn/ftez/708970/index.html",
+        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{6,})</a>',
+        base="https://bjf2.ftedu.cn"))]),
+]
+SCHOOL_SPECS["石景山区"] = [
+    ("北京市十一学校石景山实验中学", [("校园快讯", dict(
+        url="https://www.bndssjs.cn/",
+        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{6,})</a>',
+        base="https://www.bndssjs.cn/"))]),
+]
+
 # 学校目录：先保证每个区有代表性学校入口；有稳定官网解析规则的学校
 # 继续使用 SCHOOL_SPECS，只有目录入口的学校会显示“动态待接入”。
 SCHOOL_CATALOG = {
