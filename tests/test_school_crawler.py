@@ -320,6 +320,23 @@ class SchoolCrawlerReportTests(unittest.TestCase):
     def test_probe_cli_uses_full_school_catalog(self):
         self.assertGreaterEqual(len(probe_cli.SCHOOL_PROBE_SPECS), 100)
 
+    def test_probe_cli_runs_full_update_crawl(self):
+        original_crawler = probe_cli.crawl_schools_updates
+
+        async def fake_crawler(specs):
+            return [{"school": "测试学校", "status": "success", "updates": [{"title": "校园新闻"}]}]
+
+        probe_cli.crawl_schools_updates = fake_crawler
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                output = Path(temp_dir) / "report.json"
+                asyncio.run(probe_cli.run(output))
+                saved = json.loads(output.read_text(encoding="utf-8"))
+        finally:
+            probe_cli.crawl_schools_updates = original_crawler
+
+        self.assertEqual(saved[0]["updates"][0]["title"], "校园新闻")
+
     def test_write_probe_report_preserves_success_failure_and_timestamp(self):
         report = [
             {"school": "成功学校", "status": "success", "checked_at": "2026-10-22T00:00:00+00:00"},

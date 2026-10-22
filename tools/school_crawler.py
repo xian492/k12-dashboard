@@ -5,7 +5,9 @@ from __future__ import annotations
 import re
 import asyncio
 import hashlib
+import os
 from datetime import datetime, timezone
+from pathlib import Path
 from urllib.parse import urldefrag, urljoin, urlparse, urlunparse
 
 
@@ -242,9 +244,15 @@ def normalize_school_item(item: dict, spec: dict, source_url: str) -> dict | Non
 
 
 def _make_crawler():
+    # Keep Crawl4AI's robots/cache database in a project-local writable path.
+    # This also makes local runs behave like the GitHub Actions workspace.
+    cache_root = Path(__file__).resolve().parent.parent / ".crawl4ai-local"
+    cache_root.mkdir(parents=True, exist_ok=True)
+    (cache_root / ".crawl4ai").mkdir(parents=True, exist_ok=True)
+    os.environ.setdefault("CRAWL4_AI_BASE_DIRECTORY", str(cache_root))
     from crawl4ai import AsyncWebCrawler
 
-    return AsyncWebCrawler()
+    return AsyncWebCrawler(base_directory=str(cache_root))
 
 
 async def probe_school(crawler, spec: dict) -> dict:

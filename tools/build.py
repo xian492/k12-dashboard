@@ -1257,7 +1257,7 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
         "rdfz.cn ｜ qhfz.edu.cn ｜ bjsdfz.com ｜ cnuhs.cn"
         + (f" ｜ 区教委：{' ｜ '.join(src_domains)}" if src_domains else "")
         + "<br>学校名称可点击进入学校官网；名称下方的微信公众号 ID 仅作人工检索入口。"
-        + "官网与公众号均不作为本页自动抓取源。</footer>"
+        + "学校官网由 Crawl4AI 自动探测并抓取；公众号仅作人工检索入口，不作为自动抓取源。</footer>"
     )
     return "".join(parts) + "</div></body></html>"
 

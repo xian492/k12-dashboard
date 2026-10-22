@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 
 from build import SCHOOL_CATALOG, SCHOOL_HOMEPAGES
-from school_crawler import build_school_probe_specs, probe_schools
+from school_crawler import build_school_probe_specs, crawl_schools_updates
 
 
 SCHOOL_PROBE_SPECS = build_school_probe_specs(SCHOOL_CATALOG, SCHOOL_HOMEPAGES)
@@ -30,11 +30,11 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 async def run(output: Path) -> int:
-    report = await probe_schools(SCHOOL_PROBE_SPECS)
+    report = await crawl_schools_updates(SCHOOL_PROBE_SPECS)
     write_probe_report(report, output)
     successes = sum(item["status"] == "success" for item in report)
     failures = len(report) - successes
-    sections = sum(item["items_found"] for item in report)
+    sections = sum(item.get("items_found", len(item.get("updates", []))) for item in report)
     print(f"schools={len(report)} success={successes} failed={failures} candidate_sections={sections}")
     return 0
 
