@@ -116,5 +116,52 @@ class SchoolFeedTests(unittest.TestCase):
             self.assertTrue(set(catalog).issubset(direct | aggregate | seeds), district)
 
 
+class DashboardLayoutTests(unittest.TestCase):
+    def make_data(self):
+        districts = {
+            name: {"政策": [], "动态": None, "学校": {}}
+            for name in build.DISTRICTS
+        }
+        first_district = next(iter(build.DISTRICTS))
+        districts[first_district] = {
+            "政策": [{"title": "区级政策示例", "link": "https://example/policy"}],
+            "动态": (
+                "区教委",
+                [{"title": "区级动态示例", "link": "https://example/district"}],
+            ),
+            "学校": {
+                "示例中学": {
+                    "校园动态": [
+                        {"title": "学校动态示例", "link": "https://example/school"}
+                    ]
+                }
+            },
+        }
+        return {"市教委": [], "教育部": [], "区级": districts}
+
+    def test_district_and_school_information_are_rendered_in_separate_columns(self):
+        html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")
+
+        official_start = html.index('<section class="district-column district-column--official">')
+        school_start = html.index('<section class="district-column district-column--schools">')
+        official_column = html[official_start:school_start]
+        school_column = html[school_start:html.index("</details>", school_start)]
+
+        self.assertIn('<h3 class="column-title">区级信息</h3>', official_column)
+        self.assertIn("区级政策示例", official_column)
+        self.assertIn("区级动态示例", official_column)
+        self.assertNotIn("学校动态示例", official_column)
+        self.assertIn('<h3 class="column-title">学校动态</h3>', school_column)
+        self.assertIn("学校动态示例", school_column)
+
+    def test_district_columns_stack_at_the_mobile_breakpoint(self):
+        html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")
+
+        self.assertIn(".district-columns { display: grid;", html)
+        self.assertIn("grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);", html)
+        self.assertIn("@media (max-width: 760px)", html)
+        self.assertIn(".district-columns { grid-template-columns: 1fr;", html)
+
+
 if __name__ == "__main__":
     unittest.main()

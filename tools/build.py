@@ -580,7 +580,7 @@ HTML_HEAD = """<!DOCTYPE html>
     background: #FBFAF7; color: #212427;
     padding: 28px 20px 40px; line-height: 1.6;
   }}
-  .page {{ max-width: 920px; margin: 0 auto; }}
+  .page {{ max-width: 1180px; margin: 0 auto; }}
 
   /* ── 头部 ───────────────────── */
   header {{ display: flex; justify-content: space-between; align-items: flex-end;
@@ -671,12 +671,22 @@ HTML_HEAD = """<!DOCTYPE html>
   .d-latest {{ font-size: 12.5px; color: #6b6862;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }}
   .d-side {{ font-size: 11px; color: #31586E; white-space: nowrap; display: flex; gap: 6px; align-items: baseline; }}
-  .row-body {{ padding: 2px 2px 14px 96px; }}
-  @media (max-width: 680px) {{
+  .row-body {{ padding: 2px 2px 18px 96px; }}
+  .district-columns {{ display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 0 34px; }}
+  .district-column {{ min-width: 0; }}
+  .district-column--schools {{ border-left: 1px solid #E3E1D8; padding-left: 34px; }}
+  .column-title {{ font-family: "Songti SC", "Noto Serif SC", serif;
+    font-size: 14px; color: #212427; margin: 12px 0 3px; }}
+  .column-empty {{ font-size: 12px; color: #a5a29a; padding: 10px 0; }}
+  @media (max-width: 760px) {{
     details.row summary {{ grid-template-columns: 72px 1fr auto; }}
     .d-count {{ display: none; }}
     .d-latest {{ grid-column: 1 / -1; white-space: normal; }}
     .row-body {{ padding-left: 2px; }}
+    .district-columns {{ grid-template-columns: 1fr; gap: 2px; }}
+    .district-column--schools {{ border-left: 0; border-top: 1px solid #E3E1D8;
+      margin-top: 14px; padding: 2px 0 0; }}
   }}
   .school-sec {{ margin-top: 12px; }}
   .school-sec h4 {{ font-size: 12px; font-weight: 600; color: #31586E; margin-bottom: 2px; }}
@@ -770,6 +780,17 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
         latest = policies[0]["title"] if policies else "（无数据）"
         school_label = f"{len(schools)} 校" if schools else ""
         new_badge = f'<span class="n-new">{n_new} 新</span>' if n_new else ""
+        official_sections = section("区招生政策", policies, prev_keys, max_show=4)
+        if gov:
+            name, items = gov
+            official_sections += section(f"{name} · 教育动态", items, prev_keys, max_show=4)
+        school_sections = ""
+        for 校名, 栏目 in schools.items():
+            for 栏名, items in 栏目.items():
+                school_sections += section(f"{校名} · {栏名}", items, prev_keys, max_show=4)
+        if not school_sections:
+            school_sections = '<p class="column-empty">暂无学校动态</p>'
+
         parts.append(
             f'<details class="row"{" open" if (schools or n_new) else ""}><summary>'
             f'<span class="d-name">{区名}</span>'
@@ -777,16 +798,13 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
             f'<span class="d-latest">{latest}</span>'
             f'<span class="d-side">{new_badge}{school_label}</span>'
             f"</summary>"
-            f'<div class="row-body">'
-            + section("区招生政策", policies, prev_keys, max_show=4)
+            f'<div class="row-body"><div class="district-columns">'
+            f'<section class="district-column district-column--official">'
+            f'<h3 class="column-title">区级信息</h3>{official_sections}</section>'
+            f'<section class="district-column district-column--schools">'
+            f'<h3 class="column-title">学校动态</h3>{school_sections}</section>'
+            f'</div></div></details>'
         )
-        if gov:
-            name, items = gov
-            parts.append(section(f"{name} · 教育动态", items, prev_keys, max_show=4))
-        for 校名, 栏目 in schools.items():
-            for 栏名, items in 栏目.items():
-                parts.append(section(f"{校名} · {栏名}", items, prev_keys, max_show=4))
-        parts.append("</div></details>")
     parts.append("</div>")
 
     src_domains = sorted({
