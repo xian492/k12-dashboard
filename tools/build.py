@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""K12 官方信源看板构建脚本 v3。
+"""K12 官方信源看板构建脚本 v5。
 
-v3 布局：按区分组。市级置顶；区级政策与该区学校合并为同一个「区卡片」；学校按校名合并。
-信源：yjrx 18 区 + 市教委 + 教育部 + 4 所可解析学校官网。
+v5 布局：按区分组。市级置顶；区卡片 = 区招生政策(yjrx) + 区教委动态 + 该区学校官网（按校名合并）。
+信源：yjrx 18 区 + 市教委 + 教育部 + 学校官网/区教委官网（配置驱动，见 SCHOOL_SPECS / DISTRICT_GOV_SPECS）。
 
 用法：python3 build.py（无第三方依赖）
 """
@@ -39,26 +39,128 @@ DISTRICTS = {
     "经济技术开发区": "779cf55da96380347589642668fc439a",
 }
 
-# 学校配置：区 -> [学校列表]，每个学校 = (校名, [(栏目名, 栏目URL, 解析器)])
-# 解析器类型：rdfz(人大附中模板)、qhfz(title属性)、sdfz(北师大附中模板)、cnuhs(首师大附中)
-SCHOOLS = {
+# 学校配置：区 -> [学校列表]，每个学校 = (校名, [源配置...])
+# 源配置 = (栏名, spec)，spec 字典：
+#   url      列表页地址
+#   pattern  正则（re.S 可选），命名组：link / title / date（date 可选）
+#   base     相对 href 的绝对前缀；None 表示 href 已是绝对地址
+#   enc      页面编码（utf-8 / gbk ...），默认 utf-8
+#   strip    从 href 中剔除的子串（如 "../"），可选
+SCHOOL_SPECS = {
     "海淀区": [
         ("人大附中", [
-            ("通知公告", "https://www.rdfz.cn/xwzx/tzgg.htm", "rdfz"),
-            ("招生资讯", "https://www.rdfz.cn/zszp/zszx1/zsdt.htm", "rdfz"),
+            ("通知公告", dict(
+                url="https://www.rdfz.cn/xwzx/tzgg.htm",
+                pattern=r'<a href="(?P<link>(?:\.\./)+info/\d+/\d+\.htm)"[^>]*>\s*<time><span>\d+</span>/\s*(?P<date>[\d-]+)</time>\s*<div class="txt">\s*<h3 class="eclip">(?P<title>[^<]+)</h3>',
+                base="https://www.rdfz.cn/", strip="../")),
+            ("招生资讯", dict(
+                url="https://www.rdfz.cn/zszp/zszx1/zsdt.htm",
+                pattern=r'<a href="(?P<link>(?:\.\./)+info/\d+/\d+\.htm)"[^>]*>\s*<time><span>\d+</span>/\s*(?P<date>[\d-]+)</time>\s*<div class="txt">\s*<h3 class="eclip">(?P<title>[^<]+)</h3>',
+                base="https://www.rdfz.cn/", strip="../")),
         ]),
         ("清华附中", [
-            ("招生专栏", "https://www.qhfz.edu.cn/student_talent/", "qhfz"),
+            ("招生专栏", dict(
+                url="https://www.qhfz.edu.cn/student_talent/",
+                pattern=r'<a href="(?P<link>info/\d+/\d+\.htm)" title="(?P<title>[^"]{6,100})"',
+                base="https://www.qhfz.edu.cn/student_talent/")),
         ]),
         ("首师大附中", [
-            ("校园快讯", "https://www.cnuhs.cn/CampusNews/50.html", "cnuhs"),
+            ("校园快讯", dict(
+                url="https://www.cnuhs.cn/CampusNews/50.html",
+                pattern=r'<a target="_blank" href="(?P<link>/CampusNews/\d+/\d+\.html)"[^>]*>(?P<title>[^<]{6,})</a>',
+                base="https://www.cnuhs.cn")),
+        ]),
+        ("一零一中学", [
+            ("通知公告", dict(
+                url="https://www.beijing101.com/school/listArticle.do?schoolId=587bb213-aab9-415d-b129-b629de3718e8&navigationId=a2b7ac77-2b54-4e64-9d0c-fe50d248e48e",
+                pattern=r'<a href="(?P<link>/school/getNavigationArticle\.do\?[^"]+)"[^>]*>(?P<title>[^<]{6,})</a><span>(?P<date>[\d-]+)',
+                base="https://www.beijing101.com",
+                exclude=r"食堂一周食谱")),
+        ]),
+        ("八一学校", [
+            ("校园动态", dict(
+                url="https://byxx.bjhdedu.cn/xyfc/xndt/",
+                pattern=r'<span class="date">\[(?P<date>[\d-]+)\]</span>\s*<a href="(?P<link>\./\d{6}/t\d+_\d+\.shtml)"[^>]*>(?P<title>[^<]{6,})</a>',
+                base="https://byxx.bjhdedu.cn/xyfc/xndt/")),
+        ]),
+        ("交大附中", [
+            ("校园动态", dict(
+                url="https://jdfz.bjhdedu.cn/xyfc/xndt/",
+                pattern=r'<span class="date">\[(?P<date>[\d-]+)\]</span>\s*<a href="(?P<link>\./\d{6}/t\d+_\d+\.shtml)"[^>]*>(?P<title>[^<]{6,})</a>',
+                base="https://jdfz.bjhdedu.cn/xyfc/xndt/")),
+        ]),
+        ("北大附中", [
+            ("校内新闻", dict(
+                url="https://www.pkuschool.edu.cn/news/news.html",
+                pattern=r'<div class="li">.*?<div class="t">(?P<title>[^<]{6,})</div>.*?<div class="y">(?P<date>[\d-]+)</div>.*?<a href="(?P<link>[^"]+)"',
+                base="https://www.pkuschool.edu.cn", re_s=True)),
         ]),
     ],
     "西城区": [
         ("北师大附中", [
-            ("招生专栏", "https://www.bjsdfz.com/list-219-1.html", "sdfz"),
+            ("招生专栏", dict(
+                url="https://www.bjsdfz.com/list-219-1.html",
+                pattern=r'<a href="(?P<link>/show-219-\d+-1\.html)"[^>]*>.*?<em class="em3">\s*(?P<title>.*?)\s*</em>',
+                base="https://www.bjsdfz.com", re_s=True)),
         ]),
     ],
+}
+
+SCHOOL_SPECS["朝阳区"] = [
+    ("八十中学", [
+        ("最新动态", dict(
+            url="http://www.bj80.com/zxdt/",
+            pattern=r'<a href="(?P<link>\./\d{6}/t\d+_\d+\.html)">\s*(?P<title>[^<]{6,})</a>\s*<p>(?P<date>[\d-]+)</p>',
+            base="http://www.bj80.com/zxdt/", re_s=True)),
+    ]),
+    ("陈经纶中学", [
+        ("校园新闻", dict(
+            url="http://bjcjl.bjchyedu.cn/xyxw/",
+            pattern=r'<a target="_blank" href="(?P<link>\./\d{6}/t\d+(?:_\d+)?\.html)">\s*<span class="detail_txt">(?P<title>[^<]{6,})</span>\s*<span class="detail_date">(?P<date>[\d-]+)</span>',
+            base="http://bjcjl.bjchyedu.cn/xyxw/", re_s=True)),
+    ]),
+    ("朝阳外国语学校", [
+        ("通知公告", dict(
+            url="http://cyfls.bjchyedu.cn/tzgg/",
+            pattern=r'<a href="(?P<link>\./\d{6}/t\d+(?:_\d+)?\.html)">(?P<title>[^<]{6,})</a>\s*<span>(?P<date>[\d-]+)</span>',
+            base="http://cyfls.bjchyedu.cn/tzgg/", re_s=True)),
+    ]),
+    ("日坛中学", [
+        ("校园新闻", dict(
+            url="http://rtzx.bjchyedu.cn/xyxw/",
+            pattern=r'<span class="con"><a href="(?P<link>\./\d{6}/t\d+(?:_\d+)?\.html)">(?P<title>[^<]{6,})</a></span>\s*<span class="date">(?P<date>[\d-]+)</span>',
+            base="http://rtzx.bjchyedu.cn/xyxw/", re_s=True)),
+    ]),
+    ("工大附中", [
+        ("招生招聘", dict(
+            url="http://www.bjgdfz.com/?a=web.articles&uid=9182&id=7984",
+            pattern=r'<span class="add">(?P<date>[\d-]+)</span><a title="[^"]*" href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{6,})</a>',
+            base="http://www.bjgdfz.com")),
+    ]),
+]
+
+# 区级教育动态信源：区 -> (机构名, [源配置 spec])；spec 结构同上
+DISTRICT_GOV_SPECS = {
+    "海淀区": ("海淀教育网", [
+        dict(url="https://www.bjhdedu.cn/gongkai/tzgg/",
+             pattern=r'<a href="(?P<link>\./\d{6}/t\d{8}_\d+\.html)"[^>]*>(?P<title>[^<]{6,})</a>\s*<span>(?P<date>[\d-]+)</span>',
+             base="https://www.bjhdedu.cn/gongkai/tzgg/", re_s=True),
+    ]),
+    "东城区": ("东城区教委 · 通知公告", [
+        dict(url="https://www.bjdch.gov.cn/zwgk/jgdh/qzfzcbmdh/qjw/tzggqjw/",
+             pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>\s*(?P<title>[^<]{6,})\s*</a>\s*(?:<[^>]+>\s*)?(?P<date>20\d{2}-\d{2}-\d{2})',
+             base="https://www.bjdch.gov.cn", re_s=True, enc="auto"),
+    ]),
+    "丰台区": ("丰台区教委 · 教育公开", [
+        dict(url="https://www.bjft.gov.cn/xxfb/zdlygs/c100013/list_ftb_1.shtml",
+             pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>\s*(?P<title>[^<]{6,})\s*</a>\s*(?:<[^>]+>\s*)?(?P<date>20\d{2}-\d{2}-\d{2})',
+             base="https://www.bjft.gov.cn", re_s=True, enc="auto"),
+    ]),
+    "石景山区": ("石景山区教委 · 政策公开", [
+        dict(url="https://www.bjsjs.gov.cn/gongkai/",
+             pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>\s*(?P<title>[^<]{6,})\s*</a>\s*(?:<[^>]+>\s*)?(?P<date>20\d{2}-\d{2}-\d{2})',
+             base="https://www.bjsjs.gov.cn", re_s=True, enc="auto"),
+    ]),
 }
 
 YJRX_JSON = "https://yjrx.bjedu.cn/uploads/json/{}.json"
@@ -72,6 +174,49 @@ def fetch(url: str, timeout: int = 20) -> bytes:
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     with urllib.request.urlopen(req, timeout=timeout, context=CTX) as r:
         return r.read()
+
+
+def fetch_text(spec: dict) -> str:
+    raw = fetch(spec["url"])
+    enc = spec.get("enc", "utf-8")
+    if enc == "auto":
+        head = raw[:2048]
+        m = re.search(rb'charset=["\']?([\w-]+)', head, re.I)
+        enc = m.group(1).decode("ascii", "ignore").lower() if m else "utf-8"
+    if enc in ("gb2312", "gbk"):
+        enc = "gb18030"
+    return raw.decode(enc, errors="ignore")
+
+
+def parse_spec(spec: dict) -> list:
+    """通用列表页解析：按 spec 的正则提取 link/title/date，拼绝对地址。"""
+    html = fetch_text(spec)
+    flags = re.S if spec.get("re_s") else 0
+    items, seen = [], set()
+    for m in re.finditer(spec["pattern"], html, flags):
+        link = m.group("link").strip()
+        title = re.sub(r"<[^>]+>", "", m.group("title")).strip()
+        if len(title) < 6 or link in seen:
+            continue
+        if spec.get("exclude") and re.search(spec["exclude"], title):
+            continue
+        seen.add(link)
+        if link.startswith("./"):
+            link = link[2:]
+        if spec.get("strip"):
+            link = link.replace(spec["strip"], "")
+        if spec.get("base") and not link.startswith(("http://", "https://")):
+            if link.startswith("/"):
+                origin = "/".join(spec["base"].split("/")[:3])
+                link = origin + link
+            else:
+                link = spec["base"] + link
+        it = {"title": title, "link": link,
+              "tag": tag_of(title), "kp": key_point(title), "src": "学校"}
+        if m.groupdict().get("date"):
+            it["date"] = m.group("date").strip("[] ")
+        items.append(it)
+    return items
 
 
 # ---------- 标签 ----------
@@ -114,50 +259,6 @@ def fetch_yjrx(fid: str) -> list:
     ]
 
 
-def parse_rdfz(url: str) -> list:
-    html = fetch(url).decode("utf-8", errors="ignore")
-    items = []
-    for m in re.finditer(
-        r'<a href="((?:\.\./)+info/\d+/\d+\.htm)"[^>]*>\s*<time><span>\d+</span>/\s*([\d-]+)</time>\s*<div class="txt">\s*<h3 class="eclip">([^<]+)</h3>',
-        html,
-    ):
-        link = "https://www.rdfz.cn/" + m.group(1).replace("../", "")
-        items.append({"title": m.group(3), "link": link, "date": m.group(2),
-                      "tag": tag_of(m.group(3)), "kp": key_point(m.group(3)), "src": "学校"})
-    return items
-
-
-def parse_qhfz(url: str) -> list:
-    html = fetch(url).decode("utf-8", errors="ignore")
-    items = []
-    for m in re.finditer(r'<a href="(info/\d+/\d+\.htm)" title="([^"]{6,100})"', html):
-        items.append({"title": m.group(2), "link": url + m.group(1),
-                      "tag": tag_of(m.group(2)), "kp": key_point(m.group(2)), "src": "学校"})
-    return items
-
-
-def parse_sdfz(url: str) -> list:
-    html = fetch(url).decode("utf-8", errors="ignore")
-    items = []
-    for m in re.finditer(r'<a href="(/show-219-\d+-1\.html)"[^>]*>.*?<em class="em3">\s*(.*?)\s*</em>', html, re.S):
-        link = "https://www.bjsdfz.com" + m.group(1)
-        title = re.sub(r"<[^>]+>", "", m.group(2)).strip()
-        items.append({"title": title, "link": link,
-                      "tag": tag_of(title), "kp": key_point(title), "src": "学校"})
-    return items
-
-
-def parse_cnuhs(url: str) -> list:
-    html = fetch(url).decode("utf-8", errors="ignore")
-    items = []
-    for m in re.finditer(r'<a target="_blank" href="(/CampusNews/\d+/\d+\.html)"[^>]*>([^<]{6,})</a>', html):
-        items.append({"title": m.group(2), "link": "https://www.cnuhs.cn" + m.group(1),
-                      "tag": tag_of(m.group(2)), "kp": key_point(m.group(2)), "src": "学校"})
-    return items
-
-
-PARSERS = {"rdfz": parse_rdfz, "qhfz": parse_qhfz, "sdfz": parse_sdfz, "cnuhs": parse_cnuhs}
-
 
 def fetch_jw_notice() -> list:
     html = fetch("https://jw.beijing.gov.cn/tzgg/").decode("utf-8", errors="ignore")
@@ -187,15 +288,18 @@ def load_prev_keys() -> set:
     try:
         prev = json.loads(p.read_text(encoding="utf-8"))
         keys = set()
-        for d in prev.get("data", {}).get("区级", {}).values():
-            for sec in d.values():
-                for it in sec.get("items", []) if isinstance(sec, dict) else sec:
-                    if isinstance(it, dict):
-                        keys.add(it.get("id") or it.get("link"))
-        for it in prev.get("data", {}).get("市教委", []):
-            keys.add(it.get("link"))
-        for it in prev.get("data", {}).get("教育部", []):
-            keys.add(it.get("link"))
+
+        def walk(node):
+            if isinstance(node, dict):
+                if "link" in node:
+                    keys.add(node.get("id") or node.get("link"))
+                for v in node.values():
+                    walk(v)
+            elif isinstance(node, list):
+                for it in node:
+                    walk(it)
+
+        walk(prev.get("data", {}))
         return keys
     except Exception:
         return set()
@@ -401,6 +505,7 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
     for 区名, fid in DISTRICTS.items():
         d = data["区级"][区名]
         policies = d["政策"]
+        gov = d["动态"]
         schools = d["学校"]
         n_new = sum(1 for it in policies if (it.get("id") or it.get("link")) not in prev_keys)
         latest = policies[0]["title"] if policies else "（无数据）"
@@ -416,16 +521,25 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
             f'<div class="row-body">'
             + section("区招生政策", policies, prev_keys, max_show=4)
         )
+        if gov:
+            name, items = gov
+            parts.append(section(f"{name} · 教育动态", items, prev_keys, max_show=4))
         for 校名, 栏目 in schools.items():
             for 栏名, items in 栏目.items():
                 parts.append(section(f"{校名} · {栏名}", items, prev_keys, max_show=4))
         parts.append("</div></details>")
     parts.append("</div>")
 
+    src_domains = sorted({
+        re.sub(r"^https?://(www\.)?", "", it["link"]).split("/")[0]
+        for sec in data["区级"].values()
+        for it in (sec["动态"][1] if sec["动态"] else [])
+    })
     parts.append(
         "<footer>信源：yjrx.bjedu.cn（18 区招生政策）｜ jw.beijing.gov.cn ｜ moe.gov.cn ｜ "
-        "rdfz.cn ｜ qhfz.edu.cn ｜ bjsdfz.com ｜ cnuhs.cn<br>"
-        "多数学校无独立官网或页面动态渲染，公众号渠道经 wewe-rss 另行接入，不在本台账。</footer>"
+        "rdfz.cn ｜ qhfz.edu.cn ｜ bjsdfz.com ｜ cnuhs.cn"
+        + (f" ｜ 区教委：{' ｜ '.join(src_domains)}" if src_domains else "")
+        + "<br>多数学校无独立官网或页面动态渲染，公众号渠道经 wewe-rss 另行接入，不在本台账。</footer>"
     )
     return "".join(parts) + "</div></body></html>"
 
@@ -440,19 +554,40 @@ def main():
             政策 = fetch_yjrx(fid)
         except Exception:
             政策 = []
-        学校 = {}
-        for 校名, 栏目 in SCHOOLS.get(区名, []):
-            学校[校名] = {}
-            for 栏名, url, parser in 栏目:
+        动态 = None
+        if 区名 in DISTRICT_GOV_SPECS:
+            name, specs = DISTRICT_GOV_SPECS[区名]
+            items = []
+            for spec in specs:
                 try:
-                    学校[校名][栏名] = PARSERS[parser](url)
+                    for it in parse_spec(spec):
+                        it["src"] = "区教委"
+                        items.append(it)
+                except Exception:
+                    pass
+            动态 = (name, items) if items else None
+        学校 = {}
+        for 校名, 栏目 in SCHOOL_SPECS.get(区名, []):
+            学校[校名] = {}
+            for 栏名, spec in 栏目:
+                try:
+                    学校[校名][栏名] = parse_spec(spec)
                 except Exception:
                     学校[校名][栏名] = []
-        区级[区名] = {"政策": 政策, "学校": 学校}
+        区级[区名] = {"政策": 政策, "动态": 动态, "学校": 学校}
 
+    # 单一路信源短暂不可达时，不应让整次构建失败；页面会以空列表展示该路。
+    try:
+        市教委 = fetch_jw_notice()
+    except Exception:
+        市教委 = []
+    try:
+        教育部 = fetch_moe_notice()
+    except Exception:
+        教育部 = []
     data = {
-        "市教委": fetch_jw_notice(),
-        "教育部": fetch_moe_notice(),
+        "市教委": 市教委,
+        "教育部": 教育部,
         "区级": 区级,
     }
 
@@ -464,9 +599,10 @@ def main():
     (DOCS / "index.html").write_text(build_page(data, prev_keys, built_at), encoding="utf-8")
 
     d_online = sum(1 for d in 区级.values() if d["政策"])
+    g_online = sum(1 for d in 区级.values() if d["动态"])
     print(
         f"built: {built_at} | 市教委 {len(data['市教委'])} | 教育部 {len(data['教育部'])} | "
-        f"区在线 {d_online}/18 | 学校 {sum(len(d['学校']) for d in 区级.values())} 所"
+        f"区在线 {d_online}/18 | 区教委 {g_online} | 学校 {sum(len(d['学校']) for d in 区级.values())} 所"
     )
 
 
