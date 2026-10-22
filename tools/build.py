@@ -194,6 +194,27 @@ SCHOOL_SPECS["昌平区"] = [
         base="https://bjcpez.com.cn/",
         exclude=r"首页|学校简介|联系我们|友情链接"))]),
 ]
+SCHOOL_SPECS["大兴区"] = [
+    ("北京亦庄实验中学", [("校园动态", dict(
+        url="https://www.bjeaedu.com/",
+        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{8,})</a>',
+        base="https://www.bjeaedu.com/",
+        exclude=r"首页|学校简介|联系我们|友情链接"))]),
+]
+SCHOOL_SPECS["经济技术开发区"] = [
+    ("北京亦庄实验中学", [("校园动态", dict(
+        url="https://www.bjeaedu.com/",
+        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{8,})</a>',
+        base="https://www.bjeaedu.com/",
+        exclude=r"首页|学校简介|联系我们|友情链接"))]),
+]
+SCHOOL_SPECS["平谷区"] = [
+    ("北京市平谷中学", [("校园动态", dict(
+        url="http://www.pgzx.net/",
+        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{8,})</a>',
+        base="http://www.pgzx.net/",
+        exclude=r"首页|学校简介|联系我们|友情链接"))]),
+]
 
 # 学校目录：先保证每个区有代表性学校入口；有稳定官网解析规则的学校
 # 继续使用 SCHOOL_SPECS，只有目录入口的学校会显示“动态待接入”。
