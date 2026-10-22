@@ -249,6 +249,17 @@ class BeijingCommunityCrawlerTests(unittest.TestCase):
 
 
 class DashboardLayoutTests(unittest.TestCase):
+    def test_actions_installs_crawl4ai_and_runs_on_python_312(self):
+        workflow = (ROOT / ".github" / "workflows" / "build.yml").read_text(encoding="utf-8")
+        requirements = (ROOT / "requirements-crawl4ai.txt").read_text(encoding="utf-8")
+
+        self.assertIn("python-version: \"3.12\"", workflow)
+        self.assertIn("crawl4ai-setup", workflow)
+        self.assertIn("actions/cache@v4", workflow)
+        self.assertIn("crawl4ai==0.9.5", requirements)
+        self.assertIn("actions/upload-pages-artifact@v3", workflow)
+        self.assertIn("actions/deploy-pages@v4", workflow)
+
     def make_data(self):
         districts = {
             name: {"政策": [], "动态": None, "通用信息": [], "学校": {}}

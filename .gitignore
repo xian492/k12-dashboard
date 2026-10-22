@@ -1,2 +1,4 @@
 docs/data.json
 .worktrees/
+.crawl4ai-local/
+__pycache__/

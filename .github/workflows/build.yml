@@ -23,8 +23,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-crawl4ai.txt
+
+      - name: Cache Crawl4AI browsers
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright
+            ~/.cache/patchright
+          key: ${{ runner.os }}-crawl4ai-browsers-${{ hashFiles('requirements-crawl4ai.txt') }}
+
+      - name: Install Crawl4AI
+        run: |
+          python -m pip install -r requirements-crawl4ai.txt
+          crawl4ai-setup
+
       - name: Build dashboard
-        run: python3 tools/build.py
+        run: python tools/build.py
 
       - name: Commit data snapshot
         run: |
