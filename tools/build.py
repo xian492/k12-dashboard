@@ -346,6 +346,34 @@ DISTRICT_WECHATS = {
 }
 
 
+CITY_HOMEPAGES = {
+    "北京市教委 · 通知公告": "https://jw.beijing.gov.cn/",
+    "教育部 · 公告公示": "https://www.moe.gov.cn/",
+    "全市学校信息": "https://jw.beijing.gov.cn/",
+}
+
+DISTRICT_HOMEPAGES = {
+    "东城区": "https://www.bjdch.gov.cn/",
+    "西城区": "https://www.bjxch.gov.cn/",
+    "朝阳区": "https://www.bjchy.gov.cn/",
+    "海淀区": "https://www.bjhdedu.cn/",
+    "丰台区": "https://www.bjft.gov.cn/",
+    "石景山区": "https://www.bjsjs.gov.cn/",
+    "门头沟区": "https://www.bjmtg.gov.cn/",
+    "房山区": "https://www.bjfsh.gov.cn/",
+    "通州区": "https://www.bjtzh.gov.cn/",
+    "顺义区": "https://www.bjshy.gov.cn/",
+    "昌平区": "https://www.bjchp.gov.cn/",
+    "大兴区": "https://www.bjdx.gov.cn/",
+    "平谷区": "https://www.bjpg.gov.cn/",
+    "怀柔区": "https://www.bjhr.gov.cn/",
+    "密云区": "https://www.bjmy.gov.cn/",
+    "延庆区": "https://www.bjyq.gov.cn/",
+    "燕山地区": "https://www.bjfsh.gov.cn/",
+    "经济技术开发区": "https://kfqgw.beijing.gov.cn/",
+}
+
+
 # 学校目录：先保证每个区有代表性学校入口；有稳定官网解析规则的学校
 # 继续使用 SCHOOL_SPECS，太星目录只增加导航入口，不增加抓取任务。
 SCHOOL_CATALOG = {
@@ -946,6 +974,10 @@ HTML_HEAD = """<!DOCTYPE html>
   .city {{ display: grid; grid-template-columns: 1fr 1fr; gap: 0 36px; margin-top: 14px; }}
   @media (max-width: 680px) {{ .city {{ grid-template-columns: 1fr; }} }}
   .city h3 {{ font-size: 12px; font-weight: 600; color: #31586E; margin-bottom: 2px; }}
+  .official-homepage {{ color: inherit; text-decoration: none; }}
+  .official-homepage::after {{ content: " ↗"; font-size: 9px; color: #8a877e; }}
+  .official-homepage:hover {{ color: #B23B32; text-decoration: underline;
+    text-underline-offset: 3px; }}
   .headline {{ font-family: "Songti SC", "Noto Serif SC", serif;
     font-size: 15.5px; line-height: 1.5; margin: 4px 0 10px; }}
   .headline a {{ color: #212427; text-decoration: none; }}
@@ -1094,6 +1126,13 @@ def district_wechat_note(district_name: str) -> str:
     return f'<div class="district-wechat"><b>官方公众号</b>{labels}</div>'
 
 
+def official_homepage_link(label: str, url: str) -> str:
+    return (
+        f'<a class="official-homepage" href="{url}" target="_blank" '
+        f'rel="noopener">{label}</a>'
+    )
+
+
 def build_page(data: dict, prev_keys: set, built_at: str) -> str:
     jw, moe = data["市教委"], data["教育部"]
     city_school_info = data.get("市级学校信息", [])
@@ -1115,16 +1154,17 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
         ("教育部 · 公告公示", moe),
         ("全市学校信息", city_school_info),
     ):
+        name_link = official_homepage_link(name, CITY_HOMEPAGES[name])
         if items:
             top = items[0]
             top_new = '<span class="n-new">NEW</span>' if top["link"] not in prev_keys else ""
             parts.append(
-                f'<div><h3>{name} · {len(items)} 条</h3>'
+                f'<div><h3>{name_link} · {len(items)} 条</h3>'
                 f'<div class="headline">{top_new}<a href="{top["link"]}" target="_blank">{top["title"]}</a></div>'
                 f'<ul>{"".join(item_li(it, prev_keys) for it in items[1:6])}</ul></div>'
             )
         else:
-            parts.append(f'<div><h3>{name}</h3><ul><li class="empty">拉取失败</li></ul></div>')
+            parts.append(f'<div><h3>{name_link}</h3><ul><li class="empty">拉取失败</li></ul></div>')
     parts.append("</div>")
 
     # 区台账
@@ -1158,7 +1198,7 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
 
         parts.append(
             f'<details class="row"{" open" if (schools or n_new) else ""}><summary>'
-            f'<span class="d-name">{区名}</span>'
+            f'<span class="d-name">{official_homepage_link(区名, DISTRICT_HOMEPAGES[区名])}</span>'
             f'<span class="d-count">{len(policies)} 条</span>'
             f'<span class="d-latest">{latest}</span>'
             f'<span class="d-side">{new_badge}{school_label}</span>'

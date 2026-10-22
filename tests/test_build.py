@@ -357,6 +357,47 @@ class SchoolHomepageTests(unittest.TestCase):
         self.assertNotIn("rdfz1950", feed)
 
 
+class OfficialHomepageTests(unittest.TestCase):
+    def make_data(self):
+        return {
+            "市教委": [],
+            "教育部": [],
+            "市级学校信息": [],
+            "区级": {
+                name: {"政策": [], "动态": None, "通用信息": [], "学校": {}}
+                for name in build.DISTRICTS
+            },
+        }
+
+    def test_city_and_every_district_have_official_homepages(self):
+        self.assertEqual(
+            set(build.CITY_HOMEPAGES),
+            {"北京市教委 · 通知公告", "教育部 · 公告公示", "全市学校信息"},
+        )
+        self.assertEqual(set(build.DISTRICT_HOMEPAGES), set(build.DISTRICTS))
+        self.assertTrue(
+            all(url.startswith("https://") for url in build.CITY_HOMEPAGES.values())
+        )
+        self.assertTrue(
+            all(url.startswith("https://") for url in build.DISTRICT_HOMEPAGES.values())
+        )
+
+    def test_city_labels_and_district_names_link_to_official_sites(self):
+        html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")
+
+        self.assertIn(
+            '<h3><a class="official-homepage" href="https://jw.beijing.gov.cn/" '
+            'target="_blank" rel="noopener">北京市教委 · 通知公告</a></h3>',
+            html,
+        )
+        self.assertIn(
+            '<span class="d-name"><a class="official-homepage" '
+            'href="https://www.bjhdedu.cn/" target="_blank" '
+            'rel="noopener">海淀区</a></span>',
+            html,
+        )
+
+
 class RssFeedTests(unittest.TestCase):
     def test_feed_contains_new_dashboard_sources_without_existing_policy_feeds(self):
         shared = {"title": "区校联合活动", "link": "https://example/shared"}
