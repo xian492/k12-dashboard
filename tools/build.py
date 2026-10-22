@@ -10,6 +10,7 @@ v5 布局：按区分组。市级置顶；区卡片 = 区招生政策(yjrx) + �
 import json
 import re
 import asyncio
+from html import escape
 import importlib.util
 import ssl
 import urllib.request
@@ -1011,11 +1012,29 @@ HTML_HEAD = """<!DOCTYPE html>
   .page {{ max-width: 1180px; margin: 0 auto; }}
 
   /* ── 头部 ───────────────────── */
-  header {{ display: flex; justify-content: space-between; align-items: flex-end;
+header {{ display: flex; justify-content: space-between; align-items: flex-end;
     padding-bottom: 14px; border-bottom: 2px solid #212427; flex-wrap: wrap; gap: 6px; }}
   h1 {{ font-family: "Songti SC", "Noto Serif SC", "SimSun", serif;
     font-size: 22px; font-weight: 700; letter-spacing: .02em; }}
   .meta {{ font-size: 12px; color: #8a877e; }}
+  .source-switcher {{ margin-left: 12px; color: #31586E; }}
+  .source-switcher select {{ margin-left: 4px; padding: 3px 7px; border: 1px solid #B9B5AA;
+    background: #FBFAF7; color: #212427; font-size: 12px; }}
+  .community-notice {{ margin-top: 18px; padding: 10px 12px; border-left: 3px solid #B23B32;
+    background: #F3F1EC; color: #6b6862; font-size: 12px; }}
+  .community-meta {{ margin-top: 12px; color: #8a877e; font-size: 12px; }}
+  .community-groups {{ margin-top: 12px; display: grid; grid-template-columns: 1fr; gap: 18px; }}
+  .community-stage {{ border-top: 1px solid #212427; padding-top: 8px; }}
+  .community-stage h3 {{ font-family: "Songti SC", "Noto Serif SC", serif; font-size: 17px;
+    margin: 8px 0 2px; }}
+  .community-type {{ margin-top: 12px; padding: 9px 12px 0; border-left: 2px solid #B9B5AA; }}
+  .community-type h4 {{ font-size: 13px; font-weight: 600; margin-bottom: 2px; }}
+  .community-item {{ padding: 9px 0; border-bottom: 1px solid #EDEBE3; }}
+  .community-item a {{ color: #212427; text-decoration: none; font-size: 13px; }}
+  .community-item a:hover {{ color: #31586E; text-decoration: underline; }}
+  .community-item-meta {{ margin-top: 2px; color: #8a877e; font-size: 11px; }}
+  .community-item-tags {{ margin-top: 3px; color: #31586E; font-size: 11px; }}
+  [hidden] {{ display: none !important; }}
 
   /* ── 页面目录 ────────────────── */
   .page-directory {{ position: fixed;
@@ -1132,7 +1151,14 @@ HTML_HEAD = """<!DOCTYPE html>
 <div class="page">
 <header>
   <h1>北京 K12 · 官方信源看板</h1>
-  <div class="meta">构建于 {built_at}，每 6 小时自动更新</div>
+  <div class="meta">构建于 {built_at}，每 6 小时自动更新
+    <label class="source-switcher">信源视图
+      <select id="source-view" aria-label="选择信源视图">
+        <option value="official">官方信源看板</option>
+        <option value="community">社区信源看板</option>
+      </select>
+    </label>
+  </div>
 </header>
 
 """
@@ -1196,7 +1222,100 @@ def official_homepage_link(label: str, url: str) -> str:
     )
 
 
-def build_page(data: dict, prev_keys: set, built_at: str) -> str:
+def _read_json_file(path: Path) -> dict:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+        return value if isinstance(value, dict) else {}
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        return {}
+
+
+def community_view(community_data: dict, community_status: dict = None) -> str:
+    records = community_data.get("records", []) if community_data.get("status") == "success" else []
+    status = community_status or community_data
+    generated_at = escape(str(community_data.get("generated_at") or status.get("generated_at") or "未知"))
+    if not records:
+        return (
+            '<section id="community-view" hidden><h2>社区信源</h2>'
+            '<p class="community-notice">社区内容仅用于发现线索和观察家长反馈，未经官方核验，不等同于官方信息。</p>'
+            '<p class="community-meta">社区数据暂不可用；官方信源看板不受影响。</p></section>'
+        )
+    phase_order = ("小学", "中学", "高中", "其他阶段")
+    stage_to_phase = {
+        "幼升小": "小学",
+        "小升初": "小学",
+        "中招": "小学",
+        "中考": "中学",
+        "初升高": "中学",
+        "高中": "高中",
+        "高考": "高中",
+    }
+    type_order = ("政策与流程", "学校动态", "家长经验", "其他类型")
+    groups = {phase: {content_type: [] for content_type in type_order} for phase in phase_order}
+    for record in records:
+        stages = record.get("stage") or ["其他阶段"]
+        if isinstance(stages, str):
+            stages = [stages]
+        content_type = record.get("content_type") or "其他类型"
+        if content_type not in type_order:
+            content_type = "其他类型"
+        for stage in stages:
+            stage_text = str(stage)
+            phase = stage_to_phase.get(stage_text)
+            if phase is None:
+                if "高考" in stage_text or "高中" in stage_text or "高职" in stage_text:
+                    phase = "高中"
+                elif "中考" in stage_text or "初升高" in stage_text:
+                    phase = "中学"
+                elif "幼升小" in stage_text or "小升初" in stage_text or "中招" in stage_text:
+                    phase = "小学"
+                else:
+                    phase = "其他阶段"
+            groups[phase][content_type].append((record, stage))
+
+    phase_html = []
+    for phase in phase_order:
+        type_html = []
+        for content_type in type_order:
+            items = groups[phase][content_type]
+            if not items:
+                continue
+            rows = []
+            for item, stage in items:
+                link = escape(str(item.get("link") or ""), quote=True)
+                title = escape(str(item.get("title") or "无标题"))
+                date = escape(str(item.get("published_at") or "日期未知"))
+                source = escape(str(item.get("source") or "未标注社区"))
+                events = item.get("event_type") or []
+                if isinstance(events, str):
+                    events = [events]
+                event_label = "、".join(str(value) for value in events) or "无"
+                districts = item.get("district_candidates") or []
+                if isinstance(districts, str):
+                    districts = [districts]
+                district_label = "、".join(str(value) for value in districts) or "—"
+                rows.append(
+                    f'<article class="community-item"><a href="{link}" target="_blank" rel="noopener">{title}</a>'
+                    f'<div class="community-item-meta">来源：{source} · {date} · 待官方核验</div>'
+                    f'<div class="community-item-tags">学段标签：{escape(str(stage))} · 事件标签：{escape(event_label)} · 区县：{escape(district_label)}</div></article>'
+                )
+            type_html.append(
+                f'<section class="community-type"><h4>{escape(content_type)} · {len(items)} 条</h4>{"".join(rows)}</section>'
+            )
+        if type_html:
+            total = sum(len(groups[phase][content_type]) for content_type in type_order)
+            phase_html.append(
+                f'<section class="community-stage"><h3>{escape(phase)} · {total} 条</h3>{"".join(type_html)}</section>'
+            )
+    return (
+        '<section id="community-view" hidden><h2>社区信源</h2>'
+        '<p class="community-notice">社区内容仅用于发现线索和观察家长反馈，未经教育部门、考试院或学校官方页面核验，不等同于官方信息。</p>'
+        f'<p class="community-meta">最近成功采集：{generated_at} · 当前展示：{len(records)} 条</p>'
+        f'<div class="community-groups">{"".join(phase_html)}</div></section>'
+    )
+
+
+def build_page(data: dict, prev_keys: set, built_at: str, community_data: dict = None, community_status: dict = None) -> str:
     jw, moe = data["市教委"], data["教育部"]
     city_school_info = data.get("市级学校信息", [])
 
@@ -1213,6 +1332,7 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
         + "".join(directory_links)
         + "</nav>"
     )
+    parts.append('<div id="official-view">')
 
     # 市级头条
     parts.append('<h2 id="city">市级</h2><div class="city">')
@@ -1233,6 +1353,8 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
         else:
             parts.append(f'<div><h3>{name_link}</h3><ul><li class="empty">拉取失败</li></ul></div>')
     parts.append("</div>")
+    parts.append("</div>")
+    parts.append(community_view(community_data or {}, community_status))
 
     # 区台账
     parts.append('<h2>分区台账</h2><div class="ledger">')
@@ -1293,6 +1415,22 @@ def build_page(data: dict, prev_keys: set, built_at: str) -> str:
         + "微信公众号 ID 仅作人工检索入口，不作为自动抓取源。</footer>"
     )
     parts.append("""<script>
+  (() => {
+    const selector = document.getElementById('source-view');
+    const officialView = document.getElementById('official-view');
+    const communityView = document.getElementById('community-view');
+    const setSourceView = view => {
+      const community = view === 'community';
+      officialView.hidden = community;
+      communityView.hidden = !community;
+      selector.value = community ? 'community' : 'official';
+      const url = new URL(window.location.href);
+      url.searchParams.set('view', community ? 'community' : 'official');
+      window.history.replaceState({}, '', url);
+    };
+    selector.addEventListener('change', event => setSourceView(event.target.value));
+    setSourceView(new URLSearchParams(window.location.search).get('view') || 'official');
+  })();
   (() => {
     const links = [...document.querySelectorAll('.page-directory a')];
     const targets = links.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
@@ -1424,13 +1562,18 @@ def main():
         "学校官网健康": crawl_health,
         "区级": 区级,
     }
+    community_data = _read_json_file(DOCS / "community-data.json")
+    community_status = _read_json_file(DOCS / "community-status.json")
 
     DOCS.mkdir(parents=True, exist_ok=True)
     (DOCS / "data.json").write_text(
         json.dumps({"built_at": built_at, "data": data}, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
-    (DOCS / "index.html").write_text(build_page(data, prev_keys, built_at), encoding="utf-8")
+    (DOCS / "index.html").write_text(
+        build_page(data, prev_keys, built_at, community_data, community_status),
+        encoding="utf-8",
+    )
     (DOCS / "feed.xml").write_text(build_feed(data, built_at), encoding="utf-8")
     (DOCS / "school-crawler-health.json").write_text(
         json.dumps(crawl_health, ensure_ascii=False, indent=2),

@@ -1,4 +1,10 @@
 docs/data.json
+docs/community-data.json
+docs/community-status.json
+community/data/community_beijing_clean.json
+community/data/community_beijing_clean.jsonl
+community/data/community_beijing_enriched.json
+community/data/community_beijing_enriched.jsonl
 .worktrees/
 .crawl4ai-local/
 __pycache__/

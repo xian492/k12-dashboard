@@ -529,6 +529,139 @@ class OfficialHomepageTests(unittest.TestCase):
 
 
 class RssFeedTests(unittest.TestCase):
+    def make_data(self):
+        return {
+            "市教委": [],
+            "教育部": [],
+            "市级学校信息": [],
+            "区级": {
+                name: {"政策": [], "动态": None, "通用信息": [], "学校": {}}
+                for name in build.DISTRICTS
+            },
+        }
+
+    def test_page_contains_official_and_community_view_switcher(self):
+        community = {
+            "status": "success",
+            "generated_at": "2026-10-22T12:00:00+08:00",
+            "record_count": 1,
+            "records": [{
+                "title": "社区入学线索",
+                "link": "https://community.example/post/1",
+                "source": "示例社区",
+                "published_at": "2026-10-22",
+                "content_type": "政策与流程",
+                "stage": ["小升初"],
+                "event_type": ["报名"],
+                "district_candidates": ["海淀区"],
+                "school_candidates": [],
+                "verification_status": "待官方核验",
+                "community_notice": True,
+            }],
+        }
+        html = build.build_page(
+            self.make_data(), set(), "2026-10-22 12:00", community_data=community
+        )
+        self.assertIn("官方信源看板", html)
+        self.assertIn("社区信源看板", html)
+        self.assertIn("社区内容仅用于发现线索", html)
+        self.assertIn("社区入学线索", html)
+        self.assertIn("community.example/post/1", html)
+
+    def test_community_view_groups_by_stage_then_content_type(self):
+        community = {
+            "status": "success",
+            "generated_at": "2026-10-22T12:00:00+08:00",
+            "records": [
+                {
+                    "title": "家长经验帖子",
+                    "link": "https://community.example/experience",
+                    "source": "社区甲",
+                    "published_at": "2026-10-22",
+                    "content_type": "家长经验",
+                    "stage": ["小升初"],
+                    "event_type": ["分班"],
+                    "district_candidates": ["海淀区"],
+                },
+                {
+                    "title": "报名政策帖子",
+                    "link": "https://community.example/policy",
+                    "source": "社区乙",
+                    "published_at": "2026-10-21",
+                    "content_type": "政策与流程",
+                    "stage": ["幼升小"],
+                    "event_type": ["报名", "入学"],
+                    "district_candidates": ["朝阳区"],
+                },
+            ],
+        }
+
+        html = build.community_view(community)
+
+        self.assertLess(html.index("幼升小"), html.index("小升初"))
+        self.assertIn('class="community-stage"', html)
+        self.assertIn('class="community-type"', html)
+        self.assertIn("事件标签：分班", html)
+        self.assertIn("事件标签：报名、入学", html)
+        self.assertIn("来源：社区甲", html)
+        self.assertIn("来源：社区乙", html)
+
+    def test_community_view_groups_by_school_phase_with_stage_labels(self):
+        community = {
+            "status": "success",
+            "generated_at": "2026-10-22T12:00:00+08:00",
+            "records": [
+                {
+                    "title": "小升初政策",
+                    "link": "https://community.example/primary",
+                    "source": "社区甲",
+                    "content_type": "政策与流程",
+                    "stage": ["小升初"],
+                    "event_type": ["报名"],
+                },
+                {
+                    "title": "中考经验",
+                    "link": "https://community.example/middle",
+                    "source": "社区乙",
+                    "content_type": "家长经验",
+                    "stage": ["中考"],
+                    "event_type": ["考试"],
+                },
+                {
+                    "title": "高考动态",
+                    "link": "https://community.example/high",
+                    "source": "社区丙",
+                    "content_type": "学校动态",
+                    "stage": ["高考"],
+                    "event_type": ["招生"],
+                },
+            ],
+        }
+
+        html = build.community_view(community)
+
+        self.assertLess(html.index("小学"), html.index("中学"))
+        self.assertLess(html.index("中学"), html.index("高中"))
+        self.assertIn("小学 · 1 条", html)
+        self.assertIn("中学 · 1 条", html)
+        self.assertIn("高中 · 1 条", html)
+        self.assertIn("学段标签：小升初", html)
+        self.assertIn("学段标签：中考", html)
+        self.assertIn("学段标签：高考", html)
+
+    def test_page_tolerates_missing_community_snapshot(self):
+        html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")
+        self.assertIn("社区数据暂不可用", html)
+
+    def test_official_feed_never_contains_community_records(self):
+        data = self.make_data()
+        data["community"] = {
+            "records": [{"title": "不应进入 RSS", "link": "https://community.example/post"}]
+        }
+        feed = build.build_feed(data, "2026-10-22 12:00")
+        self.assertNotIn("不应进入 RSS", feed)
+        self.assertNotIn("community.example", feed)
+
     def test_feed_contains_new_dashboard_sources_without_existing_policy_feeds(self):
         shared = {"title": "区校联合活动", "link": "https://example/shared"}
         data = {

@@ -1,6 +1,6 @@
 # 社区信源采集与分析
 
-这里存放论坛、家长社区、地方生活论坛及其他公开第三方信源的独立采集和分析工作。社区数据不直接并入官网信源看板；只有经过单独核验和明确决策后，才讨论是否提供给其他系统使用。
+这里存放论坛、家长社区、地方生活论坛及其他公开第三方信源的独立采集和分析工作。社区数据通过独立展示快照接入官网看板，但不并入官方信源数据和官方 RSS。
 
 ## 工作边界
 
@@ -47,9 +47,16 @@
 - [结构化分析方案](分析方案.md)：社区采集、规范化、质量分析和报告输出的分阶段方案。
 - [社区信源分析报告](reports/社区信源分析报告-2026-10-22.md)：基于当前巡检结果的结构化判断和下一步采集安排。
 - [社区内容采集报告](reports/社区内容采集报告-2026-10-22.md)：基于 `community/data/` 三个数据文件的正文采集统计、问题分析和清洗计划。
+- [社区样本抽样校验](reports/社区样本抽样校验-2026-10-22.md)：三个北京来源各抽取 5 条有效记录的正文、日期和字段质量复核。
 - [北京社区候选链接 JSON](data/community_beijing.json)：本次 6 个北京入口发现的公开同站链接，共 419 条。
 - [北京社区正文 JSON](data/community_beijing_content.json)：419 条候选页面的正文采集结果，包含成功、登录限制、反爬和失败状态。
 - [北京社区正文 JSONL](data/community_beijing_content.jsonl)：同一批正文结果的逐行格式，适合增量处理。
+- [北京社区清洗 JSON](data/community_beijing_clean.json)：三个优先来源的第一轮清洗结果，共 289 条。
+- [北京社区清洗 JSONL](data/community_beijing_clean.jsonl)：清洗结果的逐行格式，包含有效性和内容类型标记。
+- [北京社区分析 JSON](data/community_beijing_enriched.json)：在清洗结果上补充正文候选、日期可信度、学校/区县候选和去重指纹，共 289 条。
+- [北京社区分析 JSONL](data/community_beijing_enriched.jsonl)：同一批分析结果的逐行格式，适合后续统计和人工抽查。
+- `tools/community_dashboard_export.py`：将分析数据按展示字段白名单导出为 `docs/community-data.json`，不包含完整正文或用户资料。
+- `tools/community_pipeline.py`：按入口上限执行社区刷新，并在失败时保护上一份展示快照。
 - [论坛与社区信源](sources/论坛与社区信源.md)：信源清单、入口和筛选边界。
 - [社区入口巡检报告](reports/community-source-report-2026-10-22.md)：当前只反映入口巡检结果，不是帖子内容库。
 - `tools/community_crawler.py`：北京社区入口的候选链接采集器。
@@ -57,4 +64,6 @@
 
 ## 与官网看板的关系
 
-官网学校和教育部门信源仍由项目根目录的 `tools/build.py`、`docs/index.html`、`docs/feed.xml` 等链路负责。社区目录不参与官网看板构建，也不应把社区传闻直接写入官方动态。
+官网学校和教育部门信源仍由项目根目录的 `tools/build.py`、`docs/index.html`、`docs/feed.xml` 等链路负责。社区链路由 GitHub Actions 每 6 小时调用，社区内容只进入看板的独立社区视图，不进入官方动态和官方 RSS。
+
+首期自动刷新最多访问 6 个北京社区入口页和 420 个详情页。社区刷新失败时保留上一份 `docs/community-data.json` 快照；社区视图显示最近成功状态，官方视图继续正常部署。

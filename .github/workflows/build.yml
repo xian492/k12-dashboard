@@ -43,15 +43,40 @@ jobs:
           python -m pip install -r requirements-crawl4ai.txt
           crawl4ai-setup
 
+      - name: Community refresh
+        continue-on-error: true
+        env:
+          COMMUNITY_RUN: ${{ runner.temp }}/community-refresh
+        run: |
+          set +e
+          mkdir -p "$COMMUNITY_RUN"
+          python community/tools/community_crawler.py \
+            --output "$COMMUNITY_RUN/community_beijing.json"
+          python community/tools/community_pipeline.py \
+            --cap-input "$COMMUNITY_RUN/community_beijing.json" \
+            --cap-output "$COMMUNITY_RUN/community_beijing_capped.json"
+          python community/tools/community_content_crawler.py \
+            --input "$COMMUNITY_RUN/community_beijing_capped.json" \
+            --output "$COMMUNITY_RUN/community_beijing_content.jsonl"
+          python community/tools/community_content_cleaner.py \
+            --input "$COMMUNITY_RUN/community_beijing_content.jsonl" \
+            --output "$COMMUNITY_RUN/community_beijing_clean.jsonl" \
+            --json-output "$COMMUNITY_RUN/community_beijing_clean.json"
+          python community/tools/community_content_enricher.py \
+            --input "$COMMUNITY_RUN/community_beijing_clean.jsonl" \
+            --output "$COMMUNITY_RUN/community_beijing_enriched.jsonl" \
+            --json-output "$COMMUNITY_RUN/community_beijing_enriched.json"
+          DETAIL_PAGES=$(python -c 'import json, os; print(len(json.load(open(os.path.join(os.environ["COMMUNITY_RUN"], "community_beijing_capped.json")))))')
+          python community/tools/community_pipeline.py \
+            --input "$COMMUNITY_RUN/community_beijing_enriched.json" \
+            --output docs/community-data.json \
+            --status-output docs/community-status.json \
+            --entry-pages 6 \
+            --detail-pages-attempted "$DETAIL_PAGES"
+          exit 0
+
       - name: Build dashboard
         run: python tools/build.py
-
-      - name: Commit data snapshot
-        run: |
-          git config user.name "dashboard-bot"
-          git config user.email "actions@github.com"
-          git add docs/
-          git diff --cached --quiet || git commit -m "chore: update dashboard $(date -u +%FT%TZ)"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
