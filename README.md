@@ -1,5 +1,7 @@
 # K12 官方信源看板
 
+**在线地址**：https://xian492.github.io/k12-dashboard/
+
 监控北京 K12 官方信源的自动看板，GitHub Actions 每 6 小时拉取一次，GitHub Pages 托管。
 
 ## 信源（20 路）
