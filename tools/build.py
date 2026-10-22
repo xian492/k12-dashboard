@@ -211,127 +211,223 @@ HTML_HEAD = """<!DOCTYPE html>
 <title>K12 官方信源看板</title>
 <style>
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-  body {{ font-family: -apple-system, "PingFang SC", sans-serif; background: #f5f6f7; color: #1c1e21; padding: 24px; max-width: 1280px; margin: 0 auto; }}
-  header {{ display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }}
-  h1 {{ font-size: 20px; }}
-  .meta {{ font-size: 12px; color: #888; }}
-  h2 {{ font-size: 15px; margin: 28px 0 12px; color: #444; }}
-  h2 .n {{ font-size: 12px; font-weight: normal; color: #888; }}
-  .summary {{ font-size: 13px; color: #555; background: #eef3fb; border-radius: 8px; padding: 10px 14px; margin-bottom: 4px; line-height: 1.8; }}
-  .grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 14px; }}
-  .card {{ background: #fff; border-radius: 10px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }}
-  .card-head {{ display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; border-bottom: 2px solid #2f7d32; padding-bottom: 8px; }}
-  .card-head .name {{ font-weight: 700; font-size: 16px; color: #2f7d32; }}
-  .card-head .sub {{ font-size: 11px; color: #999; }}
-  .count {{ font-size: 11px; color: #2f7d32; background: #e8f5e9; padding: 2px 8px; border-radius: 10px; white-space: nowrap; }}
-  .sec {{ margin-bottom: 10px; }}
-  .sec-t {{ font-size: 12px; color: #666; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }}
-  .sec-t .n-new {{ font-size: 10px; background: #d93025; color: #fff; padding: 0 6px; border-radius: 8px; }}
+  html {{ font-variant-numeric: tabular-nums; }}
+  body {{
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #FBFAF7; color: #212427;
+    padding: 28px 20px 40px; line-height: 1.6;
+  }}
+  .page {{ max-width: 920px; margin: 0 auto; }}
+
+  /* ── 头部 ───────────────────── */
+  header {{ display: flex; justify-content: space-between; align-items: flex-end;
+    padding-bottom: 14px; border-bottom: 2px solid #212427; flex-wrap: wrap; gap: 6px; }}
+  h1 {{ font-family: "Songti SC", "Noto Serif SC", "SimSun", serif;
+    font-size: 22px; font-weight: 700; letter-spacing: .02em; }}
+  .meta {{ font-size: 12px; color: #8a877e; }}
+
+  /* ── 招生季时间轴 ─────────────── */
+  .season {{ margin: 26px 0 6px; }}
+  .track {{
+    position: relative; height: 34px; margin: 10px 2px 0;
+    border-bottom: 1px solid #E3E1D8;
+  }}
+  .hot {{
+    position: absolute; top: 0; bottom: -1px;
+    background: #F0E4DE; opacity: .6;
+  }}
+  .stop {{
+    position: absolute; top: 0; width: 34%; max-width: 120px;
+    transform: translateX(-4px); padding-top: 10px;
+  }}
+  .stop i {{ position: absolute; top: 20px; left: 4px; width: 7px; height: 7px;
+    border-radius: 50%; background: #B23B32; display: block; }}
+  .stop b {{ font-size: 12px; font-weight: 600; color: #212427; display: block; line-height: 1.3; }}
+  .stop em {{ font-style: normal; font-size: 11px; color: #8a877e; }}
+  .today {{
+    position: absolute; top: 6px; text-align: center;
+    animation: mark .5s ease-out .25s backwards;
+  }}
+  .today b {{
+    font-size: 11px; color: #B23B32; font-weight: 600; display: block;
+  }}
+  .today i {{
+    position: absolute; left: -2px; top: 17px; width: 5px; height: 5px;
+    border: 1.5px solid #B23B32; border-radius: 50%; background: #FBFAF7;
+    display: block;
+  }}
+  @keyframes mark {{ from {{ opacity: 0; transform: translateY(4px); }} }}
+  .season-note {{ font-size: 12px; color: #8a877e; margin-top: 8px; }}
+
+  /* ── 区块标题 ────────────────── */
+  h2 {{
+    font-family: "Songti SC", "Noto Serif SC", serif;
+    font-size: 17px; margin: 34px 0 4px; padding-bottom: 4px;
+    border-bottom: 1px solid #B23B32; width: fit-content;
+  }}
+  h2::after {{ content: ""; }}
+
+  /* ── 市级头条 ────────────────── */
+  .city {{ display: grid; grid-template-columns: 1fr 1fr; gap: 0 36px; margin-top: 14px; }}
+  @media (max-width: 680px) {{ .city {{ grid-template-columns: 1fr; }} }}
+  .city h3 {{ font-size: 12px; font-weight: 600; color: #31586E; margin-bottom: 2px; }}
+  .headline {{ font-family: "Songti SC", "Noto Serif SC", serif;
+    font-size: 15.5px; line-height: 1.5; margin: 4px 0 10px; }}
+  .headline a {{ color: #212427; text-decoration: none; }}
+  .headline a:hover {{ color: #B23B32; }}
+  .headline .n-new {{ margin-right: 6px; }}
+
+  /* ── 条目 ─────────────────── */
   ul {{ list-style: none; }}
-  li {{ font-size: 13px; line-height: 1.55; border-bottom: 1px solid #f0f0f0; padding: 5px 0; display: flex; gap: 6px; align-items: baseline; }}
+  li {{ font-size: 13px; padding: 6px 0; border-bottom: 1px solid #EDEBE3;
+    display: flex; gap: 8px; align-items: baseline; }}
   li:last-child {{ border-bottom: none; }}
-  li a {{ color: #1a5fb4; text-decoration: none; flex: 1; }}
-  li a:hover {{ text-decoration: underline; }}
-  .tag {{ font-size: 10px; padding: 1px 6px; border-radius: 8px; background: #f1f3f4; color: #5f6368; white-space: nowrap; }}
-  .tag.t入学政策 {{ background: #e8f0fe; color: #1a5fb4; }}
-  .tag.t招生简章 {{ background: #fef7e0; color: #b06000; }}
-  .tag.t审核细则 {{ background: #e6f4ea; color: #137333; }}
-  .tag.t入学问答 {{ background: #f3e8fd; color: #7627bb; }}
-  .new {{ font-size: 10px; background: #d93025; color: #fff; padding: 1px 6px; border-radius: 8px; }}
-  li.empty {{ color: #999; }}
-  details {{ margin-top: 2px; }}
-  details summary {{ font-size: 12px; color: #888; cursor: pointer; padding: 4px 0; }}
-  .citycard {{ border-left: 3px solid #1a5fb4; }}
-  footer {{ margin-top: 32px; font-size: 12px; color: #999; text-align: center; line-height: 1.8; }}
+  li a {{ color: #212427; text-decoration: none; flex: 1; }}
+  li a:hover {{ color: #31586E; text-decoration: underline; text-underline-offset: 3px; }}
+  .kind {{ font-size: 11px; color: #31586E; white-space: nowrap; }}
+  .date {{ font-size: 11px; color: #a5a29a; white-space: nowrap; }}
+  .n-new {{
+    font-size: 10px; font-weight: 600; background: #B23B32; color: #FBFAF7;
+    padding: 0 5px; border-radius: 2px; white-space: nowrap; flex: none;
+  }}
+  li.empty {{ color: #a5a29a; border: none; }}
+
+  /* ── 区台账 ─────────────────── */
+  .ledger {{ margin-top: 14px; border-top: 1px solid #212427; }}
+  details.row {{ border-bottom: 1px solid #E3E1D8; }}
+  details.row summary {{
+    list-style: none; cursor: pointer; padding: 11px 2px;
+    display: grid; grid-template-columns: 84px 44px 1fr auto;
+    gap: 12px; align-items: baseline;
+  }}
+  details.row summary::-webkit-details-marker {{ display: none; }}
+  details.row summary:hover {{ background: #F3F1EC; }}
+  .d-name {{ font-family: "Songti SC", "Noto Serif SC", serif;
+    font-weight: 700; font-size: 15px; }}
+  .d-count {{ font-size: 12px; color: #8a877e; text-align: right; }}
+  .d-latest {{ font-size: 12.5px; color: #6b6862;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }}
+  .d-side {{ font-size: 11px; color: #31586E; white-space: nowrap; display: flex; gap: 6px; align-items: baseline; }}
+  .row-body {{ padding: 2px 2px 14px 96px; }}
+  @media (max-width: 680px) {{
+    details.row summary {{ grid-template-columns: 72px 1fr auto; }}
+    .d-count {{ display: none; }}
+    .d-latest {{ grid-column: 1 / -1; white-space: normal; }}
+    .row-body {{ padding-left: 2px; }}
+  }}
+  .school-sec {{ margin-top: 12px; }}
+  .school-sec h4 {{ font-size: 12px; font-weight: 600; color: #31586E; margin-bottom: 2px; }}
+  .open-hint {{ font-size: 11px; color: #a5a29a; padding: 2px 2px 0; }}
+
+  footer {{ margin-top: 40px; padding-top: 12px; border-top: 1px solid #E3E1D8;
+    font-size: 12px; color: #a5a29a; line-height: 1.9; }}
+  @media (prefers-reduced-motion: reduce) {{ .today {{ animation: none; }} }}
 </style>
 </head>
 <body>
+<div class="page">
 <header>
-  <h1>K12 官方信源看板</h1>
-  <div class="meta">构建时间：{built_at} ｜ 每 6 小时自动更新</div>
+  <h1>北京小升初 · 官方信源台账</h1>
+  <div class="meta">构建于 {built_at}，每 6 小时自动更新</div>
 </header>
-<div class="summary">{summary}</div>
+
+<div class="season">
+  <div class="track">
+    <div class="hot" style="left:31%;width:28%"></div>
+    <div class="stop" style="left:31%"><i></i><b>市政策</b><em>4 月中</em></div>
+    <div class="stop" style="left:36%"><i></i><b>区细则</b><em>4 月底</em></div>
+    <div class="stop" style="left:42%"><i></i><b>信息采集</b><em>5 月</em></div>
+    <div class="stop" style="left:47%"><i></i><b>派位</b><em>6 月</em></div>
+    <div class="stop" style="left:55%"><i></i><b>录取</b><em>7 月</em></div>
+    <div class="today" style="left:{today_pct:.0f}%"><b>今天</b><i></i></div>
+  </div>
+  <div class="season-note">{season_note}</div>
+</div>
 """
 
 
 def item_li(it: dict, prev_keys: set) -> str:
     is_new = (it.get("id") or it.get("link")) not in prev_keys
-    new = '<span class="new">NEW</span>' if is_new else ""
-    tag = it.get("tag", "")
+    new = '<span class="n-new">NEW</span>' if is_new else ""
+    kind = it.get("tag", "")
+    date = f'<span class="date">{it["date"]}</span>' if it.get("date") else ""
     return (
-        f'<li>{new}<span class="tag t{tag}">{tag}</span>'
-        f'<a href="{it["link"]}" target="_blank">{it["title"]}</a></li>'
+        f'<li>{new}<span class="kind">{kind}</span>'
+        f'<a href="{it["link"]}" target="_blank">{it["title"]}</a>{date}</li>'
     )
 
 
-def section(title: str, items: list, prev_keys: set, max_show: int = 4) -> str:
-    """一个小节：标题 + 最多 max_show 条 + 折叠剩余。"""
+def section(title: str, items: list, prev_keys: set, max_show: int = 5) -> str:
     if not items:
-        return f'<div class="sec"><div class="sec-t">{title}</div><ul><li class="empty">暂无数据</li></ul></div>'
-    n_new = sum(1 for it in items if (it.get("id") or it.get("link")) not in prev_keys)
-    new_badge = f'<span class="n-new">{n_new} 新</span>' if n_new else ""
+        return f'<div class="school-sec"><h4>{title}</h4><ul><li class="empty">暂无数据</li></ul></div>'
     top_lis = "".join(item_li(it, prev_keys) for it in items[:max_show])
     more = ""
     if len(items) > max_show:
         rest_lis = "".join(item_li(it, prev_keys) for it in items[max_show:])
-        more = f'<details><summary>展开其余 {len(items) - max_show} 条</summary><ul>{rest_lis}</ul></details>'
-    return (
-        f'<div class="sec"><div class="sec-t">{title} · {len(items)} 条 {new_badge}</div>'
-        f'<ul>{top_lis}</ul>{more}</div>'
-    )
+        more = f'<li style="display:block"><details><summary class="open-hint" style="cursor:pointer">其余 {len(items) - max_show} 条</summary><ul style="margin-top:4px">{rest_lis}</ul></details></li>'
+    return f'<div class="school-sec"><h4>{title} · {len(items)} 条</h4><ul>{top_lis}{more}</ul></div>'
 
 
 def build_page(data: dict, prev_keys: set, built_at: str) -> str:
-    parts = [HTML_HEAD.format(built_at=built_at, summary="")]
-
-    # 摘要
     jw, moe = data["市教委"], data["教育部"]
-    d_online = sum(1 for d in data["区级"].values() if d["政策"])
-    n_new = sum(
-        1
-        for d in data["区级"].values()
-        for sec_list in ([d["政策"]] + [s for sch in d["学校"].values() for s in sch.values()])
-        for it in sec_list
-        if (it.get("id") or it.get("link")) not in prev_keys
-    )
-    summary = (
-        f"<b>总览</b>：市级 2 路 · 区级 {d_online}/18 在线 · 学校 {sum(len(d['学校']) for d in data['区级'].values())} 所 ·"
-        f" 本次新增 <b>{n_new}</b> 条。市级最新：<b>{jw[0]['title'][:30]}</b>"
-        if jw else "市级拉取失败"
-    )
-    parts[0] = HTML_HEAD.format(built_at=built_at, summary=summary)
 
-    # 市级
-    parts.append('<h2>市级 <span class="n">市教委 · 教育部</span></h2><div class="grid">')
-    parts.append(
-        f'<div class="card citycard"><div class="card-head"><span class="name">北京市教委</span><span class="count">{len(jw)} 条</span></div>'
-        + section("通知公告", jw, prev_keys, max_show=6) + "</div>"
-    )
-    parts.append(
-        f'<div class="card citycard"><div class="card-head"><span class="name">教育部</span><span class="count">{len(moe)} 条</span></div>'
-        + section("公告公示", moe, prev_keys, max_show=6) + "</div>"
-    )
+    # 时间轴：今天在学年周期里的位置（1月=0%，12月≈92%）
+    now = datetime.now(timezone(timedelta(hours=8)))
+    today_pct = (now.month + now.day / 31) / 12 * 100
+    if 8 <= now.month <= 12 or now.month <= 3:
+        season_note = "当前处于招生季空窗期。政策集中发布于每年 4 至 7 月，届时本页各区行的更新徽章即为信号。"
+    else:
+        season_note = "招生季进行中，政策更新频繁，注意各区 NEW 标记。"
+
+    parts = [HTML_HEAD.format(built_at=built_at, today_pct=today_pct, season_note=season_note)]
+
+    # 市级头条
+    parts.append('<h2>市级</h2><div class="city">')
+    for name, items in (("北京市教委 · 通知公告", jw), ("教育部 · 公告公示", moe)):
+        if items:
+            top = items[0]
+            top_new = '<span class="n-new">NEW</span>' if top["link"] not in prev_keys else ""
+            parts.append(
+                f'<div><h3>{name} · {len(items)} 条</h3>'
+                f'<div class="headline">{top_new}<a href="{top["link"]}" target="_blank">{top["title"]}</a></div>'
+                f'<ul>{"".join(item_li(it, prev_keys) for it in items[1:6])}</ul></div>'
+            )
+        else:
+            parts.append(f'<div><h3>{name}</h3><ul><li class="empty">拉取失败</li></ul></div>')
     parts.append("</div>")
 
-    # 区级（每区一卡，政策+学校合并）
-    parts.append('<h2>分区 <span class="n">区招生政策 + 该区学校</span></h2><div class="grid">')
+    # 区台账
+    parts.append('<h2>分区台账</h2><div class="ledger">')
     for 区名, fid in DISTRICTS.items():
         d = data["区级"][区名]
-        card = f'<div class="card"><div class="card-head"><span class="name">{区名}</span><span class="sub">{len(d["政策"])} 政策 · {len(d["学校"])} 校</span></div>'
-        card += section("区招生政策", d["政策"], prev_keys, max_show=3)
-        for 校名, 栏目 in d["学校"].items():
+        policies = d["政策"]
+        schools = d["学校"]
+        n_new = sum(1 for it in policies if (it.get("id") or it.get("link")) not in prev_keys)
+        latest = policies[0]["title"] if policies else "（无数据）"
+        school_label = f"{len(schools)} 校" if schools else ""
+        new_badge = f'<span class="n-new">{n_new} 新</span>' if n_new else ""
+        parts.append(
+            f'<details class="row"{" open" if (schools or n_new) else ""}><summary>'
+            f'<span class="d-name">{区名}</span>'
+            f'<span class="d-count">{len(policies)} 条</span>'
+            f'<span class="d-latest">{latest}</span>'
+            f'<span class="d-side">{new_badge}{school_label}</span>'
+            f"</summary>"
+            f'<div class="row-body">'
+            + section("区招生政策", policies, prev_keys, max_show=4)
+        )
+        for 校名, 栏目 in schools.items():
             for 栏名, items in 栏目.items():
-                card += section(f"{校名} · {栏名}", items, prev_keys, max_show=3)
-        card += "</div>"
-        parts.append(card)
+                parts.append(section(f"{校名} · {栏名}", items, prev_keys, max_show=4))
+        parts.append("</div></details>")
     parts.append("</div>")
 
     parts.append(
-        '<footer>信源：yjrx.bjedu.cn（18区政策）｜ jw.beijing.gov.cn ｜ moe.gov.cn ｜ '
+        "<footer>信源：yjrx.bjedu.cn（18 区招生政策）｜ jw.beijing.gov.cn ｜ moe.gov.cn ｜ "
         "rdfz.cn ｜ qhfz.edu.cn ｜ bjsdfz.com ｜ cnuhs.cn<br>"
-        "学校官网能自动化采集的有限（多数学校无独立官网或动态渲染），公众号渠道走 wewe-rss 另行接入</footer>"
+        "多数学校无独立官网或页面动态渲染，公众号渠道经 wewe-rss 另行接入，不在本台账。</footer>"
     )
-    return "".join(parts) + "</body></html>"
+    return "".join(parts) + "</div></body></html>"
 
 
 def main():
