@@ -163,6 +163,37 @@ SCHOOL_SPECS["石景山区"] = [
         pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{6,})</a>',
         base="https://www.bndssjs.cn/"))]),
 ]
+SCHOOL_SPECS["通州区"] = [
+    ("北京学校", [("校园动态", dict(
+        url="https://www.bjs.net.cn/",
+        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{8,})</a>',
+        base="https://www.bjs.net.cn/",
+        exclude=r"首页|学校简介|联系我们|友情链接"))]),
+    ("人大附中通州校区", [("校园动态", dict(
+        url="https://rdfztzxq.cn/",
+        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{8,})</a>',
+        base="https://rdfztzxq.cn/",
+        exclude=r"首页|学校简介|联系我们|友情链接"))]),
+]
+SCHOOL_SPECS["顺义区"] = [
+    ("北京市顺义区第一中学", [("校园动态", dict(
+        url="https://bjsyyz.cn/",
+        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{8,})</a>',
+        base="https://bjsyyz.cn/",
+        exclude=r"首页|学校简介|联系我们|友情链接"))]),
+]
+SCHOOL_SPECS["昌平区"] = [
+    ("北京市昌平区第一中学", [("校园动态", dict(
+        url="http://www.cpyz.org.cn/",
+        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{8,})</a>',
+        base="http://www.cpyz.org.cn/",
+        exclude=r"首页|学校简介|联系我们|友情链接"))]),
+    ("北京市昌平区第二中学", [("校园动态", dict(
+        url="https://bjcpez.com.cn/AdmissionInformation",
+        pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>(?P<title>[^<]{8,})</a>',
+        base="https://bjcpez.com.cn/",
+        exclude=r"首页|学校简介|联系我们|友情链接"))]),
+]
 
 # 学校目录：先保证每个区有代表性学校入口；有稳定官网解析规则的学校
 # 继续使用 SCHOOL_SPECS，只有目录入口的学校会显示“动态待接入”。
