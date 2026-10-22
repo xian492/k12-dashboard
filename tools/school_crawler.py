@@ -178,10 +178,14 @@ async def probe_school(crawler, spec: dict) -> dict:
         raw_links = getattr(crawl_result, "links", {}) or {}
         if isinstance(raw_links, dict):
             raw_links = raw_links.get("internal", [])
+        allowed_hosts = {host.lower() for host in spec.get("allowed_hosts", set())}
+        final_host = urlparse(result["final_url"]).netloc.lower()
+        if final_host:
+            allowed_hosts.add(final_host)
         links = extract_internal_links(
             raw_links,
             result["final_url"],
-            set(spec.get("allowed_hosts", set())),
+            allowed_hosts,
         )
         result["candidate_sections"] = rank_section_candidates(links)[:5]
         result["items_found"] = len(result["candidate_sections"])

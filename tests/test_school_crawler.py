@@ -123,7 +123,7 @@ class SchoolCrawlerAsyncTests(unittest.TestCase):
                     "school": "测试学校",
                     "district": "海淀区",
                     "homepage": "https://school.example.edu.cn/",
-                    "allowed_hosts": {"school.example.edu.cn", "new.school.example.edu.cn"},
+                    "allowed_hosts": {"school.example.edu.cn"},
                 },
             )
         )
