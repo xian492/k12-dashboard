@@ -1,10 +1,33 @@
+# ---- 本地环境（不入库）----
+.venv/
+.uv-python/
+.crawl4ai-local/
+__pycache__/
+*.pyc
+
+# superpowers 会话/任务状态（工具私有）
+.superpowers/
+
+# ---- 可再生中间产物（脚本重跑即可生成，不入库）----
+# 官方看板构建产物：由 tools/build.py / local_refresh.sh 生成
 docs/data.json
 docs/community-data.json
 docs/community-status.json
+docs/school-crawler-health.json
+docs/feed.xml
+
+# 社区链路中间文件：由 community/tools/*.py 依次生成
+community/data/community_beijing.json
+community/data/community_beijing_capped.json
+community/data/community_beijing_content.json
+community/data/community_beijing_content.jsonl
 community/data/community_beijing_clean.json
 community/data/community_beijing_clean.jsonl
 community/data/community_beijing_enriched.json
 community/data/community_beijing_enriched.jsonl
-.worktrees/
-.crawl4ai-local/
-__pycache__/
+community/data/community_forum_enriched.json
+community/data/community_forum_enriched.jsonl
+community/data/community_merged_enriched.json
+
+# 本地刷新日志
+tools/*.log

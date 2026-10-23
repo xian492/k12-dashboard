@@ -1,18 +1,11 @@
 name: Build dashboard
 
+# CI 不再抓取：GitHub 托管 runner 在海外，区教委与多数学校站拒境外流量，
+# 抓取结果大面积空缺（实测区在线 0/18）。信息抓取只在本地跑
+# tools/local_refresh.sh（launchd 定时），产物提交进 docs/ 后由
+# frontend-build.yml 部署。此 workflow 仅保留手动触发，作为应急通道：
+# 从海外能抓到的（市教委、教育部）仍可用，但区级/学校数据会缺失。
 on:
-  push:
-    branches:
-      - main
-    # 纯前端改动走 frontend-build.yml 轻量部署，不触发全量抓取。
-    paths-ignore:
-      - docs/**
-      - tools/build.py
-      - tests/**
-      - README.md
-      - .github/workflows/frontend-build.yml
-  schedule:
-    - cron: '0 */6 * * *'  # 每 6 小时（UTC）：北京 02/08/14/20 点
   workflow_dispatch: {}     # 手动触发
 
 permissions:

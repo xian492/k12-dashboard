@@ -44,21 +44,28 @@
 
 ## 当前文件
 
+文档与报告（入库）：
+
 - [结构化分析方案](分析方案.md)：社区采集、规范化、质量分析和报告输出的分阶段方案。
+- [论坛与社区信源](sources/论坛与社区信源.md)：信源清单、入口和筛选边界。
 - [社区信源分析报告](reports/社区信源分析报告-2026-10-22.md)：基于当前巡检结果的结构化判断和下一步采集安排。
 - [社区内容采集报告](reports/社区内容采集报告-2026-10-22.md)：基于 `community/data/` 三个数据文件的正文采集统计、问题分析和清洗计划。
 - [社区样本抽样校验](reports/社区样本抽样校验-2026-10-22.md)：三个北京来源各抽取 5 条有效记录的正文、日期和字段质量复核。
-- [北京社区候选链接 JSON](data/community_beijing.json)：本次 6 个北京入口发现的公开同站链接，共 419 条。
-- [北京社区正文 JSON](data/community_beijing_content.json)：419 条候选页面的正文采集结果，包含成功、登录限制、反爬和失败状态。
-- [北京社区正文 JSONL](data/community_beijing_content.jsonl)：同一批正文结果的逐行格式，适合增量处理。
-- [北京社区清洗 JSON](data/community_beijing_clean.json)：三个优先来源的第一轮清洗结果，共 289 条。
-- [北京社区清洗 JSONL](data/community_beijing_clean.jsonl)：清洗结果的逐行格式，包含有效性和内容类型标记。
-- [北京社区分析 JSON](data/community_beijing_enriched.json)：在清洗结果上补充正文候选、日期可信度、学校/区县候选和去重指纹，共 289 条。
-- [北京社区分析 JSONL](data/community_beijing_enriched.jsonl)：同一批分析结果的逐行格式，适合后续统计和人工抽查。
-- [论坛帖子 JSONL](data/community_forum_posts.jsonl)：论坛爬虫（`tools/community_forum_crawler.py`）采集的帖子与评论，覆盖芍药居、广州妈妈网、回龙观（正文+评论）与水木、篱笆（列表元数据），按 URL 断点续采。
-- [论坛分析 JSON](data/community_forum_enriched.json)：`tools/community_forum_adapter.py` 将论坛帖子适配为看板管线记录（多城市区县、广告排除、老帖护栏）。
-- [合并分析 JSON](data/community_merged_enriched.json)：北京既有样本与论坛记录合并后的看板导出输入。
-- `tools/community_dashboard_export.py`：将分析数据按展示字段白名单导出为 `docs/community-data.json`，不包含完整正文或用户资料。
+
+数据（`data/` 下的中间 JSON 均为可再生产物，不入库；`local_refresh.sh` 重跑即生成）：
+
+- [论坛帖子 JSONL](data/community_forum_posts.jsonl)：**唯一入库的数据文件**——论坛爬虫（`tools/community_forum_crawler.py`）采集的帖子与评论，覆盖芍药居、广州妈妈网、回龙观（正文+评论）与水木、篱笆（列表元数据）。入库原因：重抓会被站点限流（gzmama 曾触发 403），不可简单再生；按 URL 断点续采。
+- 北京社区候选/正文/清洗/分析各 JSON（`community_beijing*.json[l]`）：采集→清洗→富集链路的中间产物，不入库。
+- 论坛分析 JSON（`community_forum_enriched.json[l]`）、合并分析 JSON（`community_merged_enriched.json`）：适配与合并产物，不入库。
+
+工具（入库）：
+
+- `tools/community_crawler.py`：社区入口链接发现。
+- `tools/community_content_crawler.py`：详情页正文采集。
+- `tools/community_content_cleaner.py` / `community_content_enricher.py`：清洗与富集。
+- `tools/community_forum_crawler.py`：多城市论坛爬虫（discuz/hlgnet/newsmth/liba 适配器）。
+- `tools/community_forum_adapter.py`：论坛帖子适配为看板管线记录（多城市区县、广告排除、老帖护栏）。
+- `tools/community_dashboard_export.py`：按展示字段白名单导出 `docs/community-data.json`，不包含完整正文或用户资料。
 - `tools/community_pipeline.py`：按入口上限执行社区刷新，并在失败时保护上一份展示快照。
 - [论坛与社区信源](sources/论坛与社区信源.md)：信源清单、入口和筛选边界。
 - [社区入口巡检报告](reports/community-source-report-2026-10-22.md)：当前只反映入口巡检结果，不是帖子内容库。

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.k12-dashboard.local-refresh</string>
+    <key>Comment</key>
+    <string>K12 看板本地定时刷新：抓取官方信源与社区数据（含论坛增量），重建 docs/ 并提交推送，由 frontend-build.yml 部署到 Pages。抓取在本地跑的原因见 tools/local_refresh.sh 头部注释。</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/xian/Dev/k12-dashboard/tools/local_refresh.sh</string>
+    </array>
+    <!-- 北京时间 02/08/14/20 点过 10 分，避开整点；机器需处于开机状态 -->
+    <key>StartCalendarInterval</key>
+    <array>
+        <dict><key>Hour</key><integer>2</integer><key>Minute</key><integer>10</integer></dict>
+        <dict><key>Hour</key><integer>8</integer><key>Minute</key><integer>10</integer></dict>
+        <dict><key>Hour</key><integer>14</integer><key>Minute</key><integer>10</integer></dict>
+        <dict><key>Hour</key><integer>20</integer><key>Minute</key><integer>10</integer></dict>
+    </array>
+    <key>StandardOutPath</key>
+    <string>/Users/xian/Library/Logs/k12-dashboard-refresh.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/xian/Library/Logs/k12-dashboard-refresh.log</string>
+</dict>
+</plist>
