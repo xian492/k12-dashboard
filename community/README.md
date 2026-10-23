@@ -55,6 +55,9 @@
 - [北京社区清洗 JSONL](data/community_beijing_clean.jsonl)：清洗结果的逐行格式，包含有效性和内容类型标记。
 - [北京社区分析 JSON](data/community_beijing_enriched.json)：在清洗结果上补充正文候选、日期可信度、学校/区县候选和去重指纹，共 289 条。
 - [北京社区分析 JSONL](data/community_beijing_enriched.jsonl)：同一批分析结果的逐行格式，适合后续统计和人工抽查。
+- [论坛帖子 JSONL](data/community_forum_posts.jsonl)：论坛爬虫（`tools/community_forum_crawler.py`）采集的帖子与评论，覆盖芍药居、广州妈妈网、回龙观（正文+评论）与水木、篱笆（列表元数据），按 URL 断点续采。
+- [论坛分析 JSON](data/community_forum_enriched.json)：`tools/community_forum_adapter.py` 将论坛帖子适配为看板管线记录（多城市区县、广告排除、老帖护栏）。
+- [合并分析 JSON](data/community_merged_enriched.json)：北京既有样本与论坛记录合并后的看板导出输入。
 - `tools/community_dashboard_export.py`：将分析数据按展示字段白名单导出为 `docs/community-data.json`，不包含完整正文或用户资料。
 - `tools/community_pipeline.py`：按入口上限执行社区刷新，并在失败时保护上一份展示快照。
 - [论坛与社区信源](sources/论坛与社区信源.md)：信源清单、入口和筛选边界。

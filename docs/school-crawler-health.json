@@ -2,13 +2,12 @@
   {
     "school": "北京市第二中学",
     "district": "东城区",
-    "homepage": "https://www.bjdch.gov.cn/zwgk/sjgk/sjxz/jyws/202303/t20230302_3030150.html",
-    "final_url": "https://www.bjdch.gov.cn/zwgk/sjgk/sjxz/jyws/202303/t20230302_3030150.html",
-    "status": "success",
+    "homepage": "",
+    "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "",
-    "checked_at": "2026-10-22T09:01:56.664382+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.644687+00:00"
   },
   {
     "school": "北京汇文中学",
@@ -18,19 +17,18 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"http://www.pka.edu.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:01:56.673316+00:00"
+    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_CONNECTION_TIMED_OUT at http://www.pka.edu.cn/\nCall log:\n  - navigating to \"http://www.pka.edu.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
+    "checked_at": "2026-10-23T06:06:33.644706+00:00"
   },
   {
     "school": "北京市第五中学",
     "district": "东城区",
-    "homepage": "https://www.bjdch.gov.cn/zwgk/sjgk/sjxz/jyws/202303/t20230302_3030150.html",
-    "final_url": "https://www.bjdch.gov.cn/zwgk/sjgk/sjxz/jyws/202303/t20230302_3030150.html",
-    "status": "success",
+    "homepage": "",
+    "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "",
-    "checked_at": "2026-10-22T09:01:56.682091+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.653482+00:00"
   },
   {
     "school": "北京市第二中学分校",
@@ -41,7 +39,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:01:57.818217+00:00"
+    "checked_at": "2026-10-23T06:06:33.653492+00:00"
   },
   {
     "school": "北京市第五中学分校",
@@ -51,8 +49,8 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"http://www.bjwzfx.com.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:01:57.858979+00:00"
+    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_CONNECTION_TIMED_OUT at http://www.bjwzfx.com.cn/\nCall log:\n  - navigating to \"http://www.bjwzfx.com.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
+    "checked_at": "2026-10-23T06:06:33.666361+00:00"
   },
   {
     "school": "北京市文汇中学",
@@ -63,7 +61,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:02:03.568320+00:00"
+    "checked_at": "2026-10-23T06:06:49.763361+00:00"
   },
   {
     "school": "北京市第十一中学分校",
@@ -74,7 +72,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Blocked by anti-bot protection: HTTP 403 with HTML content (144 bytes)",
-    "checked_at": "2026-10-22T09:02:04.938895+00:00"
+    "checked_at": "2026-10-23T06:06:51.253276+00:00"
   },
   {
     "school": "北京市第二十二中学",
@@ -85,18 +83,18 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://www.bj22z.com/\nCall log:\n  - navigating to \"http://www.bj22z.com/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:02:06.424425+00:00"
+    "checked_at": "2026-10-23T06:06:51.984836+00:00"
   },
   {
     "school": "北京市第一六六中学",
     "district": "东城区",
     "homepage": "http://www.bj166z.cn/",
     "final_url": "http://www.bj166z.cn/",
-    "status": "failed",
+    "status": "success",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"http://www.bj166z.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:02:06.491572+00:00"
+    "error": "",
+    "checked_at": "2026-10-23T06:06:52.262633+00:00"
   },
   {
     "school": "北京市东直门中学",
@@ -107,7 +105,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Blocked by anti-bot protection: HTTP 403 with near-empty response (74 bytes)",
-    "checked_at": "2026-10-22T09:02:26.874935+00:00"
+    "checked_at": "2026-10-23T06:06:54.914052+00:00"
   },
   {
     "school": "北京市第六十五中学",
@@ -123,7 +121,7 @@
     ],
     "items_found": 1,
     "error": "",
-    "checked_at": "2026-10-22T09:02:27.811411+00:00"
+    "checked_at": "2026-10-23T06:06:56.029431+00:00"
   },
   {
     "school": "北京市第二十五中学",
@@ -143,7 +141,7 @@
     ],
     "items_found": 2,
     "error": "",
-    "checked_at": "2026-10-22T09:02:27.954764+00:00"
+    "checked_at": "2026-10-23T06:06:59.333042+00:00"
   },
   {
     "school": "北京市第一七一中学",
@@ -154,7 +152,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Blocked by anti-bot protection: HTTP 403 with HTML content (160 bytes)",
-    "checked_at": "2026-10-22T09:02:32.594625+00:00"
+    "checked_at": "2026-10-23T06:07:02.220894+00:00"
   },
   {
     "school": "北京市第五十五中学",
@@ -178,7 +176,7 @@
     ],
     "items_found": 3,
     "error": "",
-    "checked_at": "2026-10-22T09:02:33.023113+00:00"
+    "checked_at": "2026-10-23T06:07:02.459061+00:00"
   },
   {
     "school": "中央工艺美术学院附属中学",
@@ -189,7 +187,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Blocked by anti-bot protection: Structural: minimal_text on small page (148 bytes, 23 chars visible)",
-    "checked_at": "2026-10-22T09:02:33.044887+00:00"
+    "checked_at": "2026-10-23T06:07:04.494428+00:00"
   },
   {
     "school": "北京市广渠门中学",
@@ -199,8 +197,8 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "Blocked by anti-bot protection: HTTP 403 with HTML content (130740 bytes)",
-    "checked_at": "2026-10-22T09:02:34.500657+00:00"
+    "error": "Blocked by anti-bot protection: HTTP 403 with HTML content (130729 bytes)",
+    "checked_at": "2026-10-23T06:07:05.715245+00:00"
   },
   {
     "school": "北京市第五十中学",
@@ -211,7 +209,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Blocked by anti-bot protection: Structural: minimal_text, no_content_elements, script_heavy_shell (743 bytes, 0 chars visible)",
-    "checked_at": "2026-10-22T09:02:35.604597+00:00"
+    "checked_at": "2026-10-23T06:07:07.923927+00:00"
   },
   {
     "school": "北京市景山学校",
@@ -222,7 +220,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://www.bjjsschool.net/\nCall log:\n  - navigating to \"http://www.bjjsschool.net/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:02:35.932471+00:00"
+    "checked_at": "2026-10-23T06:07:08.526399+00:00"
   },
   {
     "school": "北京市第四中学",
@@ -233,7 +231,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:02:36.009570+00:00"
+    "checked_at": "2026-10-23T06:07:08.604669+00:00"
   },
   {
     "school": "北京市第八中学",
@@ -265,7 +263,7 @@
     ],
     "items_found": 5,
     "error": "",
-    "checked_at": "2026-10-22T09:02:36.329075+00:00"
+    "checked_at": "2026-10-23T06:07:09.493594+00:00"
   },
   {
     "school": "北京市第十五中学",
@@ -276,7 +274,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Blocked by anti-bot protection: Structural: minimal_text on small page (164 bytes, 23 chars visible)",
-    "checked_at": "2026-10-22T09:02:36.547968+00:00"
+    "checked_at": "2026-10-23T06:07:49.051413+00:00"
   },
   {
     "school": "北京市第十三中学分校",
@@ -287,7 +285,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:02:36.800075+00:00"
+    "checked_at": "2026-10-23T06:07:49.353754+00:00"
   },
   {
     "school": "北师大附属实验中学分校",
@@ -299,11 +297,15 @@
       {
         "title": "招生工作",
         "url": "http://www.sdsz.com.cn/lists/zsxx.html"
+      },
+      {
+        "title": "北京师范大学附属实验中学 办学一百一十周年校庆公告",
+        "url": "http://www.sdsz.com.cn/view.html?id=ovrunm9"
       }
     ],
-    "items_found": 1,
+    "items_found": 2,
     "error": "",
-    "checked_at": "2026-10-22T09:02:36.819664+00:00"
+    "checked_at": "2026-10-23T06:07:49.874346+00:00"
   },
   {
     "school": "北京市三帆中学",
@@ -331,7 +333,7 @@
     ],
     "items_found": 4,
     "error": "",
-    "checked_at": "2026-10-22T09:02:38.172214+00:00"
+    "checked_at": "2026-10-23T06:07:52.346450+00:00"
   },
   {
     "school": "北京市第一六一中学",
@@ -342,7 +344,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:02:39.683864+00:00"
+    "checked_at": "2026-10-23T06:07:56.824545+00:00"
   },
   {
     "school": "北京市第一五六中学",
@@ -366,7 +368,7 @@
     ],
     "items_found": 3,
     "error": "",
-    "checked_at": "2026-10-22T09:02:45.298784+00:00"
+    "checked_at": "2026-10-23T06:07:58.332169+00:00"
   },
   {
     "school": "北京市第三十五中学",
@@ -376,8 +378,8 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "Blocked by anti-bot protection: Structural: no_content_elements on small page (1422 bytes, 106 chars visible)",
-    "checked_at": "2026-10-22T09:02:47.111169+00:00"
+    "error": "Blocked by anti-bot protection: Structural: no_content_elements on small page (1429 bytes, 113 chars visible)",
+    "checked_at": "2026-10-23T06:07:58.995278+00:00"
   },
   {
     "school": "北京市铁路第二中学",
@@ -409,7 +411,7 @@
     ],
     "items_found": 5,
     "error": "",
-    "checked_at": "2026-10-22T09:02:47.815404+00:00"
+    "checked_at": "2026-10-23T06:08:00.098002+00:00"
   },
   {
     "school": "北京市第五十六中学",
@@ -420,7 +422,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:02:50.661243+00:00"
+    "checked_at": "2026-10-23T06:08:00.762521+00:00"
   },
   {
     "school": "北京市西城外国语学校",
@@ -431,7 +433,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://www.xjfls.org/index.aspx\nCall log:\n  - navigating to \"http://www.xjfls.org/index.aspx\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:02:53.282558+00:00"
+    "checked_at": "2026-10-23T06:08:02.986100+00:00"
   },
   {
     "school": "北师大附中",
@@ -451,7 +453,7 @@
     ],
     "items_found": 2,
     "error": "",
-    "checked_at": "2026-10-22T09:02:53.346258+00:00"
+    "checked_at": "2026-10-23T06:08:03.211681+00:00"
   },
   {
     "school": "北京市第十四中学",
@@ -467,7 +469,7 @@
     ],
     "items_found": 1,
     "error": "",
-    "checked_at": "2026-10-22T09:02:53.604870+00:00"
+    "checked_at": "2026-10-23T06:08:04.524480+00:00"
   },
   {
     "school": "北京市回民学校",
@@ -478,18 +480,18 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_CONNECTION_RESET at https://www.bjhmxx.com/\nCall log:\n  - navigating to \"https://www.bjhmxx.com/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:02:56.478514+00:00"
+    "checked_at": "2026-10-23T06:08:07.168773+00:00"
   },
   {
     "school": "北京市华夏女子中学",
     "district": "西城区",
     "homepage": "http://www.hxgs.net/",
     "final_url": "http://www.hxgs.net/",
-    "status": "success",
+    "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "",
-    "checked_at": "2026-10-22T09:02:56.783301+00:00"
+    "error": "Blocked by anti-bot protection: Structural: minimal_text, no_content_elements, script_heavy_shell (1333 bytes, 0 chars visible)",
+    "checked_at": "2026-10-23T06:08:09.172019+00:00"
   },
   {
     "school": "北京市宣武外国语实验学校",
@@ -499,8 +501,8 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"http://www.flesedu.com/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:02:58.447676+00:00"
+    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_CONNECTION_TIMED_OUT at http://www.flesedu.com/\nCall log:\n  - navigating to \"http://www.flesedu.com/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
+    "checked_at": "2026-10-23T06:08:12.497662+00:00"
   },
   {
     "school": "北京师范大学亚太实验学校",
@@ -511,7 +513,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:03:09.527546+00:00"
+    "checked_at": "2026-10-23T06:08:13.560661+00:00"
   },
   {
     "school": "北京市正泽学校",
@@ -527,7 +529,7 @@
     ],
     "items_found": 1,
     "error": "",
-    "checked_at": "2026-10-22T09:03:10.285382+00:00"
+    "checked_at": "2026-10-23T06:08:14.442542+00:00"
   },
   {
     "school": "北京市第八十中学",
@@ -538,7 +540,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:03:12.279187+00:00"
+    "checked_at": "2026-10-23T06:08:14.567210+00:00"
   },
   {
     "school": "陈经纶中学",
@@ -562,7 +564,7 @@
     ],
     "items_found": 3,
     "error": "",
-    "checked_at": "2026-10-22T09:03:15.474762+00:00"
+    "checked_at": "2026-10-23T06:08:17.083415+00:00"
   },
   {
     "school": "北京中学",
@@ -578,7 +580,7 @@
     ],
     "items_found": 1,
     "error": "",
-    "checked_at": "2026-10-22T09:03:15.834265+00:00"
+    "checked_at": "2026-10-23T06:08:18.496812+00:00"
   },
   {
     "school": "北京师范大学朝阳附属中学",
@@ -589,7 +591,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Blocked by anti-bot protection: Structural: minimal_text on small page (144 bytes, 19 chars visible)",
-    "checked_at": "2026-10-22T09:03:19.840576+00:00"
+    "checked_at": "2026-10-23T06:08:21.103957+00:00"
   },
   {
     "school": "北京市第八十中学管庄分校",
@@ -600,7 +602,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:03:19.971699+00:00"
+    "checked_at": "2026-10-23T06:08:21.230994+00:00"
   },
   {
     "school": "东北师范大学附属中学朝阳学校",
@@ -616,7 +618,7 @@
     ],
     "items_found": 1,
     "error": "",
-    "checked_at": "2026-10-22T09:03:20.419468+00:00"
+    "checked_at": "2026-10-23T06:08:21.917347+00:00"
   },
   {
     "school": "中国人民大学附属中学朝阳学校",
@@ -648,7 +650,7 @@
     ],
     "items_found": 5,
     "error": "",
-    "checked_at": "2026-10-22T09:03:21.571035+00:00"
+    "checked_at": "2026-10-23T06:08:22.799870+00:00"
   },
   {
     "school": "北京师范大学三帆中学朝阳学校",
@@ -659,7 +661,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Blocked by anti-bot protection: Structural: minimal_text on small page (1816 bytes, 37 chars visible)",
-    "checked_at": "2026-10-22T09:03:24.940377+00:00"
+    "checked_at": "2026-10-23T06:08:23.535969+00:00"
   },
   {
     "school": "北京市陈经纶中学分校",
@@ -679,7 +681,7 @@
     ],
     "items_found": 2,
     "error": "",
-    "checked_at": "2026-10-22T09:03:28.622244+00:00"
+    "checked_at": "2026-10-23T06:08:23.901896+00:00"
   },
   {
     "school": "北京市陈经纶中学分校实验学校",
@@ -695,7 +697,7 @@
     ],
     "items_found": 1,
     "error": "",
-    "checked_at": "2026-10-22T09:03:31.526559+00:00"
+    "checked_at": "2026-10-23T06:08:26.075516+00:00"
   },
   {
     "school": "北京市和平街第一中学",
@@ -727,7 +729,7 @@
     ],
     "items_found": 5,
     "error": "",
-    "checked_at": "2026-10-22T09:03:32.916084+00:00"
+    "checked_at": "2026-10-23T06:08:27.373608+00:00"
   },
   {
     "school": "北京市朝阳区人大附中朝阳分校",
@@ -738,7 +740,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:03:33.209439+00:00"
+    "checked_at": "2026-10-23T06:08:31.718538+00:00"
   },
   {
     "school": "日坛中学",
@@ -762,7 +764,7 @@
     ],
     "items_found": 3,
     "error": "",
-    "checked_at": "2026-10-22T09:03:34.056385+00:00"
+    "checked_at": "2026-10-23T06:08:32.524579+00:00"
   },
   {
     "school": "工大附中",
@@ -786,7 +788,7 @@
     ],
     "items_found": 3,
     "error": "",
-    "checked_at": "2026-10-22T09:03:35.895881+00:00"
+    "checked_at": "2026-10-23T06:08:36.748810+00:00"
   },
   {
     "school": "清华大学附属中学朝阳学校",
@@ -797,7 +799,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:03:37.799396+00:00"
+    "checked_at": "2026-10-23T06:08:37.460093+00:00"
   },
   {
     "school": "朝阳外国语学校",
@@ -809,11 +811,15 @@
       {
         "title": "体育新闻",
         "url": "https://www.cyfls.net/spor/xinwen/"
+      },
+      {
+        "title": "詹姆斯只专注比赛，回应特朗普批评：看来白宫今天没大新闻",
+        "url": "https://www.cyfls.net/vision/9963515.html"
       }
     ],
-    "items_found": 1,
+    "items_found": 2,
     "error": "",
-    "checked_at": "2026-10-22T09:03:39.392400+00:00"
+    "checked_at": "2026-10-23T06:08:38.976779+00:00"
   },
   {
     "school": "北京拔萃双语学校",
@@ -833,7 +839,7 @@
     ],
     "items_found": 2,
     "error": "",
-    "checked_at": "2026-10-22T09:03:46.294781+00:00"
+    "checked_at": "2026-10-23T06:08:39.055074+00:00"
   },
   {
     "school": "人大附中",
@@ -861,7 +867,7 @@
     ],
     "items_found": 4,
     "error": "",
-    "checked_at": "2026-10-22T09:03:46.896858+00:00"
+    "checked_at": "2026-10-23T06:08:48.115863+00:00"
   },
   {
     "school": "清华附中",
@@ -877,18 +883,27 @@
     ],
     "items_found": 1,
     "error": "",
-    "checked_at": "2026-10-22T09:03:46.926974+00:00"
+    "checked_at": "2026-10-23T06:08:52.579775+00:00"
   },
   {
     "school": "北京大学附属中学",
     "district": "海淀区",
     "homepage": "http://www.pkuschool.edu.cn/",
     "final_url": "http://www.pkuschool.edu.cn/",
-    "status": "failed",
-    "candidate_sections": [],
-    "items_found": 0,
-    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"http://www.pkuschool.edu.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:03:49.958214+00:00"
+    "status": "success",
+    "candidate_sections": [
+      {
+        "title": "新闻公告",
+        "url": "https://www.pkuschool.edu.cn/news/news.html"
+      },
+      {
+        "title": "通知公告",
+        "url": "https://www.pkuschool.edu.cn/news/notice.html"
+      }
+    ],
+    "items_found": 2,
+    "error": "",
+    "checked_at": "2026-10-23T06:08:55.380331+00:00"
   },
   {
     "school": "北京市上地实验学校",
@@ -899,7 +914,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:03:52.820843+00:00"
+    "checked_at": "2026-10-23T06:09:00.072834+00:00"
   },
   {
     "school": "北京市清河中学",
@@ -910,7 +925,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:03:54.340234+00:00"
+    "checked_at": "2026-10-23T06:09:00.347229+00:00"
   },
   {
     "school": "北京市十一学校龙樾实验中学",
@@ -921,7 +936,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:03:55.787871+00:00"
+    "checked_at": "2026-10-23T06:09:04.098445+00:00"
   },
   {
     "school": "人大附中北大附小联合实验学校",
@@ -931,8 +946,8 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"http://www.bjkedi.com/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:03:56.296144+00:00"
+    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_CONNECTION_TIMED_OUT at http://www.bjkedi.com/\nCall log:\n  - navigating to \"http://www.bjkedi.com/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
+    "checked_at": "2026-10-23T06:09:07.648627+00:00"
   },
   {
     "school": "交大附中",
@@ -943,7 +958,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:04:01.234275+00:00"
+    "checked_at": "2026-10-23T06:09:15.457583+00:00"
   },
   {
     "school": "海淀教师进修学校附属实验学校",
@@ -954,7 +969,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:04:02.248138+00:00"
+    "checked_at": "2026-10-23T06:09:17.341955+00:00"
   },
   {
     "school": "北京理工大学附属中学分校",
@@ -965,7 +980,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Blocked by anti-bot protection: Structural: minimal_text on small page (137 bytes, 19 chars visible)",
-    "checked_at": "2026-10-22T09:04:03.847307+00:00"
+    "checked_at": "2026-10-23T06:09:19.638775+00:00"
   },
   {
     "school": "北京市第十九中学",
@@ -975,8 +990,8 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"http://www.bj19zx.cn/Domain/1\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:04:06.794319+00:00"
+    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_CONNECTION_TIMED_OUT at http://www.bj19zx.cn/Domain/1\nCall log:\n  - navigating to \"http://www.bj19zx.cn/Domain/1\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
+    "checked_at": "2026-10-23T06:09:26.494387+00:00"
   },
   {
     "school": "北京外国语大学附属中学",
@@ -987,18 +1002,39 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://www.bjwgydxfszx.com/\nCall log:\n  - navigating to \"http://www.bjwgydxfszx.com/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:04:20.023455+00:00"
+    "checked_at": "2026-10-23T06:09:27.661328+00:00"
   },
   {
     "school": "北京市十一学校",
     "district": "海淀区",
     "homepage": "http://www.bnds.cn/",
     "final_url": "http://www.bnds.cn/",
-    "status": "failed",
-    "candidate_sections": [],
-    "items_found": 0,
-    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_CONNECTION_REFUSED at http://www.bnds.cn/\nCall log:\n  - navigating to \"http://www.bnds.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:04:20.091795+00:00"
+    "status": "success",
+    "candidate_sections": [
+      {
+        "title": "通知公告",
+        "url": "http://www.bnds.cn/activity/notice/"
+      },
+      {
+        "title": "新闻资讯",
+        "url": "http://www.bnds.cn/activity/information/"
+      },
+      {
+        "title": "北京第一实验中学教室装修改造项目造价咨询费中选公告",
+        "url": "http://www.bnds.cn/2026/notice_1021/785.html"
+      },
+      {
+        "title": "北京第一实验中学教室装修改造项目设计费中选公告",
+        "url": "http://www.bnds.cn/2026/notice_1021/784.html"
+      },
+      {
+        "title": "2026年北京十一学校高中招生咨询",
+        "url": "http://www.bnds.cn/2026/notice_0709/760.html"
+      }
+    ],
+    "items_found": 5,
+    "error": "",
+    "checked_at": "2026-10-23T06:09:27.888570+00:00"
   },
   {
     "school": "北京市第二十中学",
@@ -1009,7 +1045,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:04:20.446775+00:00"
+    "checked_at": "2026-10-23T06:09:30.355829+00:00"
   },
   {
     "school": "北京市北达资源中学",
@@ -1020,18 +1056,18 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://bdzy.pku.edu.cn/\nCall log:\n  - navigating to \"http://bdzy.pku.edu.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:04:21.782202+00:00"
+    "checked_at": "2026-10-23T06:09:34.425615+00:00"
   },
   {
     "school": "北京市育英中学",
     "district": "海淀区",
     "homepage": "http://www.yyzx.org/",
     "final_url": "http://www.yyzx.org/",
-    "status": "failed",
+    "status": "success",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "Blocked by anti-bot protection: HTTP 403 with HTML content (148 bytes)",
-    "checked_at": "2026-10-22T09:04:21.839636+00:00"
+    "error": "",
+    "checked_at": "2026-10-23T06:09:34.504163+00:00"
   },
   {
     "school": "人大附中翠微学校",
@@ -1042,7 +1078,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_EMPTY_RESPONSE at http://www.rdfzcw.cn/\nCall log:\n  - navigating to \"http://www.rdfzcw.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:04:22.617779+00:00"
+    "checked_at": "2026-10-23T06:09:36.237184+00:00"
   },
   {
     "school": "北京市第五十七中学",
@@ -1053,7 +1089,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:04:22.719501+00:00"
+    "checked_at": "2026-10-23T06:09:36.394241+00:00"
   },
   {
     "school": "首都师范大学第二附属中学",
@@ -1063,8 +1099,8 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"http://www.cnu2school.bjedu.cn/cms/home/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:04:26.356947+00:00"
+    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_CONNECTION_TIMED_OUT at http://www.cnu2school.bjedu.cn/cms/home/\nCall log:\n  - navigating to \"http://www.cnu2school.bjedu.cn/cms/home/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
+    "checked_at": "2026-10-23T06:09:38.020554+00:00"
   },
   {
     "school": "北京市海淀实验中学",
@@ -1075,7 +1111,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://www.hdsyzx.com/\nCall log:\n  - navigating to \"http://www.hdsyzx.com/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:04:26.974894+00:00"
+    "checked_at": "2026-10-23T06:10:23.010029+00:00"
   },
   {
     "school": "首师大附中",
@@ -1086,7 +1122,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://www.cnuschool.org/\nCall log:\n  - navigating to \"http://www.cnuschool.org/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:04:27.034042+00:00"
+    "checked_at": "2026-10-23T06:10:23.158165+00:00"
   },
   {
     "school": "北京科技大学附属中学",
@@ -1097,7 +1133,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://www.bjgyfz.bjedu.cn/\nCall log:\n  - navigating to \"http://www.bjgyfz.bjedu.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:04:27.111427+00:00"
+    "checked_at": "2026-10-23T06:10:23.406133+00:00"
   },
   {
     "school": "北京市中关村中学",
@@ -1108,7 +1144,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://www.hdzgczx.bjedu.cn/\nCall log:\n  - navigating to \"http://www.hdzgczx.bjedu.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:04:27.204740+00:00"
+    "checked_at": "2026-10-23T06:10:23.475214+00:00"
   },
   {
     "school": "中国人民大学附属中学分校",
@@ -1119,7 +1155,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://www.fx.rdfz.cn/\nCall log:\n  - navigating to \"http://www.fx.rdfz.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:04:27.259229+00:00"
+    "checked_at": "2026-10-23T06:10:23.545790+00:00"
   },
   {
     "school": "一零一中学",
@@ -1130,7 +1166,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:04:27.308045+00:00"
+    "checked_at": "2026-10-23T06:10:23.651783+00:00"
   },
   {
     "school": "人大附中西山学校",
@@ -1140,8 +1176,8 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"http://www.rdfzxishan.cn/site/default.aspx?PageID=1\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:04:27.734338+00:00"
+    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_CONNECTION_TIMED_OUT at http://www.rdfzxishan.cn/site/default.aspx?PageID=1\nCall log:\n  - navigating to \"http://www.rdfzxishan.cn/site/default.aspx?PageID=1\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
+    "checked_at": "2026-10-23T06:10:24.153536+00:00"
   },
   {
     "school": "北京市师达中学",
@@ -1152,7 +1188,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_EMPTY_RESPONSE at http://www.bjsdschool.cn/\nCall log:\n  - navigating to \"http://www.bjsdschool.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:04:36.853675+00:00"
+    "checked_at": "2026-10-23T06:10:41.605746+00:00"
   },
   {
     "school": "清华大学附属中学永丰学校",
@@ -1163,7 +1199,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:04:36.947249+00:00"
+    "checked_at": "2026-10-23T06:10:41.761721+00:00"
   },
   {
     "school": "北京航空航天大学实验学校",
@@ -1174,7 +1210,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:04:37.309889+00:00"
+    "checked_at": "2026-10-23T06:10:43.171242+00:00"
   },
   {
     "school": "北京市建华实验学校",
@@ -1194,7 +1230,7 @@
     ],
     "items_found": 2,
     "error": "",
-    "checked_at": "2026-10-22T09:04:38.740094+00:00"
+    "checked_at": "2026-10-23T06:10:45.191670+00:00"
   },
   {
     "school": "北京市海淀外国语学校",
@@ -1218,7 +1254,7 @@
     ],
     "items_found": 3,
     "error": "",
-    "checked_at": "2026-10-22T09:04:47.531315+00:00"
+    "checked_at": "2026-10-23T06:10:49.906517+00:00"
   },
   {
     "school": "清华大学附属实验学校",
@@ -1234,7 +1270,7 @@
     ],
     "items_found": 1,
     "error": "",
-    "checked_at": "2026-10-22T09:04:54.380024+00:00"
+    "checked_at": "2026-10-23T06:10:53.095214+00:00"
   },
   {
     "school": "北京市中关村外国语学校",
@@ -1262,7 +1298,7 @@
     ],
     "items_found": 4,
     "error": "",
-    "checked_at": "2026-10-22T09:04:55.616177+00:00"
+    "checked_at": "2026-10-23T06:10:54.037409+00:00"
   },
   {
     "school": "北京市21世纪国际学校",
@@ -1273,7 +1309,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:04:56.418547+00:00"
+    "checked_at": "2026-10-23T06:10:56.843233+00:00"
   },
   {
     "school": "北京市十一学校一分校",
@@ -1305,7 +1341,7 @@
     ],
     "items_found": 5,
     "error": "",
-    "checked_at": "2026-10-22T09:04:57.589774+00:00"
+    "checked_at": "2026-10-23T06:10:58.338939+00:00"
   },
   {
     "school": "北京理工大学附属中学",
@@ -1321,7 +1357,7 @@
     ],
     "items_found": 1,
     "error": "",
-    "checked_at": "2026-10-22T09:04:57.792424+00:00"
+    "checked_at": "2026-10-23T06:10:59.299218+00:00"
   },
   {
     "school": "北外附属外国语学校",
@@ -1341,7 +1377,7 @@
     ],
     "items_found": 2,
     "error": "",
-    "checked_at": "2026-10-22T09:04:57.848573+00:00"
+    "checked_at": "2026-10-23T06:11:02.767769+00:00"
   },
   {
     "school": "北京市育英学校",
@@ -1352,7 +1388,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://www.yuying.org.cn/\nCall log:\n  - navigating to \"http://www.yuying.org.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:05:02.094788+00:00"
+    "checked_at": "2026-10-23T06:11:05.124010+00:00"
   },
   {
     "school": "八一学校",
@@ -1363,7 +1399,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "",
-    "checked_at": "2026-10-22T09:05:02.454792+00:00"
+    "checked_at": "2026-10-23T06:11:05.199276+00:00"
   },
   {
     "school": "北京市第十二中学",
@@ -1387,7 +1423,7 @@
     ],
     "items_found": 3,
     "error": "",
-    "checked_at": "2026-10-22T09:05:02.574566+00:00"
+    "checked_at": "2026-10-23T06:11:06.609130+00:00"
   },
   {
     "school": "北京市第十八中学",
@@ -1397,8 +1433,8 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"http://www.bj18.net/cms/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:05:04.911448+00:00"
+    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_CONNECTION_TIMED_OUT at http://www.bj18.net/cms/\nCall log:\n  - navigating to \"http://www.bj18.net/cms/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
+    "checked_at": "2026-10-23T06:11:09.306021+00:00"
   },
   {
     "school": "北京市丰台第二中学",
@@ -1409,7 +1445,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://www.bjf2.ftedu.cn/bxn-cms/cms/\nCall log:\n  - navigating to \"http://www.bjf2.ftedu.cn/bxn-cms/cms/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:05:05.578784+00:00"
+    "checked_at": "2026-10-23T06:11:10.963823+00:00"
   },
   {
     "school": "首都师范大学附属丽泽中学",
@@ -1420,7 +1456,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://www.lzms.cn/\nCall log:\n  - navigating to \"http://www.lzms.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:05:05.637164+00:00"
+    "checked_at": "2026-10-23T06:11:11.043543+00:00"
   },
   {
     "school": "北京市第八中学怡海分校",
@@ -1430,8 +1466,8 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"http://yhjyzx.ftbj.net/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:05:05.795986+00:00"
+    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_CONNECTION_TIMED_OUT at http://yhjyzx.ftbj.net/\nCall log:\n  - navigating to \"http://yhjyzx.ftbj.net/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
+    "checked_at": "2026-10-23T06:11:11.141659+00:00"
   },
   {
     "school": "北京市第十中学",
@@ -1441,8 +1477,8 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"http://www.bj10z.com.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:05:08.567325+00:00"
+    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_CONNECTION_TIMED_OUT at http://www.bj10z.com.cn/\nCall log:\n  - navigating to \"http://www.bj10z.com.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
+    "checked_at": "2026-10-23T06:11:39.248144+00:00"
   },
   {
     "school": "中国人民大学附属中学丰台学校",
@@ -1462,7 +1498,7 @@
     ],
     "items_found": 2,
     "error": "",
-    "checked_at": "2026-10-22T09:05:34.974985+00:00"
+    "checked_at": "2026-10-23T06:12:24.473712+00:00"
   },
   {
     "school": "北京市第九中学",
@@ -1473,7 +1509,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://9z.sjsedu.cn/\nCall log:\n  - navigating to \"http://9z.sjsedu.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:05:35.858913+00:00"
+    "checked_at": "2026-10-23T06:12:26.230372+00:00"
   },
   {
     "school": "北京市京源学校",
@@ -1484,7 +1520,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://jyxx.sjsedu.cn/\nCall log:\n  - navigating to \"http://jyxx.sjsedu.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:05:35.921521+00:00"
+    "checked_at": "2026-10-23T06:12:26.315174+00:00"
   },
   {
     "school": "北京市十一学校石景山实验中学",
@@ -1500,7 +1536,7 @@
     ],
     "items_found": 1,
     "error": "",
-    "checked_at": "2026-10-22T09:05:36.052225+00:00"
+    "checked_at": "2026-10-23T06:12:26.384798+00:00"
   },
   {
     "school": "北京市第九中学分校",
@@ -1511,7 +1547,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://fz.sjsedu.cn/\nCall log:\n  - navigating to \"http://fz.sjsedu.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:05:36.432042+00:00"
+    "checked_at": "2026-10-23T06:12:26.664952+00:00"
   },
   {
     "school": "北京景山学校远洋分校",
@@ -1522,7 +1558,7 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://jsyy.sjsedu.cn/\nCall log:\n  - navigating to \"http://jsyy.sjsedu.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:05:36.483213+00:00"
+    "checked_at": "2026-10-23T06:12:26.731859+00:00"
   },
   {
     "school": "北大附中石景山学校",
@@ -1533,116 +1569,131 @@
     "candidate_sections": [],
     "items_found": 0,
     "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://bdfz.sjsedu.cn/\nCall log:\n  - navigating to \"http://bdfz.sjsedu.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
-    "checked_at": "2026-10-22T09:05:36.534493+00:00"
+    "checked_at": "2026-10-23T06:12:26.795839+00:00"
   },
   {
     "school": "北京市大峪中学",
     "district": "门头沟区",
-    "homepage": "https://www.bjmtg.gov.cn/bjmtg/c103090/202212/98ad071c7593457fb0c202a9a0b7353d.shtml",
-    "final_url": "https://www.bjmtg.gov.cn/bjmtg/c103090/202212/98ad071c7593457fb0c202a9a0b7353d.shtml",
-    "status": "success",
+    "homepage": "",
+    "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "",
-    "checked_at": "2026-10-22T09:05:36.581885+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.676698+00:00"
   },
   {
     "school": "北京市门头沟区实验中学",
     "district": "门头沟区",
-    "homepage": "https://www.bjmtg.gov.cn/bjmtg/c103090/202212/98ad071c7593457fb0c202a9a0b7353d.shtml",
-    "final_url": "https://www.bjmtg.gov.cn/bjmtg/c103090/202212/98ad071c7593457fb0c202a9a0b7353d.shtml",
-    "status": "success",
+    "homepage": "",
+    "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "",
-    "checked_at": "2026-10-22T09:05:37.077751+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.676708+00:00"
   },
   {
     "school": "首都师范大学附属中学永定分校",
     "district": "门头沟区",
-    "homepage": "https://www.bjmtg.gov.cn/bjmtg/c103090/202212/98ad071c7593457fb0c202a9a0b7353d.shtml",
-    "final_url": "https://www.bjmtg.gov.cn/bjmtg/c103090/202212/98ad071c7593457fb0c202a9a0b7353d.shtml",
-    "status": "success",
+    "homepage": "",
+    "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "",
-    "checked_at": "2026-10-22T09:05:37.360260+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.676711+00:00"
   },
   {
     "school": "北京市房山中学",
     "district": "房山区",
-    "homepage": "https://www.bjfsh.gov.cn/zhxw/bmdt/index.shtml",
-    "final_url": "https://www.bjfsh.gov.cn/zhxw/bmdt/index.shtml",
-    "status": "success",
-    "candidate_sections": [
-      {
-        "title": "综合新闻",
-        "url": "https://www.bjfsh.gov.cn/zhxw/"
-      }
-    ],
-    "items_found": 1,
-    "error": "",
-    "checked_at": "2026-10-22T09:05:37.645951+00:00"
+    "homepage": "",
+    "status": "failed",
+    "candidate_sections": [],
+    "items_found": 0,
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.676712+00:00"
   },
   {
     "school": "北京市房山区良乡中学",
     "district": "房山区",
-    "homepage": "https://www.bjfsh.gov.cn/zhxw/bmdt/index.shtml",
-    "final_url": "https://www.bjfsh.gov.cn/zhxw/bmdt/index.shtml",
-    "status": "success",
-    "candidate_sections": [
-      {
-        "title": "综合新闻",
-        "url": "https://www.bjfsh.gov.cn/zhxw/"
-      }
-    ],
-    "items_found": 1,
-    "error": "",
-    "checked_at": "2026-10-22T09:05:38.622318+00:00"
+    "homepage": "",
+    "status": "failed",
+    "candidate_sections": [],
+    "items_found": 0,
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.676714+00:00"
   },
   {
     "school": "首都师范大学附属中学房山学校",
     "district": "房山区",
     "homepage": "https://www.cnuhs.cn/",
     "final_url": "https://www.cnuhs.cn/",
-    "status": "failed",
-    "candidate_sections": [],
-    "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:39.706360+00:00"
+    "status": "success",
+    "candidate_sections": [
+      {
+        "title": "招生信息",
+        "url": "https://www.cnuhs.cn/AdmissionsInformation/"
+      },
+      {
+        "title": "信息公开",
+        "url": "https://www.cnuhs.cn/InformationDisclosure/"
+      }
+    ],
+    "items_found": 2,
+    "error": "",
+    "checked_at": "2026-10-23T06:12:26.862128+00:00"
   },
   {
     "school": "北京市通州区潞河中学",
     "district": "通州区",
-    "homepage": "http://www.luhe.net/",
-    "final_url": "http://www.luhe.net/",
-    "status": "failed",
-    "candidate_sections": [],
-    "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:41.390293+00:00"
+    "homepage": "https://www.luhe.cn/",
+    "final_url": "https://www.luhe.cn/",
+    "status": "success",
+    "candidate_sections": [
+      {
+        "title": "综合新闻",
+        "url": "https://www.luhe.cn/article/list_1086_1.html"
+      },
+      {
+        "title": "招生",
+        "url": "https://www.luhe.cn/jobs/list_1103_1.html"
+      }
+    ],
+    "items_found": 2,
+    "error": "",
+    "checked_at": "2026-10-23T06:12:29.153536+00:00"
   },
   {
     "school": "北京学校",
     "district": "通州区",
-    "homepage": "https://www.bjtzh.gov.cn/bjtz/zwgk/tjsj/sjkf/2026052215435127308/index.shtml",
-    "final_url": "https://www.bjtzh.gov.cn/bjtz/zwgk/tjsj/sjkf/2026052215435127308/index.shtml",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:41.410637+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.676720+00:00"
   },
   {
     "school": "人大附中通州校区",
     "district": "通州区",
     "homepage": "http://www.rdfztzxq.cn/",
     "final_url": "http://www.rdfztzxq.cn/",
-    "status": "failed",
-    "candidate_sections": [],
-    "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:41.939277+00:00"
+    "status": "success",
+    "candidate_sections": [
+      {
+        "title": "校园新闻",
+        "url": "http://www.rdfztzxq.cn/xydt/xyxw.htm"
+      },
+      {
+        "title": "校园动态",
+        "url": "http://www.rdfztzxq.cn/xydt.htm"
+      },
+      {
+        "title": "招生咨询",
+        "url": "http://www.rdfztzxq.cn/zszp/zszx.htm"
+      }
+    ],
+    "items_found": 3,
+    "error": "",
+    "checked_at": "2026-10-23T06:12:30.034838+00:00"
   },
   {
     "school": "首都师范大学附属中学通州校区",
@@ -1652,41 +1703,68 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:41.998324+00:00"
+    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://www.cnuschool.org/tz/\nCall log:\n  - navigating to \"http://www.cnuschool.org/tz/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
+    "checked_at": "2026-10-23T06:12:34.549510+00:00"
   },
   {
     "school": "北京理工大学附属中学通州校区",
     "district": "通州区",
     "homepage": "http://www.lgfztzschool.cn/",
     "final_url": "http://www.lgfztzschool.cn/",
-    "status": "failed",
-    "candidate_sections": [],
-    "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:42.088200+00:00"
+    "status": "success",
+    "candidate_sections": [
+      {
+        "title": "学校新闻",
+        "url": "http://www.lgfztzschool.cn/list.jsp?urltype=tree.TreeTempUrl&wbtreeid=1003"
+      }
+    ],
+    "items_found": 1,
+    "error": "",
+    "checked_at": "2026-10-23T06:12:34.620493+00:00"
   },
   {
     "school": "北京市顺义牛栏山第一中学",
     "district": "顺义区",
-    "homepage": "https://www.nlsyz.com.cn/",
-    "final_url": "https://www.nlsyz.com.cn/",
-    "status": "failed",
-    "candidate_sections": [],
-    "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:42.289114+00:00"
+    "homepage": "http://www.nlsyz.com.cn/",
+    "final_url": "http://www.nlsyz.com.cn/",
+    "status": "success",
+    "candidate_sections": [
+      {
+        "title": "牛栏山一中2025年“1+3”培养实验项目面试公告",
+        "url": "http://www.nlsyz.com.cn/newsinfo/8560599.html"
+      },
+      {
+        "title": "牛栏山一中2024年“1 3”培养实验项目面试公告",
+        "url": "http://www.nlsyz.com.cn/newsinfo/7441574.html"
+      },
+      {
+        "title": "牛栏山一中2024年1+3培养实验公告",
+        "url": "http://www.nlsyz.com.cn/newsinfo/7423173.html"
+      },
+      {
+        "title": "2024年牛栏山一中中招科技特长生招生工作方案",
+        "url": "http://www.nlsyz.com.cn/newsinfo/7143363.html"
+      }
+    ],
+    "items_found": 4,
+    "error": "",
+    "checked_at": "2026-10-23T06:12:35.622059+00:00"
   },
   {
     "school": "北京市顺义区第一中学",
     "district": "顺义区",
     "homepage": "https://bjsyyz.cn/",
     "final_url": "https://bjsyyz.cn/",
-    "status": "failed",
-    "candidate_sections": [],
-    "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:42.717523+00:00"
+    "status": "success",
+    "candidate_sections": [
+      {
+        "title": "校园动态",
+        "url": "https://bjsyyz.cn/xwzx"
+      }
+    ],
+    "items_found": 1,
+    "error": "",
+    "checked_at": "2026-10-23T06:12:36.296287+00:00"
   },
   {
     "school": "北京市顺义区杨镇第一中学",
@@ -1696,8 +1774,8 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:42.764187+00:00"
+    "error": "Blocked by anti-bot protection: Structural: minimal_text, no_content_elements, script_heavy_shell (3344 bytes, 0 chars visible)",
+    "checked_at": "2026-10-23T06:12:41.027673+00:00"
   },
   {
     "school": "牛栏山一中实验学校",
@@ -1707,52 +1785,85 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:43.170699+00:00"
+    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_CONNECTION_TIMED_OUT at http://syxx.nlsyz.com.cn/\nCall log:\n  - navigating to \"http://syxx.nlsyz.com.cn/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
+    "checked_at": "2026-10-23T06:12:42.254463+00:00"
   },
   {
     "school": "北京市昌平区第一中学",
     "district": "昌平区",
     "homepage": "http://www.cpyz.org.cn/",
     "final_url": "http://www.cpyz.org.cn/",
-    "status": "failed",
-    "candidate_sections": [],
-    "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:44.690119+00:00"
+    "status": "success",
+    "candidate_sections": [
+      {
+        "title": "校园新闻",
+        "url": "http://www.cpyz.org.cn/cpyz/catalog.jhtml?viewId=21"
+      },
+      {
+        "title": "招生专栏",
+        "url": "http://www.cpyz.org.cn/cpyz/catalog.jhtml?viewId=37"
+      },
+      {
+        "title": "招生信息",
+        "url": "http://www.cpyz.org.cn/cpyz/catalog.jhtml?viewId=24"
+      }
+    ],
+    "items_found": 3,
+    "error": "",
+    "checked_at": "2026-10-23T06:12:42.331496+00:00"
   },
   {
     "school": "北京市昌平区第二中学",
     "district": "昌平区",
     "homepage": "http://www.bjcpez.net/",
     "final_url": "http://www.bjcpez.net/",
-    "status": "failed",
+    "status": "success",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:44.963476+00:00"
+    "error": "",
+    "checked_at": "2026-10-23T06:12:51.888293+00:00"
   },
   {
     "school": "北京市昌平区实验学校",
     "district": "昌平区",
-    "homepage": "https://www.bjchp.gov.cn/",
-    "final_url": "https://www.bjchp.gov.cn/",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:46.077641+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754081+00:00"
   },
   {
     "school": "北京王府学校",
     "district": "昌平区",
     "homepage": "http://www.brs.edu.cn/",
     "final_url": "http://www.brs.edu.cn/",
-    "status": "failed",
-    "candidate_sections": [],
-    "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:48.860579+00:00"
+    "status": "success",
+    "candidate_sections": [
+      {
+        "title": "校园动态",
+        "url": "https://www.brs.edu.cn/category/chuzhongnews"
+      },
+      {
+        "title": "小学部新闻",
+        "url": "https://www.brs.edu.cn/category/xiaoxuenews"
+      },
+      {
+        "title": "王府招生简章",
+        "url": "https://www.brs.edu.cn/admissions-policy"
+      },
+      {
+        "title": "王府招生问答Q&A",
+        "url": "https://www.brs.edu.cn/admissions-faq"
+      },
+      {
+        "title": "王府招生宣传页",
+        "url": "https://www.brs.edu.cn/admissions-brochure"
+      }
+    ],
+    "items_found": 5,
+    "error": "",
+    "checked_at": "2026-10-23T06:12:54.335445+00:00"
   },
   {
     "school": "北京市昌平区回龙观中学",
@@ -1762,30 +1873,28 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:50.711781+00:00"
+    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_CONNECTION_REFUSED at http://www.hlgzhx.net/\nCall log:\n  - navigating to \"http://www.hlgzhx.net/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
+    "checked_at": "2026-10-23T06:13:00.210387+00:00"
   },
   {
     "school": "北京市大兴区第一中学",
     "district": "大兴区",
-    "homepage": "https://www.bjdx.gov.cn/bjsdxqrmzf/zhyw/bmdt66/index.html",
-    "final_url": "https://www.bjdx.gov.cn/bjsdxqrmzf/zhyw/bmdt66/index.html",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:53.247398+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754099+00:00"
   },
   {
     "school": "北京市大兴区兴华中学",
     "district": "大兴区",
-    "homepage": "https://www.bjdx.gov.cn/bjsdxqrmzf/zhyw/bmdt66/index.html",
-    "final_url": "https://www.bjdx.gov.cn/bjsdxqrmzf/zhyw/bmdt66/index.html",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:53.838177+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754101+00:00"
   },
   {
     "school": "北京亦庄实验中学",
@@ -1795,8 +1904,8 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:54.108539+00:00"
+    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://www.bjeaedu.com/\nCall log:\n  - navigating to \"http://www.bjeaedu.com/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
+    "checked_at": "2026-10-23T06:13:36.235495+00:00"
   },
   {
     "school": "北京市大兴区第七中学",
@@ -1806,8 +1915,8 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:54.194032+00:00"
+    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://www.bjdxqz.cn/cms/\nCall log:\n  - navigating to \"http://www.bjdxqz.cn/cms/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
+    "checked_at": "2026-10-23T06:13:36.323941+00:00"
   },
   {
     "school": "北京市大兴区第三中学",
@@ -1817,8 +1926,8 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:05:54.536636+00:00"
+    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_CONNECTION_TIMED_OUT at http://www.dxqdszx.cn/cms/\nCall log:\n  - navigating to \"http://www.dxqdszx.cn/cms/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
+    "checked_at": "2026-10-23T06:13:37.533368+00:00"
   },
   {
     "school": "北京市平谷中学",
@@ -1828,162 +1937,148 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:06:13.235252+00:00"
+    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://www.pgzx.net/\nCall log:\n  - navigating to \"http://www.pgzx.net/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
+    "checked_at": "2026-10-23T06:13:50.608156+00:00"
   },
   {
     "school": "北京市平谷区第五中学",
     "district": "平谷区",
-    "homepage": "https://www.bjpg.gov.cn/",
-    "final_url": "https://www.bjpg.gov.cn/",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:06:13.314801+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754107+00:00"
   },
   {
     "school": "北京市平谷区马坊实验中学",
     "district": "平谷区",
-    "homepage": "https://www.bjpg.gov.cn/",
-    "final_url": "https://www.bjpg.gov.cn/",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:06:14.023908+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754109+00:00"
   },
   {
     "school": "北京市怀柔区第一中学",
     "district": "怀柔区",
-    "homepage": "https://www.bjhr.gov.cn/zjhr/bxsh/jykj/jyzx/",
-    "final_url": "https://www.bjhr.gov.cn/zjhr/bxsh/jykj/jyzx/",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:06:14.302081+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754111+00:00"
   },
   {
     "school": "北京市怀柔区第二中学",
     "district": "怀柔区",
-    "homepage": "https://www.bjhr.gov.cn/zjhr/bxsh/jykj/jyzx/",
-    "final_url": "https://www.bjhr.gov.cn/zjhr/bxsh/jykj/jyzx/",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:06:14.870489+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754112+00:00"
   },
   {
     "school": "北京市怀柔区第五中学",
     "district": "怀柔区",
-    "homepage": "https://www.bjhr.gov.cn/zjhr/bxsh/jykj/jyzx/",
-    "final_url": "https://www.bjhr.gov.cn/zjhr/bxsh/jykj/jyzx/",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:06:15.039320+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754114+00:00"
   },
   {
     "school": "北京市密云区第二中学",
     "district": "密云区",
-    "homepage": "https://www.bjmy.gov.cn/ywdt/gzdt/",
-    "final_url": "https://www.bjmy.gov.cn/ywdt/gzdt/",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:06:15.212875+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754115+00:00"
   },
   {
     "school": "首都师范大学附属密云中学",
     "district": "密云区",
-    "homepage": "https://www.bjmy.gov.cn/ywdt/gzdt/",
-    "final_url": "https://www.bjmy.gov.cn/ywdt/gzdt/",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:06:15.362525+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754117+00:00"
   },
   {
     "school": "北京师范大学密云实验中学",
     "district": "密云区",
-    "homepage": "https://www.bjmy.gov.cn/ywdt/gzdt/",
-    "final_url": "https://www.bjmy.gov.cn/ywdt/gzdt/",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:06:16.007541+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754118+00:00"
   },
   {
     "school": "北京市延庆区第一中学",
     "district": "延庆区",
-    "homepage": "https://www.bjyq.gov.cn/",
-    "final_url": "https://www.bjyq.gov.cn/",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:06:16.021851+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754120+00:00"
   },
   {
     "school": "北京市延庆区第二中学",
     "district": "延庆区",
-    "homepage": "https://www.bjyq.gov.cn/",
-    "final_url": "https://www.bjyq.gov.cn/",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:06:16.222547+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754121+00:00"
   },
   {
     "school": "北京市延庆区第五中学",
     "district": "延庆区",
-    "homepage": "https://www.bjyq.gov.cn/",
-    "final_url": "https://www.bjyq.gov.cn/",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:06:24.606534+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754123+00:00"
   },
   {
     "school": "北京市房山区燕山前进中学",
     "district": "燕山地区",
-    "homepage": "https://www.bjfsh.gov.cn/zwgk/qmzqb/ghjh_2674/index_bm.shtml",
-    "final_url": "https://www.bjfsh.gov.cn/zwgk/qmzqb/ghjh_2674/index_bm.shtml",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:06:46.088145+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754124+00:00"
   },
   {
     "school": "北京市房山区燕山向阳中学",
     "district": "燕山地区",
-    "homepage": "https://www.bjfsh.gov.cn/zwgk/qmzqb/ghjh_2674/index_bm.shtml",
-    "final_url": "https://www.bjfsh.gov.cn/zwgk/qmzqb/ghjh_2674/index_bm.shtml",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:06:46.275733+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754125+00:00"
   },
   {
     "school": "北京师范大学燕化附属中学",
     "district": "燕山地区",
-    "homepage": "https://www.bjfsh.gov.cn/zwgk/qmzqb/ghjh_2674/index_bm.shtml",
-    "final_url": "https://www.bjfsh.gov.cn/zwgk/qmzqb/ghjh_2674/index_bm.shtml",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:06:46.633960+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754127+00:00"
   },
   {
     "school": "北京亦庄实验中学",
@@ -1993,29 +2088,27 @@
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:06:46.647494+00:00"
+    "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (.venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_NAME_NOT_RESOLVED at http://www.bjeaedu.com/\nCall log:\n  - navigating to \"http://www.bjeaedu.com/\", waiting until \"domcontentloaded\"\n\n\nCode context:\n 774                                   tag=\"GOTO\",\n 775                                   params={\"url\": url},\n 776                               )\n 777                               response = None\n 778                           else:\n 779 →                             raise RuntimeError(f\"Failed on navigating ACS-GOTO:\\n{str(e)}\")\n 780   \n 781                       # ──────────────────────────────────────────────────────────────\n 782                       # Walk the redirect chain.  Playwright returns only the last\n 783                       # hop, so we trace the `request.redirected_from` links until the\n 784                       # first response that differs from the final one and surface its",
+    "checked_at": "2026-10-23T06:13:50.688753+00:00"
   },
   {
     "school": "北京市第二中学经开区学校",
     "district": "经济技术开发区",
-    "homepage": "https://kfqgw.beijing.gov.cn/zwgkkfq/zfxxgk/fdzdgknr/zdmsxx/jy/",
-    "final_url": "https://kfqgw.beijing.gov.cn/zwgkkfq/zfxxgk/fdzdgknr/zdmsxx/jy/",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:06:46.704174+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754129+00:00"
   },
   {
     "school": "人大附中北京经济技术开发区学校",
     "district": "经济技术开发区",
-    "homepage": "https://kfqgw.beijing.gov.cn/zwgkkfq/zfxxgk/fdzdgknr/zdmsxx/jy/",
-    "final_url": "https://kfqgw.beijing.gov.cn/zwgkkfq/zfxxgk/fdzdgknr/zdmsxx/jy/",
+    "homepage": "",
     "status": "failed",
     "candidate_sections": [],
     "items_found": 0,
-    "error": "[Errno 2] No such file or directory: '/Users/xian/Dev/k12-dashboard/.crawl4ai-local/.crawl4ai/crawler.log'",
-    "checked_at": "2026-10-22T09:06:46.840268+00:00"
+    "error": "disabled",
+    "checked_at": "2026-10-23T06:06:33.754131+00:00"
   }
 ]

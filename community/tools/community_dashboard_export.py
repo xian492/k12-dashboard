@@ -66,10 +66,12 @@ def export_dashboard_data(records: list[dict], generated_at: str) -> dict:
     if not eligible:
         raise ExportError("community sample has no analysis-eligible records")
     projected = [_display_record(record) for record in dedupe_records(eligible)]
+    regions = {record.get("region") or "" for record in projected}
+    region = regions.pop() if len(regions) == 1 else "多城市"
     return {
         "status": "success",
         "generated_at": generated_at,
-        "region": "北京",
+        "region": region,
         "record_count": len(projected),
         "records": projected,
     }
