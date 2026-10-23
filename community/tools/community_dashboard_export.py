@@ -28,6 +28,31 @@ class ExportError(ValueError):
     """Raised when a dashboard snapshot cannot be safely exported."""
 
 
+def dedupe_records(records: list[dict]) -> list[dict]:
+    """Drop repeat links and articles whose normalized content already appeared.
+
+    The first occurrence wins, so a thread syndicated across community sites
+    keeps its earliest crawled copy. Fingerprints are optional: records
+    without one are only deduplicated by link.
+    """
+    seen_links = set()
+    seen_fingerprints = set()
+    result = []
+    for record in records:
+        link = record.get("link")
+        fingerprint = record.get("content_fingerprint")
+        if link and link in seen_links:
+            continue
+        if fingerprint and fingerprint in seen_fingerprints:
+            continue
+        if link:
+            seen_links.add(link)
+        if fingerprint:
+            seen_fingerprints.add(fingerprint)
+        result.append(record)
+    return result
+
+
 def _display_record(record: dict) -> dict:
     result = {field: record.get(field) for field in DISPLAY_FIELDS}
     result["published_at"] = result.pop("published_at_normalized") or ""
@@ -40,7 +65,7 @@ def export_dashboard_data(records: list[dict], generated_at: str) -> dict:
     eligible = [record for record in records if record.get("analysis_eligible")]
     if not eligible:
         raise ExportError("community sample has no analysis-eligible records")
-    projected = [_display_record(record) for record in eligible]
+    projected = [_display_record(record) for record in dedupe_records(eligible)]
     return {
         "status": "success",
         "generated_at": generated_at,

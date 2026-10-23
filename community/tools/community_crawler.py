@@ -134,19 +134,25 @@ def extract_candidate_links(links: list[dict], source: dict) -> list[dict]:
 
     INCLUDE_TERMS are intentionally advisory in this first pass. They are
     recorded as tags but do not decide whether a community link is retained.
+
+    Forum list pages expose several anchors for one thread URL (title, icons,
+    "有新回复 - 新窗口打开"); the most descriptive anchor text wins.
     """
     results = []
-    seen = set()
+    seen: dict[str, dict] = {}
     for raw_link in links:
         item = normalize_link(raw_link, source)
         if not item["title"] or not _is_public_internal_link(item["link"], source):
             continue
         if _matches(item["title"], EXCLUDE_TERMS):
             continue
-        if item["link"] in seen:
-            continue
-        seen.add(item["link"])
-        results.append(item)
+        previous = seen.get(item["link"])
+        if previous is None:
+            seen[item["link"]] = item
+            results.append(item)
+        elif len(item["title"]) > len(previous["title"]):
+            previous["title"] = item["title"]
+            previous["tags"] = sorted(set(previous["tags"]) | set(item["tags"]))
     return results
 
 

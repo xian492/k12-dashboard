@@ -661,6 +661,31 @@ class RssFeedTests(unittest.TestCase):
         self.assertIn("学段标签：中考", html)
         self.assertIn("学段标签：高考", html)
 
+    def test_community_view_renders_multi_stage_record_once(self):
+        community = {
+            "status": "success",
+            "generated_at": "2026-10-22T12:00:00+08:00",
+            "records": [
+                {
+                    "title": "海淀小升初跨区怎么选",
+                    "link": "https://community.example/multi-stage",
+                    "source": "社区甲",
+                    "published_at": "2026-10-13",
+                    "content_type": "政策与流程",
+                    "stage": ["幼升小", "小升初", "中考"],
+                    "event_type": ["报名"],
+                    "district_candidates": ["海淀区"],
+                },
+            ],
+        }
+
+        html = build.community_view(community)
+
+        self.assertEqual(html.count("community.example/multi-stage"), 1)
+        self.assertIn("小学 · 1 条", html)
+        self.assertIn("学段标签：幼升小、小升初、中考", html)
+        self.assertNotIn("中学 · ", html)
+
     def test_community_view_has_a_matching_directory_for_rendered_phases(self):
         community = {
             "status": "success",

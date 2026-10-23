@@ -56,6 +56,26 @@ class CommunityDashboardExportTests(unittest.TestCase):
         with self.assertRaises(exporter.ExportError):
             exporter.export_dashboard_data([record(analysis_eligible=False)], "now")
 
+    def test_deduplicates_repeat_links_and_matching_fingerprints(self):
+        fingerprinted = record(
+            link="https://example.com/post/1", content_fingerprint="abc123"
+        )
+        result = exporter.export_dashboard_data(
+            [
+                fingerprinted,
+                record(link="https://example.com/post/1", content_fingerprint="def456"),
+                record(link="https://example.com/post/2", content_fingerprint="abc123"),
+                record(link="https://example.com/post/3", content_fingerprint=""),
+            ],
+            "2026-10-22T12:00:00+08:00",
+        )
+
+        self.assertEqual(result["record_count"], 2)
+        self.assertEqual(
+            [item["link"] for item in result["records"]],
+            ["https://example.com/post/1", "https://example.com/post/3"],
+        )
+
     def test_cli_writes_valid_json_to_target(self):
         with tempfile.TemporaryDirectory() as directory:
             input_path = Path(directory) / "input.json"

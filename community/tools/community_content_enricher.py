@@ -10,6 +10,7 @@ from pathlib import Path
 
 
 IMAGE_LINE_RE = re.compile(r"^\s*!\[[^\]]*\]\([^)]*\)\s*$")
+MD_LINK_RE = re.compile(r"\[+\s*([^\[\]]*)\]+\s*\([^)]*\)")
 DATE_RE = re.compile(r"(?<!\d)(20\d{2})[-/.年](\d{1,2})[-/.月](\d{1,2})")
 URL_DATE_RE = re.compile(r"/(20\d{2})(\d{2})(\d{2})\d*\.html(?:$|[?#])")
 SCHOOL_RE = re.compile(r"([一-龥]{2,12}(?:小学|中学|附中|附小|学校|校区))")
@@ -44,6 +45,27 @@ def _lines(text: str) -> list[str]:
         if line and not IMAGE_LINE_RE.match(line):
             result.append(line)
     return result
+
+
+def recover_forum_subject(record: dict) -> str:
+    """Recover the real thread subject when the list anchor text is boilerplate.
+
+    Discuz list pages label thread rows with icon anchors such as
+    "有新回复 - 新窗口打开"; the actual subject only appears on the detail
+    page as the single top-level heading (a type tag link plus the subject).
+    """
+    if record.get("source_id") != "shaoyaojuwang":
+        return ""
+    title = (record.get("title") or "").strip()
+    if title and not title.endswith("新窗口打开"):
+        return ""
+    for line in _lines(record.get("content_text_clean", "")):
+        if line.startswith("# ") and not line.startswith("## "):
+            candidate = MD_LINK_RE.sub(r"\1", line[2:])
+            candidate = candidate.replace("[", "").replace("]", "").strip()
+            if len(candidate) >= 6:
+                return candidate
+    return ""
 
 
 def extract_body_text(record: dict) -> tuple[str, str, str]:
@@ -146,6 +168,9 @@ def fingerprint(text: str) -> str:
 
 
 def enrich_record(record: dict) -> dict:
+    recovered_title = recover_forum_subject(record)
+    if recovered_title:
+        record = {**record, "title": recovered_title, "title_recovered": True}
     body, method, confidence = extract_body_text(record)
     published_at, date_confidence = normalize_published_date(record)
     searchable = f"{record.get('title', '')}\n{body[:6000]}"

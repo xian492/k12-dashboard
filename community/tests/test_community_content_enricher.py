@@ -75,6 +75,37 @@ class CommunityContentEnricherTests(unittest.TestCase):
         self.assertEqual(result["body_extraction_method"], "forum_post_anchor")
         self.assertIn("630政策", result["body_text"])
 
+    def test_recovers_forum_subject_from_detail_page_for_boilerplate_anchor(self):
+        result = enricher.enrich_record(
+            {
+                "source_id": "shaoyaojuwang",
+                "title": "有新回复 - 新窗口打开",
+                "link": "https://www.shaoyaojuwang.com/thread-493-1-1.html",
+                "content_text_clean": (
+                    "## [![芍药居社区网](https://www.shaoyaojuwang.com/logo.png)](https://www.shaoyaojuwang.com/)\n"
+                    "#  [[小学]](https://www.shaoyaojuwang.com/forum.php?mod=forumdisplay&fid=6) "
+                    "2026年，芍药居1年级新生，提前到校时间：8月29日、8月30日\n"
+                    "### 浏览过的版块\n"
+                ),
+            }
+        )
+
+        self.assertEqual(result["title"], "小学 2026年，芍药居1年级新生，提前到校时间：8月29日、8月30日")
+        self.assertTrue(result["title_recovered"])
+
+    def test_keeps_original_title_when_anchor_text_is_not_boilerplate(self):
+        result = enricher.enrich_record(
+            {
+                "source_id": "shaoyaojuwang",
+                "title": "（630政策汇总）2022-2026年芍药居入学政策",
+                "link": "https://www.shaoyaojuwang.com/thread-444-1-1.html",
+                "content_text_clean": "# [[政策]](https://example.com) 无关标题",
+            }
+        )
+
+        self.assertEqual(result["title"], "（630政策汇总）2022-2026年芍药居入学政策")
+        self.assertNotIn("title_recovered", result)
+
     def test_extracts_school_and_district_candidates_and_fingerprint(self):
         result = enricher.enrich_record(
             {

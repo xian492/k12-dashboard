@@ -61,3 +61,15 @@ class BeijingCommunityCrawlerTests(unittest.TestCase):
             ["https://www.xschu.com/policy", "https://www.xschu.com/experience"],
         )
 
+    def test_keeps_most_descriptive_anchor_for_duplicate_thread_link(self):
+        shaoyaoju = next(source for source in community.BEIJING_SOURCES if source["id"] == "shaoyaojuwang")
+        links = [
+            {"text": "有新回复 - 新窗口打开", "href": "https://www.shaoyaojuwang.com/thread-493-1-1.html"},
+            {"text": "2026年，芍药居1年级新生，提前到校时间", "href": "https://www.shaoyaojuwang.com/thread-493-1-1.html"},
+        ]
+
+        result = community.extract_candidate_links(links, shaoyaoju)
+
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["title"], "2026年，芍药居1年级新生，提前到校时间")
+

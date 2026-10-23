@@ -1290,28 +1290,33 @@ def community_view(community_data: dict, community_status: dict = None) -> str:
         "高中": "高中",
         "高考": "高中",
     }
+
+    def phase_for_stage(stage_text: str) -> str:
+        phase = stage_to_phase.get(stage_text)
+        if phase is None:
+            if "高考" in stage_text or "高中" in stage_text or "高职" in stage_text:
+                return "高中"
+            if "中考" in stage_text or "初升高" in stage_text:
+                return "中学"
+            if "幼升小" in stage_text or "小升初" in stage_text or "中招" in stage_text:
+                return "小学"
+            return "其他阶段"
+        return phase
+
     type_order = ("政策与流程", "学校动态", "家长经验", "其他类型")
     groups = {phase: {content_type: [] for content_type in type_order} for phase in phase_order}
     for record in records:
         stages = record.get("stage") or ["其他阶段"]
         if isinstance(stages, str):
             stages = [stages]
+        stage_texts = [str(stage) for stage in stages]
         content_type = record.get("content_type") or "其他类型"
         if content_type not in type_order:
             content_type = "其他类型"
-        for stage in stages:
-            stage_text = str(stage)
-            phase = stage_to_phase.get(stage_text)
-            if phase is None:
-                if "高考" in stage_text or "高中" in stage_text or "高职" in stage_text:
-                    phase = "高中"
-                elif "中考" in stage_text or "初升高" in stage_text:
-                    phase = "中学"
-                elif "幼升小" in stage_text or "小升初" in stage_text or "中招" in stage_text:
-                    phase = "小学"
-                else:
-                    phase = "其他阶段"
-            groups[phase][content_type].append((record, stage))
+        # One card per record: the first stage decides the school phase and
+        # every stage is listed in the tag line, so a post tagged
+        # 幼升小+小升初+中考 is not rendered three times.
+        groups[phase_for_stage(stage_texts[0])][content_type].append((record, stage_texts))
 
     phase_html = []
     directory_links = [("community-overview", "概览")]
@@ -1322,11 +1327,12 @@ def community_view(community_data: dict, community_status: dict = None) -> str:
             if not items:
                 continue
             rows = []
-            for item, stage in items:
+            for item, stage_texts in items:
                 link = escape(str(item.get("link") or ""), quote=True)
                 title = escape(str(item.get("title") or "无标题"))
                 date = escape(str(item.get("published_at") or "日期未知"))
                 source = escape(str(item.get("source") or "未标注社区"))
+                stage_label = "、".join(stage_texts) or "其他阶段"
                 events = item.get("event_type") or []
                 if isinstance(events, str):
                     events = [events]
@@ -1338,7 +1344,7 @@ def community_view(community_data: dict, community_status: dict = None) -> str:
                 rows.append(
                     f'<article class="community-item"><a href="{link}" target="_blank" rel="noopener">{title}</a>'
                     f'<div class="community-item-meta">来源：{source} · {date} · 待官方核验</div>'
-                    f'<div class="community-item-tags">学段标签：{escape(str(stage))} · 事件标签：{escape(event_label)} · 区县：{escape(district_label)}</div></article>'
+                    f'<div class="community-item-tags">学段标签：{escape(stage_label)} · 事件标签：{escape(event_label)} · 区县：{escape(district_label)}</div></article>'
                 )
             type_html.append(
                 f'<section class="community-type"><h4>{escape(content_type)} · {len(items)} 条</h4>{"".join(rows)}</section>'
