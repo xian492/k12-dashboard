@@ -18,10 +18,12 @@
 ## 本地构建
 
 ```bash
-python3 tools/build.py
+python3 tools/build.py            # 完整构建：抓取全部信源并重建页面
+python3 tools/build.py --offline  # 仅重渲染页面：用既有快照，不联网不抓取
 ```
 
-构建产物位于 `docs/`。
+构建产物位于 `docs/`。纯前端改动：本地跑 `--offline` 重出页面后提交，推送由
+`frontend-build.yml` 轻量部署，不触发全量抓取。
 
 ## 社区信源工作区
 
@@ -30,8 +32,9 @@ python3 tools/build.py
 ## 主要文件
 
 ```text
-.github/workflows/build.yml  定时构建与 Pages 部署
-tools/build.py               信源、学校目录与构建逻辑
+.github/workflows/build.yml           定时/全量构建与 Pages 部署
+.github/workflows/frontend-build.yml  纯前端改动的轻量 Pages 部署（不抓取）
+tools/build.py                        信源、学校目录与构建逻辑
 tools/school_crawler.py      学校官网动态抓取与链接筛选
 docs/index.html              看板页面
 docs/data.json               数据快照

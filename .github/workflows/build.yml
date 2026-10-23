@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - main
+    # 纯前端改动走 frontend-build.yml 轻量部署，不触发全量抓取。
+    paths-ignore:
+      - docs/**
+      - tools/build.py
+      - tests/**
+      - README.md
+      - .github/workflows/frontend-build.yml
   schedule:
     - cron: '0 */6 * * *'  # 每 6 小时（UTC）：北京 02/08/14/20 点
   workflow_dispatch: {}     # 手动触发
