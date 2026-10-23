@@ -75,7 +75,7 @@ class CommunityContentEnricherTests(unittest.TestCase):
         self.assertEqual(result["body_extraction_method"], "forum_post_anchor")
         self.assertIn("630政策", result["body_text"])
 
-    def test_recovers_forum_subject_from_detail_page_for_boilerplate_anchor(self):
+    def test_recovers_forum_subject_and_board_tag_from_detail_page(self):
         result = enricher.enrich_record(
             {
                 "source_id": "shaoyaojuwang",
@@ -90,8 +90,41 @@ class CommunityContentEnricherTests(unittest.TestCase):
             }
         )
 
-        self.assertEqual(result["title"], "小学 2026年，芍药居1年级新生，提前到校时间：8月29日、8月30日")
+        self.assertEqual(result["title"], "2026年，芍药居1年级新生，提前到校时间：8月29日、8月30日")
         self.assertTrue(result["title_recovered"])
+        self.assertEqual(result["stage"], ["小学"])
+
+    def test_board_tag_policy_does_not_claim_a_school_stage(self):
+        result = enricher.enrich_record(
+            {
+                "source_id": "shaoyaojuwang",
+                "title": "有新回复 - 新窗口打开",
+                "link": "https://www.shaoyaojuwang.com/thread-444-1-1.html",
+                "content_text_clean": (
+                    "#  [[政策]](https://www.shaoyaojuwang.com/forum.php?mod=forumdisplay&fid=6) "
+                    "（630政策汇总）2022-2026年，每年芍药居小学，初中，都是执行630政策。\n"
+                ),
+            }
+        )
+
+        self.assertEqual(result["title"], "（630政策汇总）2022-2026年，每年芍药居小学，初中，都是执行630政策。")
+        self.assertEqual(result.get("stage", []), [])
+
+    def test_board_tag_does_not_overwrite_existing_stage(self):
+        result = enricher.enrich_record(
+            {
+                "source_id": "shaoyaojuwang",
+                "title": "有新回复 - 新窗口打开",
+                "link": "https://www.shaoyaojuwang.com/thread-457-1-1.html",
+                "stage": ["小升初"],
+                "content_text_clean": (
+                    "#  [[初中]](https://www.shaoyaojuwang.com/forum.php?mod=forumdisplay&fid=6) "
+                    "2025年人朝初中（初一新生）领取通知书时间地点（7月5日上午）。\n"
+                ),
+            }
+        )
+
+        self.assertEqual(result["stage"], ["小升初"])
 
     def test_keeps_original_title_when_anchor_text_is_not_boilerplate(self):
         result = enricher.enrich_record(

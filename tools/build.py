@@ -1007,7 +1007,7 @@ HTML_HEAD = """<!DOCTYPE html>
   body {{
     font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
     background: #FBFAF7; color: #212427;
-    padding: 28px 20px 40px; line-height: 1.6;
+    padding: 32px 20px 48px; line-height: 1.65;
   }}
   .page {{ max-width: 1180px; margin: 0 auto; }}
 
@@ -1016,24 +1016,34 @@ header {{ display: flex; justify-content: space-between; align-items: flex-end;
     padding-bottom: 14px; border-bottom: 2px solid #212427; flex-wrap: wrap; gap: 6px; }}
   h1 {{ font-family: "Songti SC", "Noto Serif SC", "SimSun", serif;
     font-size: 22px; font-weight: 700; letter-spacing: .02em; }}
-  .meta {{ font-size: 12px; color: #8a877e; }}
+  .meta {{ font-size: 12.5px; color: #77736b; }}
   .source-switcher {{ margin-left: 12px; color: #31586E; }}
   .source-switcher select {{ margin-left: 4px; padding: 3px 7px; border: 1px solid #B9B5AA;
     background: #FBFAF7; color: #212427; font-size: 12px; }}
   .community-notice {{ margin-top: 18px; padding: 10px 12px; border-left: 3px solid #B23B32;
-    background: #F3F1EC; color: #6b6862; font-size: 12px; }}
-  .community-meta {{ margin-top: 12px; color: #8a877e; font-size: 12px; }}
+    background: #F3F1EC; color: #6b6862; font-size: 13px; }}
+  .community-meta {{ margin-top: 12px; color: #77736b; font-size: 12.5px; }}
   .community-groups {{ margin-top: 12px; display: grid; grid-template-columns: 1fr; gap: 18px; }}
   .community-stage {{ border-top: 1px solid #212427; padding-top: 8px; }}
-  .community-stage h3 {{ font-family: "Songti SC", "Noto Serif SC", serif; font-size: 17px;
+  .community-stage h3 {{ font-family: "Songti SC", "Noto Serif SC", serif; font-size: 18px;
     margin: 8px 0 2px; }}
-  .community-type {{ margin-top: 12px; padding: 9px 12px 0; border-left: 2px solid #B9B5AA; }}
+  .community-type {{ margin-top: 14px; padding: 9px 12px 0; border-left: 2px solid #B9B5AA; }}
   .community-type h4 {{ font-size: 13px; font-weight: 600; margin-bottom: 2px; }}
-  .community-item {{ padding: 9px 0; border-bottom: 1px solid #EDEBE3; }}
-  .community-item a {{ color: #212427; text-decoration: none; font-size: 13px; }}
-  .community-item a:hover {{ color: #31586E; text-decoration: underline; }}
-  .community-item-meta {{ margin-top: 2px; color: #8a877e; font-size: 11px; }}
-  .community-item-tags {{ margin-top: 3px; color: #31586E; font-size: 11px; }}
+  .community-items {{ display: grid; grid-template-columns: 1fr; gap: 0 44px; }}
+  @media (min-width: 920px) {{ .community-items {{ grid-template-columns: 1fr 1fr; }} }}
+  .community-item {{ padding: 10px 0 12px; border-bottom: 1px solid #EDEBE3; }}
+  .community-item a {{ color: #212427; text-decoration: none; font-size: 14px;
+    line-height: 1.55; }}
+  .community-item a:hover {{ color: #31586E; text-decoration: underline;
+    text-underline-offset: 3px; }}
+  .community-item-meta {{ margin-top: 3px; color: #77736b; font-size: 12px; }}
+  .community-item-tags {{ margin-top: 5px; }}
+  .chip {{ display: inline-block; padding: 1px 7px 2px; margin: 2px 6px 2px 0;
+    border: 1px solid #D8D4C8; border-radius: 3px; font-size: 11.5px;
+    line-height: 1.5; color: #6b6862; white-space: nowrap; }}
+  .chip--stage {{ color: #31586E; border-color: rgba(49, 88, 110, .4); }}
+  .chip--verify {{ color: #8a6a24; border-color: #D8C08F; }}
+  .community-geo {{ font-size: 11.5px; color: #8a877e; }}
   [hidden] {{ display: none !important; }}
 
   /* ── 页面目录 ────────────────── */
@@ -1081,21 +1091,21 @@ header {{ display: flex; justify-content: space-between; align-items: flex-end;
   /* ── 区块标题 ────────────────── */
   h2 {{
     font-family: "Songti SC", "Noto Serif SC", serif;
-    font-size: 17px; margin: 34px 0 4px; padding-bottom: 4px;
+    font-size: 19px; margin: 42px 0 6px; padding-bottom: 5px;
     border-bottom: 1px solid #B23B32; width: fit-content;
   }}
   h2::after {{ content: ""; }}
 
   /* ── 市级头条 ────────────────── */
-  .city {{ display: grid; grid-template-columns: 1fr 1fr; gap: 0 36px; margin-top: 14px; }}
+  .city {{ display: grid; grid-template-columns: 1fr 1fr; gap: 0 36px; margin-top: 16px; }}
   @media (max-width: 680px) {{ .city {{ grid-template-columns: 1fr; }} }}
-  .city h3 {{ font-size: 12px; font-weight: 600; color: #31586E; margin-bottom: 2px; }}
+  .city h3 {{ font-size: 13px; font-weight: 600; color: #31586E; margin-bottom: 2px; }}
   .official-homepage {{ color: inherit; text-decoration: none; }}
   .official-homepage::after {{ content: " ↗"; font-size: 9px; color: #8a877e; }}
   .official-homepage:hover {{ color: #B23B32; text-decoration: underline;
     text-underline-offset: 3px; }}
   .headline {{ font-family: "Songti SC", "Noto Serif SC", serif;
-    font-size: 15.5px; line-height: 1.5; margin: 4px 0 10px; }}
+    font-size: 16px; line-height: 1.5; margin: 4px 0 10px; }}
   .headline a {{ color: #212427; text-decoration: none; }}
   .headline a:hover {{ color: #B23B32; }}
   .headline .n-new {{ margin-right: 6px; }}
@@ -1274,19 +1284,23 @@ def community_view(community_data: dict, community_status: dict = None) -> str:
             '<p class="community-notice">社区内容仅用于发现线索和观察家长反馈，未经官方核验，不等同于官方信息。</p>'
             '<p class="community-meta">社区数据暂不可用；官方信源看板不受影响。</p></section>'
         )
-    phase_order = ("小学", "中学", "高中", "其他阶段")
+    phase_order = ("幼儿园", "小学", "中学", "高中", "其他阶段")
     phase_anchors = {
+        "幼儿园": "community-phase-kindergarten",
         "小学": "community-phase-primary",
         "中学": "community-phase-middle",
         "高中": "community-phase-high",
         "其他阶段": "community-phase-other",
     }
     stage_to_phase = {
-        "幼升小": "小学",
+        "幼儿园": "幼儿园",
+        "幼升小": "幼儿园",
         "小升初": "小学",
         "中招": "小学",
+        "小学": "小学",
         "中考": "中学",
         "初升高": "中学",
+        "初中": "中学",
         "高中": "高中",
         "高考": "高中",
     }
@@ -1298,7 +1312,9 @@ def community_view(community_data: dict, community_status: dict = None) -> str:
                 return "高中"
             if "中考" in stage_text or "初升高" in stage_text:
                 return "中学"
-            if "幼升小" in stage_text or "小升初" in stage_text or "中招" in stage_text:
+            if "幼升小" in stage_text or "幼儿园" in stage_text:
+                return "幼儿园"
+            if "小升初" in stage_text or "中招" in stage_text:
                 return "小学"
             return "其他阶段"
         return phase

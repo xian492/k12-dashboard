@@ -682,9 +682,54 @@ class RssFeedTests(unittest.TestCase):
         html = build.community_view(community)
 
         self.assertEqual(html.count("community.example/multi-stage"), 1)
-        self.assertIn("小学 · 1 条", html)
+        self.assertIn("幼儿园 · 1 条", html)
         self.assertIn("学段标签：幼升小、小升初、中考", html)
         self.assertNotIn("中学 · ", html)
+
+    def test_community_view_maps_forum_board_tags_to_school_phases(self):
+        community = {
+            "status": "success",
+            "generated_at": "2026-10-22T12:00:00+08:00",
+            "records": [
+                {
+                    "title": "2026年芍药居幼儿园小班、托班几个班汇总",
+                    "link": "https://community.example/kindergarten",
+                    "source": "社区甲",
+                    "content_type": "政策与流程",
+                    "stage": ["幼儿园"],
+                },
+                {
+                    "title": "2026年，芍药居1年级新生，提前到校时间",
+                    "link": "https://community.example/primary",
+                    "source": "社区甲",
+                    "content_type": "政策与流程",
+                    "stage": ["小学"],
+                },
+                {
+                    "title": "2025年人朝初中（初一新生）领取通知书时间地点",
+                    "link": "https://community.example/middle",
+                    "source": "社区甲",
+                    "content_type": "家长经验",
+                    "stage": ["初中"],
+                },
+                {
+                    "title": "北大附中朝阳未来学校面向全市招收高一年级新生",
+                    "link": "https://community.example/high",
+                    "source": "社区甲",
+                    "content_type": "学校动态",
+                    "stage": ["高中"],
+                },
+            ],
+        }
+
+        html = build.community_view(community)
+
+        self.assertIn("幼儿园 · 1 条", html)
+        self.assertIn("小学 · 1 条", html)
+        self.assertIn("中学 · 1 条", html)
+        self.assertIn("高中 · 1 条", html)
+        self.assertIn("学段标签：幼儿园", html)
+        self.assertIn("学段标签：初中", html)
 
     def test_community_view_has_a_matching_directory_for_rendered_phases(self):
         community = {
