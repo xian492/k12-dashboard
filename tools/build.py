@@ -668,7 +668,7 @@ DISTRICT_GOV_SPECS = {
     "东城区": ("东城区教委 · 通知公告", [
         dict(url="https://www.bjdch.gov.cn/zwgk/jgdh/qzfzcbmdh/qjw/tzggqjw/",
              pattern=r'<a[^>]+href="(?P<link>[^"]+)"[^>]*>\s*(?P<title>[^<]{6,})\s*</a>\s*(?:<[^>]+>\s*)?(?P<date>20\d{2}-\d{2}-\d{2})',
-             base="https://www.bjdch.gov.cn", re_s=True, enc="auto"),
+             base="https://www.bjdch.gov.cn/zwgk/jgdh/qzfzcbmdh/qjw/tzggqjw/", re_s=True, enc="auto"),
     ]),
     "丰台区": ("丰台区教委 · 教育公开", [
         dict(url="https://www.bjft.gov.cn/xxfb/zdlygs/c100013/list_ftb_1.shtml",
@@ -755,7 +755,7 @@ def parse_spec(spec: dict) -> list:
                 origin = "/".join(spec["base"].split("/")[:3])
                 link = origin + link
             else:
-                link = spec["base"] + link
+                link = spec["base"].rstrip("/") + "/" + link
         it = {"title": title, "link": link,
               "tag": tag_of(title), "kp": key_point(title), "src": "学校"}
         if m.groupdict().get("date"):
