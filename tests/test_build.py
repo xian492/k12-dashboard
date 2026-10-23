@@ -1,5 +1,6 @@
 import importlib.util
 import asyncio
+import json
 import re
 import tempfile
 import unittest
@@ -313,8 +314,8 @@ class DashboardLayoutTests(unittest.TestCase):
     def test_dashboard_title_covers_all_k12_stages(self):
         html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")
 
-        self.assertIn("<title>北京 K12 官方信源看板</title>", html)
-        self.assertIn("<h1>北京 K12 · 官方信源看板</h1>", html)
+        self.assertIn("<title>K12 信源看板</title>", html)
+        self.assertIn("<h1>K12 信源看板</h1>", html)
         self.assertNotIn("北京小升初 · 官方信源台账", html)
 
 
@@ -574,8 +575,8 @@ class RssFeedTests(unittest.TestCase):
         html = build.build_page(
             self.make_data(), set(), "2026-10-22 12:00", community_data=community
         )
-        self.assertIn("官方信源看板", html)
-        self.assertIn("社区信源看板", html)
+        self.assertIn("官方信源（北京）", html)
+        self.assertIn("社区信源（多城市）", html)
         self.assertIn("社区内容仅用于发现线索", html)
         self.assertIn("社区入学线索", html)
         self.assertIn("community.example/post/1", html)
@@ -797,29 +798,32 @@ class RssFeedTests(unittest.TestCase):
         self.assertIn('title="海淀区、西城区、东城区、朝阳区、丰台区、通州区"', html)
         self.assertIn("海淀区、西城区、东城区 等 6 区", html)
 
-    def test_community_view_has_a_matching_directory_for_rendered_phases(self):
+    def test_community_view_groups_records_by_city_then_phase(self):
         community = {
             "status": "success",
             "generated_at": "2026-10-22T12:00:00+08:00",
             "records": [
                 {
-                    "title": "小升初政策",
-                    "link": "https://community.example/primary",
-                    "source": "社区甲",
-                    "content_type": "政策与流程",
-                    "stage": ["小升初"],
-                },
-                {
-                    "title": "中考经验",
-                    "link": "https://community.example/middle",
-                    "source": "社区乙",
+                    "title": "上海中考经验",
+                    "link": "https://community.example/shanghai",
+                    "source": "篱笆网",
+                    "region": "上海",
                     "content_type": "家长经验",
                     "stage": ["中考"],
                 },
                 {
-                    "title": "高考动态",
-                    "link": "https://community.example/high",
+                    "title": "北京小升初政策",
+                    "link": "https://community.example/beijing-primary",
+                    "source": "北京小升初网",
+                    "region": "北京",
+                    "content_type": "政策与流程",
+                    "stage": ["小升初"],
+                },
+                {
+                    "title": "北京高考动态",
+                    "link": "https://community.example/beijing-high",
                     "source": "社区丙",
+                    "region": "北京",
                     "content_type": "学校动态",
                     "stage": ["高考"],
                 },
@@ -831,17 +835,54 @@ class RssFeedTests(unittest.TestCase):
         self.assertIn('<nav class="page-directory" aria-label="社区页面目录">', html)
         self.assertIn('<a href="#community-overview">概览</a>', html)
         self.assertIn('<h2 id="community-overview">社区信源</h2>', html)
-        for anchor, label in (
-            ("community-phase-primary", "小学"),
-            ("community-phase-middle", "中学"),
-            ("community-phase-high", "高中"),
-        ):
-            self.assertIn(f'<a href="#{anchor}">{label}</a>', html)
-            self.assertIn(f'<section id="{anchor}" class="community-stage">', html)
+        # 目录按城市导航，城市按条数降序（北京 2 条在上海 1 条之前）。
+        self.assertLess(html.index('href="#community-city-beijing"'), html.index('href="#community-city-shanghai"'))
+        self.assertIn('<a href="#community-city-beijing">北京</a>', html)
+        self.assertIn('<a href="#community-city-shanghai">上海</a>', html)
+        self.assertIn('<section id="community-city-beijing" class="community-city">', html)
+        self.assertIn('<h3>北京 · 2 条</h3>', html)
+        self.assertIn('<h3>上海 · 1 条</h3>', html)
+        # 学段落在城市分区内，锚点带城市前缀避免重复 id。
+        self.assertIn(
+            '<section id="community-city-beijing-community-phase-primary" class="community-stage">',
+            html,
+        )
+        self.assertIn(
+            '<section id="community-city-shanghai-community-phase-middle" class="community-stage">',
+            html,
+        )
+        self.assertIn("覆盖城市：北京、上海", html)
 
     def test_page_tolerates_missing_community_snapshot(self):
         html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")
         self.assertIn("社区数据暂不可用", html)
+
+    def test_render_only_rebuilds_page_and_feed_from_existing_snapshot(self):
+        import tempfile
+        from unittest import mock
+
+        with tempfile.TemporaryDirectory() as tmp:
+            docs = Path(tmp)
+            snapshot = {"built_at": "2026-10-22 12:00", "data": self.make_data()}
+            (docs / "data.json").write_text(
+                json.dumps(snapshot, ensure_ascii=False), encoding="utf-8"
+            )
+            with mock.patch.object(build, "DOCS", docs):
+                build.render_only()
+
+            html = (docs / "index.html").read_text(encoding="utf-8")
+            self.assertIn("<h1>K12 信源看板</h1>", html)
+            rss = ET.fromstring((docs / "feed.xml").read_text(encoding="utf-8"))
+            self.assertEqual(rss.find("channel/title").text, "K12 信源看板 · 区教委与学校动态")
+
+    def test_render_only_fails_loudly_without_a_snapshot(self):
+        import tempfile
+        from unittest import mock
+
+        with tempfile.TemporaryDirectory() as tmp:
+            with mock.patch.object(build, "DOCS", Path(tmp)):
+                with self.assertRaises(SystemExit):
+                    build.render_only()
 
     def test_official_feed_never_contains_community_records(self):
         data = self.make_data()

@@ -10,6 +10,7 @@ v5 布局：按区分组。市级置顶；区卡片 = 区招生政策(yjrx) + �
 import json
 import re
 import asyncio
+import sys
 from html import escape
 import importlib.util
 import ssl
@@ -1000,7 +1001,7 @@ HTML_HEAD = """<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>北京 K12 官方信源看板</title>
+<title>K12 信源看板</title>
 <style>
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
   html {{ font-variant-numeric: tabular-nums; scroll-behavior: smooth; }}
@@ -1024,11 +1025,13 @@ header {{ display: flex; justify-content: space-between; align-items: flex-end;
     background: #F3F1EC; color: #6b6862; font-size: 13px; }}
   .community-meta {{ margin-top: 12px; color: #77736b; font-size: 12.5px; }}
   .community-groups {{ margin-top: 12px; display: grid; grid-template-columns: 1fr; gap: 18px; }}
-  .community-stage {{ border-top: 1px solid #212427; padding-top: 8px; }}
-  .community-stage h3 {{ font-family: "Songti SC", "Noto Serif SC", serif; font-size: 18px;
+  .community-city {{ border-top: 1px solid #212427; padding-top: 8px; margin-top: 14px; }}
+  .community-city h3 {{ font-family: "Songti SC", "Noto Serif SC", serif; font-size: 18px;
     margin: 8px 0 2px; }}
+  .community-stage h4 {{ font-family: "Songti SC", "Noto Serif SC", serif; font-size: 15px;
+    margin: 14px 0 2px; }}
   .community-type {{ margin-top: 14px; padding: 9px 12px 0; border-left: 2px solid #B9B5AA; }}
-  .community-type h4 {{ font-size: 13px; font-weight: 600; margin-bottom: 2px; }}
+  .community-type h5 {{ font-size: 13px; font-weight: 600; margin-bottom: 2px; }}
   .community-items {{ display: grid; grid-template-columns: 1fr; gap: 0 44px; }}
   @media (min-width: 920px) {{ .community-items {{ grid-template-columns: 1fr 1fr; }} }}
   .community-item {{ padding: 10px 0 12px; border-bottom: 1px solid #EDEBE3; }}
@@ -1181,12 +1184,12 @@ header {{ display: flex; justify-content: space-between; align-items: flex-end;
 <body>
 <div class="page">
 <header>
-  <h1>北京 K12 · 官方信源看板</h1>
+  <h1>K12 信源看板</h1>
   <div class="meta">构建于 {built_at}，每 6 小时自动更新
     <label class="source-switcher">信源视图
       <select id="source-view" aria-label="选择信源视图">
-        <option value="official">官方信源看板</option>
-        <option value="community">社区信源看板</option>
+        <option value="official">官方信源（北京）</option>
+        <option value="community">社区信源（多城市）</option>
       </select>
     </label>
   </div>
@@ -1340,7 +1343,9 @@ def community_view(community_data: dict, community_status: dict = None) -> str:
         return phase
 
     type_order = ("政策与流程", "学校动态", "家长经验", "其他类型")
-    groups = {phase: {content_type: [] for content_type in type_order} for phase in phase_order}
+    city_anchors = {"北京": "beijing", "上海": "shanghai", "广州": "guangzhou", "深圳": "shenzhen"}
+    # 城市 → 学段 → 类型；同一城市内学段按 phase_order 排序。
+    city_groups = {}
     for record in records:
         stages = record.get("stage") or ["其他阶段"]
         if isinstance(stages, str):
@@ -1349,86 +1354,110 @@ def community_view(community_data: dict, community_status: dict = None) -> str:
         content_type = record.get("content_type") or "其他类型"
         if content_type not in type_order:
             content_type = "其他类型"
+        city = str(record.get("region") or "未标注城市")
         # One card per record: the first stage decides the school phase and
         # every stage is listed in the tag line, so a post tagged
         # 幼升小+小升初+中考 is not rendered three times.
-        groups[phase_for_stage(stage_texts[0])][content_type].append((record, stage_texts))
+        phase = phase_for_stage(stage_texts[0])
+        city_groups.setdefault(city, {p: {t: [] for t in type_order} for p in phase_order})
+        city_groups[city][phase][content_type].append((record, stage_texts))
 
-    phase_html = []
+    # 城市按条数降序，并列时按名称，保证构建稳定。
+    ordered_cities = sorted(
+        city_groups,
+        key=lambda city: (
+            -sum(len(items) for phase in city_groups[city].values() for items in phase.values()),
+            city,
+        ),
+    )
+
+    def render_item(item, stage_texts) -> str:
+        link = escape(str(item.get("link") or ""), quote=True)
+        title = escape(str(item.get("title") or "无标题"))
+        date = escape(str(item.get("published_at") or "日期未知"))
+        source = escape(str(item.get("source") or "未标注社区"))
+        # 标签墙改小徽章：学段全量、事件与区县截断计数，完整清单放 title 提示。
+        stage_chips = "".join(
+            f'<span class="chip chip--stage">{escape(str(stage))}</span>'
+            for stage in (stage_texts or ["其他阶段"])
+        )
+        events = item.get("event_type") or []
+        if isinstance(events, str):
+            events = [events]
+        event_texts = [str(value) for value in events]
+        shown_events = event_texts[:4]
+        event_chips = "".join(
+            f'<span class="chip">{escape(value)}</span>' for value in shown_events
+        )
+        if len(event_texts) > len(shown_events):
+            full_events = escape("、".join(event_texts), quote=True)
+            event_chips += (
+                f'<span class="chip" title="{full_events}">等 {len(event_texts)} 项</span>'
+            )
+        districts = item.get("district_candidates") or []
+        if isinstance(districts, str):
+            districts = [districts]
+        district_texts = [str(value) for value in districts]
+        shown_districts = district_texts[:3]
+        district_label = "、".join(shown_districts)
+        if len(district_texts) > len(shown_districts):
+            district_label += f' 等 {len(district_texts)} 区'
+        geo = ""
+        if district_texts:
+            geo_label = escape(district_label)
+            if len(district_texts) > len(shown_districts):
+                full_districts = escape("、".join(district_texts), quote=True)
+                geo = (
+                    f'<span class="community-geo" title="{full_districts}">'
+                    f'{geo_label}</span>'
+                )
+            else:
+                geo = f'<span class="community-geo">{geo_label}</span>'
+        return (
+            f'<article class="community-item"><a href="{link}" target="_blank" rel="noopener">{title}</a>'
+            f'<div class="community-item-meta">来源：{source} · {date} · <span class="chip chip--verify">待官方核验</span></div>'
+            f'<div class="community-item-tags">{stage_chips}{event_chips}{geo}</div></article>'
+        )
+
+    city_html = []
     directory_links = [("community-overview", "概览")]
-    for phase in phase_order:
-        type_html = []
-        for content_type in type_order:
-            items = groups[phase][content_type]
-            if not items:
-                continue
-            rows = []
-            for item, stage_texts in items:
-                link = escape(str(item.get("link") or ""), quote=True)
-                title = escape(str(item.get("title") or "无标题"))
-                date = escape(str(item.get("published_at") or "日期未知"))
-                source = escape(str(item.get("source") or "未标注社区"))
-                # 标签墙改小徽章：学段全量、事件与区县截断计数，完整清单放 title 提示。
-                stage_chips = "".join(
-                    f'<span class="chip chip--stage">{escape(str(stage))}</span>'
-                    for stage in (stage_texts or ["其他阶段"])
+    for city_index, city in enumerate(ordered_cities, start=1):
+        groups = city_groups[city]
+        city_anchor = f"community-city-{city_anchors.get(city) or city_index}"
+        phase_html = []
+        for phase in phase_order:
+            type_html = []
+            for content_type in type_order:
+                items = groups[phase][content_type]
+                if not items:
+                    continue
+                rows = "".join(render_item(item, stage_texts) for item, stage_texts in items)
+                type_html.append(
+                    f'<section class="community-type"><h5>{escape(content_type)} · {len(items)} 条</h5>'
+                    f'<div class="community-items">{rows}</div></section>'
                 )
-                events = item.get("event_type") or []
-                if isinstance(events, str):
-                    events = [events]
-                event_texts = [str(value) for value in events]
-                shown_events = event_texts[:4]
-                event_chips = "".join(
-                    f'<span class="chip">{escape(value)}</span>' for value in shown_events
+            if type_html:
+                phase_anchor = phase_anchors[phase]
+                phase_html.append(
+                    f'<section id="{city_anchor}-{phase_anchor}" class="community-stage">'
+                    f'<h4>{escape(phase)} · {sum(len(items) for items in groups[phase].values())} 条</h4>'
+                    f'{"".join(type_html)}</section>'
                 )
-                if len(event_texts) > len(shown_events):
-                    full_events = escape("、".join(event_texts), quote=True)
-                    event_chips += (
-                        f'<span class="chip" title="{full_events}">等 {len(event_texts)} 项</span>'
-                    )
-                districts = item.get("district_candidates") or []
-                if isinstance(districts, str):
-                    districts = [districts]
-                district_texts = [str(value) for value in districts]
-                shown_districts = district_texts[:3]
-                district_label = "、".join(shown_districts)
-                if len(district_texts) > len(shown_districts):
-                    district_label += f' 等 {len(district_texts)} 区'
-                geo = ""
-                if district_texts:
-                    geo_label = escape(district_label)
-                    if len(district_texts) > len(shown_districts):
-                        full_districts = escape("、".join(district_texts), quote=True)
-                        geo = (
-                            f'<span class="community-geo" title="{full_districts}">'
-                            f'{geo_label}</span>'
-                        )
-                    else:
-                        geo = f'<span class="community-geo">{geo_label}</span>'
-                rows.append(
-                    f'<article class="community-item"><a href="{link}" target="_blank" rel="noopener">{title}</a>'
-                    f'<div class="community-item-meta">来源：{source} · {date} · <span class="chip chip--verify">待官方核验</span></div>'
-                    f'<div class="community-item-tags">{stage_chips}{event_chips}{geo}</div></article>'
-                )
-            type_html.append(
-                f'<section class="community-type"><h4>{escape(content_type)} · {len(items)} 条</h4>'
-                f'<div class="community-items">{"".join(rows)}</div></section>'
-            )
-        if type_html:
-            total = sum(len(groups[phase][content_type]) for content_type in type_order)
-            anchor = phase_anchors[phase]
-            directory_links.append((anchor, phase))
-            phase_html.append(
-                f'<section id="{anchor}" class="community-stage">'
-                f'<h3>{escape(phase)} · {total} 条</h3>{"".join(type_html)}</section>'
-            )
+        total = sum(len(items) for phase in groups.values() for items in phase.values())
+        directory_links.append((city_anchor, city))
+        city_html.append(
+            f'<section id="{city_anchor}" class="community-city">'
+            f'<h3>{escape(city)} · {total} 条</h3>'
+            f'<div class="community-groups">{"".join(phase_html)}</div></section>'
+        )
+    coverage = "、".join(ordered_cities)
     return (
         '<section id="community-view" hidden>'
         + page_directory(directory_links, "社区页面目录")
         + '<h2 id="community-overview">社区信源</h2>'
         '<p class="community-notice">社区内容仅用于发现线索和观察家长反馈，未经教育部门、考试院或学校官方页面核验，不等同于官方信息。</p>'
-        f'<p class="community-meta">最近成功采集：{generated_at} · 当前展示：{len(records)} 条</p>'
-        f'<div class="community-groups">{"".join(phase_html)}</div></section>'
+        f'<p class="community-meta">覆盖城市：{escape(coverage)} · 最近成功采集：{generated_at} · 当前展示：{len(records)} 条</p>'
+        f'<div class="community-groups">{"".join(city_html)}</div></section>'
     )
 
 
@@ -1575,7 +1604,7 @@ def build_feed(data: dict, built_at: str) -> str:
     """生成 OPML 使用的增量 RSS；排除已有独立订阅的市级通知和区招生政策。"""
     rss = ET.Element("rss", {"version": "2.0"})
     channel = ET.SubElement(rss, "channel")
-    ET.SubElement(channel, "title").text = "K12 官方信源看板 · 区教委与学校动态"
+    ET.SubElement(channel, "title").text = "K12 信源看板 · 区教委与学校动态"
     ET.SubElement(channel, "link").text = "https://xian492.github.io/k12-dashboard/"
     ET.SubElement(channel, "description").text = "北京各区教委、学校动态及市区学校综合信息"
     ET.SubElement(channel, "language").text = "zh-cn"
@@ -1707,5 +1736,37 @@ def main():
     )
 
 
+def render_only() -> None:
+    """仅重渲染前端：用 docs/ 既有快照重建 index.html 与 feed.xml。
+
+    不联网、不抓取、不产生新快照，供纯前端改动时本地快速重出页面。
+    NEW 徽章依赖"本次抓取 vs 上次快照"的对比，离线重渲染下两者相同，
+    徽章状态与已部署页面保持一致，属预期行为。
+    """
+    snapshot_path = DOCS / "data.json"
+    try:
+        snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError):
+        raise SystemExit(f"缺少数据快照 {snapshot_path}，请先跑一次完整构建")
+    data = snapshot.get("data")
+    if not data:
+        raise SystemExit("docs/data.json 缺少数据快照，请先跑一次完整构建")
+    built_at = str(snapshot.get("built_at") or "")
+    if not built_at:
+        built_at = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M")
+    community_data = _read_json_file(DOCS / "community-data.json")
+    community_status = _read_json_file(DOCS / "community-status.json")
+    prev_keys = load_prev_keys()
+    (DOCS / "index.html").write_text(
+        build_page(data, prev_keys, built_at, community_data, community_status),
+        encoding="utf-8",
+    )
+    (DOCS / "feed.xml").write_text(build_feed(data, built_at), encoding="utf-8")
+    print(f"offline render: {built_at}（数据来自既有快照，未更新信息）")
+
+
 if __name__ == "__main__":
-    main()
+    if "--offline" in sys.argv[1:]:
+        render_only()
+    else:
+        main()
