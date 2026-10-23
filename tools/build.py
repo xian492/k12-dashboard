@@ -1312,7 +1312,9 @@ def community_view(community_data: dict, community_status: dict = None) -> str:
     }
     stage_to_phase = {
         "幼儿园": "幼儿园",
-        "幼升小": "幼儿园",
+        # 幼升小是小学入学阶段，归小学档；幼儿园档只收真正的幼儿园内容（入园/托班）。
+        # 社区帖常带 [幼升小, 小升初, 中考] 全量宽标签，首标签定档后应与小升初内容同列。
+        "幼升小": "小学",
         "小升初": "小学",
         "中招": "小学",
         "小学": "小学",
@@ -1330,9 +1332,9 @@ def community_view(community_data: dict, community_status: dict = None) -> str:
                 return "高中"
             if "中考" in stage_text or "初升高" in stage_text:
                 return "中学"
-            if "幼升小" in stage_text or "幼儿园" in stage_text:
+            if "幼儿园" in stage_text:
                 return "幼儿园"
-            if "小升初" in stage_text or "中招" in stage_text:
+            if "幼升小" in stage_text or "小升初" in stage_text or "中招" in stage_text:
                 return "小学"
             return "其他阶段"
         return phase

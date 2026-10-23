@@ -685,7 +685,7 @@ class RssFeedTests(unittest.TestCase):
         html = build.community_view(community)
 
         self.assertEqual(html.count("community.example/multi-stage"), 1)
-        self.assertIn("幼儿园 · 1 条", html)
+        self.assertIn("小学 · 1 条", html)
         self.assertIn(
             '<span class="chip chip--stage">幼升小</span>'
             '<span class="chip chip--stage">小升初</span>'
@@ -693,6 +693,35 @@ class RssFeedTests(unittest.TestCase):
             html,
         )
         self.assertNotIn("中学 · ", html)
+
+    def test_community_view_maps_preschool_posts_to_kindergarten_phase(self):
+        """幼升小是小学入学，只有真正的幼儿园内容才进幼儿园档。"""
+        community = {
+            "status": "success",
+            "generated_at": "2026-10-22T12:00:00+08:00",
+            "records": [
+                {
+                    "title": "2026年芍药居幼儿园小班、托班几个班汇总",
+                    "link": "https://community.example/kindergarten",
+                    "source": "社区甲",
+                    "content_type": "政策与流程",
+                    "stage": ["幼儿园"],
+                },
+                {
+                    "title": "2027北京小升初入学指南",
+                    "link": "https://community.example/primary-entry",
+                    "source": "社区甲",
+                    "content_type": "政策与流程",
+                    # 社区宽标签：小升初帖同时带出幼升小标签，首标签定档。
+                    "stage": ["幼升小", "小升初", "中考"],
+                },
+            ],
+        }
+
+        html = build.community_view(community)
+
+        self.assertIn("幼儿园 · 1 条", html)
+        self.assertIn("小学 · 1 条", html)
 
     def test_community_view_maps_forum_board_tags_to_school_phases(self):
         community = {
