@@ -94,7 +94,7 @@ class CommunityContentEnricherTests(unittest.TestCase):
         self.assertTrue(result["title_recovered"])
         self.assertEqual(result["stage"], ["小学"])
 
-    def test_board_tag_policy_does_not_claim_a_school_stage(self):
+    def test_stage_comes_from_title_school_type_not_board_tag(self):
         result = enricher.enrich_record(
             {
                 "source_id": "shaoyaojuwang",
@@ -108,9 +108,10 @@ class CommunityContentEnricherTests(unittest.TestCase):
         )
 
         self.assertEqual(result["title"], "（630政策汇总）2022-2026年，每年芍药居小学，初中，都是执行630政策。")
-        self.assertEqual(result.get("stage", []), [])
+        # 政策版块标签本身不代表学段；学段来自标题里的学校类型锚点（小学、初中）。
+        self.assertEqual(result.get("stage", []), ["小学", "中学"])
 
-    def test_board_tag_does_not_overwrite_existing_stage(self):
+    def test_title_grade_anchor_supersedes_legacy_stage(self):
         result = enricher.enrich_record(
             {
                 "source_id": "shaoyaojuwang",
@@ -124,7 +125,8 @@ class CommunityContentEnricherTests(unittest.TestCase):
             }
         )
 
-        self.assertEqual(result["stage"], ["小升初"])
+        # 标题里的年级锚点（初一新生）说明孩子已在初中，压过清洗层遗留的小升初标签。
+        self.assertEqual(result["stage"], ["中学"])
 
     def test_keeps_original_title_when_anchor_text_is_not_boilerplate(self):
         result = enricher.enrich_record(

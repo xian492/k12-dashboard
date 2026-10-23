@@ -656,11 +656,12 @@ class RssFeedTests(unittest.TestCase):
 
         html = build.community_view(community)
 
-        self.assertLess(html.index("小学"), html.index("中学"))
-        self.assertLess(html.index("中学"), html.index("高中"))
-        self.assertIn("小学 · 1 条", html)
-        self.assertIn("中学 · 1 条", html)
-        self.assertIn("高中 · 1 条", html)
+        # 过渡期各自成组：小升初、初升高（中考）、高考，按升学时间线排序。
+        self.assertLess(html.index("小升初"), html.index("初升高"))
+        self.assertLess(html.index("初升高"), html.index("高考"))
+        self.assertIn("小升初 · 1 条", html)
+        self.assertIn("初升高 · 1 条", html)
+        self.assertIn("高考 · 1 条", html)
         self.assertIn('<span class="chip chip--stage">小升初</span>', html)
         self.assertIn('<span class="chip chip--stage">中考</span>', html)
         self.assertIn('<span class="chip chip--stage">高考</span>', html)
@@ -686,17 +687,18 @@ class RssFeedTests(unittest.TestCase):
         html = build.community_view(community)
 
         self.assertEqual(html.count("community.example/multi-stage"), 1)
-        self.assertIn("小学 · 1 条", html)
+        self.assertIn("幼升小 · 1 条", html)
         self.assertIn(
             '<span class="chip chip--stage">幼升小</span>'
             '<span class="chip chip--stage">小升初</span>'
             '<span class="chip chip--stage">中考</span>',
             html,
         )
+        self.assertNotIn("小学 · ", html)
         self.assertNotIn("中学 · ", html)
 
-    def test_community_view_maps_preschool_posts_to_kindergarten_phase(self):
-        """幼升小是小学入学，只有真正的幼儿园内容才进幼儿园档。"""
+    def test_community_view_places_preschool_transition_in_own_phase(self):
+        """幼升小单独成组；幼儿园档只收真正的幼儿园内容（入园/托班）。"""
         community = {
             "status": "success",
             "generated_at": "2026-10-22T12:00:00+08:00",
@@ -722,7 +724,7 @@ class RssFeedTests(unittest.TestCase):
         html = build.community_view(community)
 
         self.assertIn("幼儿园 · 1 条", html)
-        self.assertIn("小学 · 1 条", html)
+        self.assertIn("幼升小 · 1 条", html)
 
     def test_community_view_maps_forum_board_tags_to_school_phases(self):
         community = {
@@ -844,11 +846,11 @@ class RssFeedTests(unittest.TestCase):
         self.assertIn('<h3>上海 · 1 条</h3>', html)
         # 学段落在城市分区内，锚点带城市前缀避免重复 id。
         self.assertIn(
-            '<section id="community-city-beijing-community-phase-primary" class="community-stage">',
+            '<section id="community-city-beijing-community-phase-primary-transition" class="community-stage">',
             html,
         )
         self.assertIn(
-            '<section id="community-city-shanghai-community-phase-middle" class="community-stage">',
+            '<section id="community-city-shanghai-community-phase-middle-transition" class="community-stage">',
             html,
         )
         self.assertIn("覆盖城市：北京、上海", html)

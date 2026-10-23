@@ -62,6 +62,9 @@ FORUM_EXCLUDE_TERMS = (
     "公众号",
     "免费领",
     "团购",
+    "团课",
+    "刷题班",
+    "辅导班",
     "优惠券",
     "福利社",
     "抽奖",
@@ -72,20 +75,6 @@ FORUM_EXCLUDE_TERMS = (
 # 老帖护栏：2024 年前的帖子只有标题命中明确升学词才保留
 STALE_YEAR = 2024
 STALE_TITLE_TERMS = POLICY_TERMS + SCHOOL_TERMS
-
-STAGE_TERMS = ("幼儿园", "幼升小", "小升初", "中考", "中招", "初升高", "高考")
-
-
-def stage_candidates(title: str, body: str) -> list[str]:
-    """学段以标题为准；标题没有学段词才看正文（论坛正文无侧栏噪声）。
-
-    标题优先的原因：一条讨论中考的帖子里，正文常提到"这批孩子当年
-    幼升小/小升初怎么进的"，全文匹配会把所有提到过的学段都打上标签。
-    """
-    title_hits = [term for term in STAGE_TERMS if term in title]
-    if title_hits:
-        return title_hits
-    return [term for term in STAGE_TERMS if term in body]
 
 
 def _hits(text: str, terms) -> list[str]:
@@ -135,6 +124,8 @@ def _school_candidates(text: str) -> list[str]:
 
 
 def adapt_record(record: dict) -> dict:
+    from community_stage import classify_stage, relevant_forum
+
     title = (record.get("title") or "").strip()
     main = (record.get("content_text") or "").strip()
     replies = record.get("replies") or []
@@ -142,25 +133,26 @@ def adapt_record(record: dict) -> dict:
     signal_text = f"{title}\n{main}\n{reply_text}"
 
     content_type = _classify(title, signal_text)
-    education_hits = _hits(signal_text, POLICY_TERMS + SCHOOL_TERMS + PARENT_TERMS)
     exclude_hits = _hits(signal_text, EXCLUDE_TERMS + FORUM_EXCLUDE_TERMS)
     status = record.get("crawl_status", "")
     has_content = status == "success" and (len(main) >= 80 or len(reply_text) >= 200)
-    # 水木/篱笆的列表级记录没有正文；标题本身命中教育词才作为标题级线索
-    title_only_lead = status.startswith("list_only") and bool(_hits(title, POLICY_TERMS + SCHOOL_TERMS + PARENT_TERMS))
+    # 相关性只看标题：正文出现一次"家长"不算教育信号（拦律师/生活杂帖）
+    title_relevant = relevant_forum(title)
+    # 水木/篱笆的列表级记录没有正文；标题命中教育词即标题级线索
+    title_only_lead = status.startswith("list_only") and title_relevant
     year_match = DATE_RE.search(record.get("published_at", "") or "")
     stale = bool(year_match) and int(year_match.group(1)) < STALE_YEAR
     fresh_enough = not stale or bool(_hits(title, STALE_TITLE_TERMS))
     valid = (
         (has_content or title_only_lead)
+        and title_relevant
         and fresh_enough
-        and bool(education_hits)
         and content_type not in NOISE_TYPES
         and content_type != "噪声"
         and not exclude_hits
     )
 
-    stage = stage_candidates(title, signal_text)
+    stage = classify_stage(title, signal_text[:2500], board=record.get("board", ""))
     return {
         "title": title,
         "link": record.get("url", ""),

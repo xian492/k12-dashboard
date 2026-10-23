@@ -1338,49 +1338,63 @@ def community_view(community_data: dict, community_status: dict = None) -> str:
             '<p class="community-notice">社区内容仅用于发现线索和观察家长反馈，未经官方核验，不等同于官方信息。</p>'
             '<p class="community-meta">社区数据暂不可用；官方信源看板不受影响。</p></section>'
         )
-    phase_order = ("幼儿园", "小学", "中学", "高中", "其他阶段")
+    # 学段按升学时间线排列：幼儿园 → 幼升小 → 小学 → 小升初 → 中学 →
+    # 初升高 → 高中 → 高考 → 综合。四条过渡期各自成组，不并入前后学段；
+    # "综合"收无学段锚点的育儿类家长经验。
+    phase_order = ("幼儿园", "幼升小", "小学", "小升初", "中学", "初升高", "高中", "高考", "综合")
     phase_anchors = {
         "幼儿园": "community-phase-kindergarten",
+        "幼升小": "community-phase-preschool-transition",
         "小学": "community-phase-primary",
+        "小升初": "community-phase-primary-transition",
         "中学": "community-phase-middle",
+        "初升高": "community-phase-middle-transition",
         "高中": "community-phase-high",
-        "其他阶段": "community-phase-other",
+        "高考": "community-phase-high-transition",
+        "综合": "community-phase-general",
     }
     stage_to_phase = {
         "幼儿园": "幼儿园",
-        # 幼升小是小学入学阶段，归小学档；幼儿园档只收真正的幼儿园内容（入园/托班）。
-        # 社区帖常带 [幼升小, 小升初, 中考] 全量宽标签，首标签定档后应与小升初内容同列。
-        "幼升小": "小学",
-        "小升初": "小学",
-        "中招": "小学",
+        "幼升小": "幼升小",
         "小学": "小学",
-        "中考": "中学",
-        "初升高": "中学",
+        "小升初": "小升初",
+        "中招": "小升初",
+        "XSC": "小升初",
+        "中学": "中学",
         "初中": "中学",
+        "中考": "初升高",
+        "初升高": "初升高",
+        "校额到校": "初升高",
         "高中": "高中",
-        "高考": "高中",
+        "高考": "高考",
     }
 
     def phase_for_stage(stage_text: str) -> str:
         phase = stage_to_phase.get(stage_text)
-        if phase is None:
-            if "高考" in stage_text or "高中" in stage_text or "高职" in stage_text:
-                return "高中"
-            if "中考" in stage_text or "初升高" in stage_text:
-                return "中学"
-            if "幼儿园" in stage_text:
-                return "幼儿园"
-            if "幼升小" in stage_text or "小升初" in stage_text or "中招" in stage_text:
-                return "小学"
-            return "其他阶段"
-        return phase
+        if phase is not None:
+            return phase
+        if "高考" in stage_text or "高中" in stage_text:
+            return "高考" if "高考" in stage_text else "高中"
+        if "初升高" in stage_text or "中考" in stage_text:
+            return "初升高"
+        if "小升初" in stage_text or "中招" in stage_text:
+            return "小升初"
+        if "幼升小" in stage_text:
+            return "幼升小"
+        if "幼儿园" in stage_text:
+            return "幼儿园"
+        if "初中" in stage_text or "中学" in stage_text:
+            return "中学"
+        if "小学" in stage_text:
+            return "小学"
+        return "综合"
 
     type_order = ("政策与流程", "学校动态", "家长经验", "其他类型")
     city_anchors = {"北京": "beijing", "上海": "shanghai", "广州": "guangzhou", "深圳": "shenzhen"}
     # 城市 → 学段 → 类型；同一城市内学段按 phase_order 排序。
     city_groups = {}
     for record in records:
-        stages = record.get("stage") or ["其他阶段"]
+        stages = record.get("stage") or ["综合"]
         if isinstance(stages, str):
             stages = [stages]
         stage_texts = [str(stage) for stage in stages]
@@ -1412,7 +1426,7 @@ def community_view(community_data: dict, community_status: dict = None) -> str:
         # 标签墙改小徽章：学段全量、事件与区县截断计数，完整清单放 title 提示。
         stage_chips = "".join(
             f'<span class="chip chip--stage">{escape(str(stage))}</span>'
-            for stage in (stage_texts or ["其他阶段"])
+            for stage in (stage_texts or ["综合"])
         )
         events = item.get("event_type") or []
         if isinstance(events, str):
