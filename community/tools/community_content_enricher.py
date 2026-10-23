@@ -13,6 +13,7 @@ IMAGE_LINE_RE = re.compile(r"^\s*!\[[^\]]*\]\([^)]*\)\s*$")
 MD_LINK_RE = re.compile(r"\[+\s*([^\[\]]*)\]+\s*\([^)]*\)")
 HEADING_LINK_RE = re.compile(r"^#+\s*\[+\s*([^\[\]]+)\]+\s*\([^)]*\)\s*")
 BOARD_TAGS = ("幼儿园", "小学", "初中", "高中", "政策")
+STAGE_TERMS = ("幼升小", "小升初", "中考", "中招")
 DATE_RE = re.compile(r"(?<!\d)(20\d{2})[-/.年](\d{1,2})[-/.月](\d{1,2})")
 URL_DATE_RE = re.compile(r"/(20\d{2})(\d{2})(\d{2})\d*\.html(?:$|[?#])")
 SCHOOL_RE = re.compile(r"([一-龥]{2,12}(?:小学|中学|附中|附小|学校|校区))")
@@ -177,6 +178,33 @@ def fingerprint(text: str) -> str:
     return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
 
 
+SIDEBAR_MARKERS = ("关键词", "相关推荐", "上一篇", "友情链接")
+
+
+def stage_candidates(title: str, body: str, previous: list) -> list:
+    """学段标签：标题优先，其次正文核心段，最后保留原标签。
+
+    清洗层用"标题 + 整页文本"匹配学段词，而资讯页尾部的相关推荐、
+    关键词和友情链接会带来大量跨学段噪声（例如中考分析页的侧栏全是
+    小升初链接）。三级取舍：
+
+    1. 标题命中学段词——作者明确锚定了学段，只信标题；
+    2. 正文核心段（截掉侧栏标记之后的部分的前 2500 字）命中——
+       正文确实在讨论该学段；
+    3. 都没有时保留清洗层标签（论坛版块标签等可靠来源）。
+    """
+    title_hits = [term for term in STAGE_TERMS if term in (title or "")]
+    if title_hits:
+        return title_hits
+    core = body or ""
+    for marker in SIDEBAR_MARKERS:
+        core = core.split(marker, 1)[0]
+    core_hits = [term for term in STAGE_TERMS if term in core[:2500]]
+    if core_hits:
+        return core_hits
+    return list(previous or [])
+
+
 def enrich_record(record: dict) -> dict:
     recovered_title, board_tag = recover_forum_subject(record)
     if recovered_title:
@@ -185,6 +213,7 @@ def enrich_record(record: dict) -> dict:
             record = {**record, "stage": [board_tag]}
     body, method, confidence = extract_body_text(record)
     published_at, date_confidence = normalize_published_date(record)
+    stage = stage_candidates(record.get("title", ""), body, record.get("stage") or [])
     searchable = f"{record.get('title', '')}\n{body[:6000]}"
     return {
         **record,
@@ -193,6 +222,7 @@ def enrich_record(record: dict) -> dict:
         "body_extraction_confidence": confidence,
         "published_at_normalized": published_at,
         "date_confidence": date_confidence,
+        "stage": stage,
         "school_candidates": school_candidates(searchable),
         "district_candidates": district_candidates(searchable),
         "content_fingerprint": fingerprint(f"{record.get('title', '')}\n{body}"),

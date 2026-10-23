@@ -73,6 +73,20 @@ FORUM_EXCLUDE_TERMS = (
 STALE_YEAR = 2024
 STALE_TITLE_TERMS = POLICY_TERMS + SCHOOL_TERMS
 
+STAGE_TERMS = ("幼儿园", "幼升小", "小升初", "中考", "中招", "初升高", "高考")
+
+
+def stage_candidates(title: str, body: str) -> list[str]:
+    """学段以标题为准；标题没有学段词才看正文（论坛正文无侧栏噪声）。
+
+    标题优先的原因：一条讨论中考的帖子里，正文常提到"这批孩子当年
+    幼升小/小升初怎么进的"，全文匹配会把所有提到过的学段都打上标签。
+    """
+    title_hits = [term for term in STAGE_TERMS if term in title]
+    if title_hits:
+        return title_hits
+    return [term for term in STAGE_TERMS if term in body]
+
 
 def _hits(text: str, terms) -> list[str]:
     return [term for term in terms if term in text]
@@ -146,7 +160,7 @@ def adapt_record(record: dict) -> dict:
         and not exclude_hits
     )
 
-    stage = [term for term in ("幼儿园", "幼升小", "小升初", "中考", "中招", "初升高", "高考") if term in signal_text]
+    stage = stage_candidates(title, signal_text)
     return {
         "title": title,
         "link": record.get("url", ""),

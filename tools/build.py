@@ -1065,6 +1065,10 @@ header {{ display: flex; justify-content: space-between; align-items: flex-end;
     white-space: nowrap; transform-origin: left center;
     transition: color .18s ease, transform .18s ease, font-size .18s ease,
       background-color .18s ease; }}
+  /* 社区目录两级：城市链接 + 缩进的学段子链接 */
+  .page-directory .dir-group {{ display: block; }}
+  .page-directory a.dir-sub {{ padding-left: 26px; font-size: 10px; color: #9a958c; }}
+  .page-directory a.dir-sub::before {{ width: 3px; height: 3px; opacity: .35; }}
   .page-directory a::before {{ content: ""; position: absolute; left: 2px; top: 50%;
     width: 4px; height: 4px; border-radius: 50%; background: #B23B32;
     opacity: 0; transform: translateY(-50%) scale(.5);
@@ -1087,6 +1091,8 @@ header {{ display: flex; justify-content: space-between; align-items: flex-end;
     .page-directory strong {{ display: none; }}
     .page-directory a {{ flex: none; padding: 2px 0; }}
     .page-directory a::before {{ display: none; }}
+    .page-directory .dir-group {{ display: contents; }}
+    .page-directory a.dir-sub {{ padding-left: 0; font-size: 11px; color: #77736b; }}
     .page-directory a:hover {{ transform: none; }}
     .page-directory a[aria-current="location"] {{ transform: none; background: transparent; }}
   }}
@@ -1293,6 +1299,33 @@ def page_directory(links: list[tuple[str, str]], aria_label: str = "页面目录
     )
 
 
+def community_directory(
+    overview_link: tuple[str, str],
+    city_groups_links: list[tuple[tuple[str, str], list[tuple[str, str]]]],
+) -> str:
+    """社区快速跳转：城市一级、学段二级（缩进小字）。
+
+    city_groups_links 每项是 ((城市 anchor, 城市名), [(学段 anchor, 学段
+    标签), ...])，渲染时城市链接紧跟其学段子链接。移动端目录横向排布
+    时缩进取消，标签本身带城市前缀以免混淆。
+    """
+    overview = (
+        f'<a href="#{escape(overview_link[0], quote=True)}">{escape(overview_link[1])}</a>'
+    )
+    parts = []
+    for (city_anchor, city_label), phase_links in city_groups_links:
+        city = f'<a href="#{escape(city_anchor, quote=True)}">{escape(city_label)}</a>'
+        subs = "".join(
+            f'<a class="dir-sub" href="#{escape(anchor, quote=True)}">{escape(label)}</a>'
+            for anchor, label in phase_links
+        )
+        parts.append(f'<span class="dir-group">{city}{subs}</span>')
+    return (
+        '<nav class="page-directory" aria-label="社区页面目录">'
+        f'<strong>快速跳转</strong>{overview}{"".join(parts)}</nav>'
+    )
+
+
 def community_view(community_data: dict, community_status: dict = None) -> str:
     records = community_data.get("records", []) if community_data.get("status") == "success" else []
     status = community_status or community_data
@@ -1420,11 +1453,13 @@ def community_view(community_data: dict, community_status: dict = None) -> str:
         )
 
     city_html = []
-    directory_links = [("community-overview", "概览")]
+    # 快速跳转两级：城市一级、学段二级（缩进子链接）
+    directory_groups: list[tuple[tuple[str, str], list[tuple[str, str]]]] = []
     for city_index, city in enumerate(ordered_cities, start=1):
         groups = city_groups[city]
         city_anchor = f"community-city-{city_anchors.get(city) or city_index}"
         phase_html = []
+        city_phase_links: list[tuple[str, str]] = []
         for phase in phase_order:
             type_html = []
             for content_type in type_order:
@@ -1443,8 +1478,9 @@ def community_view(community_data: dict, community_status: dict = None) -> str:
                     f'<h4>{escape(phase)} · {sum(len(items) for items in groups[phase].values())} 条</h4>'
                     f'{"".join(type_html)}</section>'
                 )
+                city_phase_links.append((f"{city_anchor}-{phase_anchor}", f"{city}·{phase}"))
         total = sum(len(items) for phase in groups.values() for items in phase.values())
-        directory_links.append((city_anchor, city))
+        directory_groups.append(((city_anchor, city), city_phase_links))
         city_html.append(
             f'<section id="{city_anchor}" class="community-city">'
             f'<h3>{escape(city)} · {total} 条</h3>'
@@ -1453,7 +1489,7 @@ def community_view(community_data: dict, community_status: dict = None) -> str:
     coverage = "、".join(ordered_cities)
     return (
         '<section id="community-view" hidden>'
-        + page_directory(directory_links, "社区页面目录")
+        + community_directory(("community-overview", "概览"), directory_groups)
         + '<h2 id="community-overview">社区信源</h2>'
         '<p class="community-notice">社区内容仅用于发现线索和观察家长反馈，未经教育部门、考试院或学校官方页面核验，不等同于官方信息。</p>'
         f'<p class="community-meta">覆盖城市：{escape(coverage)} · 最近成功采集：{generated_at} · 当前展示：{len(records)} 条</p>'
