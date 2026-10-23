@@ -1112,43 +1112,43 @@ header {{ display: flex; justify-content: space-between; align-items: flex-end;
 
   /* ── 条目 ─────────────────── */
   ul {{ list-style: none; }}
-  li {{ font-size: 13px; padding: 6px 0; border-bottom: 1px solid #EDEBE3;
-    display: flex; gap: 8px; align-items: baseline; }}
+  li {{ font-size: 14px; padding: 7px 0; border-bottom: 1px solid #EDEBE3;
+    display: flex; gap: 10px; align-items: baseline; }}
   li:last-child {{ border-bottom: none; }}
   li a {{ color: #212427; text-decoration: none; flex: 1; }}
   li a:hover {{ color: #31586E; text-decoration: underline; text-underline-offset: 3px; }}
-  .kind {{ font-size: 11px; color: #31586E; white-space: nowrap; }}
-  .date {{ font-size: 11px; color: #a5a29a; white-space: nowrap; }}
+  .kind {{ font-size: 11.5px; color: #8a877e; white-space: nowrap; }}
+  .date {{ font-size: 11.5px; color: #8a877e; white-space: nowrap; }}
   .n-new {{
     font-size: 10px; font-weight: 600; background: #B23B32; color: #FBFAF7;
     padding: 0 5px; border-radius: 2px; white-space: nowrap; flex: none;
   }}
-  li.empty {{ color: #a5a29a; border: none; }}
+  li.empty {{ color: #8a877e; border: none; }}
 
   /* ── 区台账 ─────────────────── */
   .ledger {{ margin-top: 14px; border-top: 1px solid #212427; }}
   details.row {{ border-bottom: 1px solid #E3E1D8; }}
   details.row summary {{
-    list-style: none; cursor: pointer; padding: 11px 2px;
-    display: grid; grid-template-columns: 84px 44px 1fr auto;
+    list-style: none; cursor: pointer; padding: 12px 2px;
+    display: grid; grid-template-columns: 84px 50px 1fr auto;
     gap: 12px; align-items: baseline;
   }}
   details.row summary::-webkit-details-marker {{ display: none; }}
   details.row summary:hover {{ background: #F3F1EC; }}
   .d-name {{ font-family: "Songti SC", "Noto Serif SC", serif;
     font-weight: 700; font-size: 15px; }}
-  .d-count {{ font-size: 12px; color: #8a877e; text-align: right; }}
-  .d-latest {{ font-size: 12.5px; color: #6b6862;
+  .d-count {{ font-size: 12.5px; color: #77736b; text-align: right; }}
+  .d-latest {{ font-size: 13px; color: #6b6862;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }}
-  .d-side {{ font-size: 11px; color: #31586E; white-space: nowrap; display: flex; gap: 6px; align-items: baseline; }}
+  .d-side {{ font-size: 12px; color: #31586E; white-space: nowrap; display: flex; gap: 6px; align-items: baseline; }}
   .row-body {{ padding: 2px 2px 18px 96px; }}
   .district-columns {{ display: grid;
     grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 0 34px; }}
   .district-column {{ min-width: 0; }}
   .district-column--schools {{ border-left: 1px solid #E3E1D8; padding-left: 34px; }}
   .column-title {{ font-family: "Songti SC", "Noto Serif SC", serif;
-    font-size: 14px; color: #212427; margin: 12px 0 3px; }}
-  .column-empty {{ font-size: 12px; color: #a5a29a; padding: 10px 0; }}
+    font-size: 15px; color: #212427; margin: 12px 0 3px; }}
+  .column-empty {{ font-size: 12.5px; color: #8a877e; padding: 10px 0; }}
   @media (max-width: 760px) {{
     details.row summary {{ grid-template-columns: 72px 1fr auto; }}
     .d-count {{ display: none; }}
@@ -1159,23 +1159,23 @@ header {{ display: flex; justify-content: space-between; align-items: flex-end;
       margin-top: 14px; padding: 2px 0 0; }}
   }}
   .school-sec {{ margin-top: 12px; }}
-  .school-sec h4 {{ font-size: 12px; font-weight: 600; color: #31586E; margin-bottom: 2px; }}
+  .school-sec h4 {{ font-size: 12.5px; font-weight: 600; color: #31586E; margin-bottom: 2px; }}
   .school-homepage {{ color: #31586E; text-decoration: none; }}
   .school-homepage::after {{ content: " ↗"; font-size: 10px; color: #8a877e; }}
   .school-homepage:hover {{ color: #B23B32; text-decoration: underline;
     text-underline-offset: 3px; }}
-  .school-wechat {{ display: block; margin-top: 2px; color: #8a877e;
-    font-size: 11px; font-weight: 400; }}
+  .school-wechat {{ display: block; margin-top: 2px; color: #77736b;
+    font-size: 11.5px; font-weight: 400; }}
   .school-wechat code, .district-wechat code {{ font-family: ui-monospace, SFMono-Regular,
-    Menlo, Consolas, monospace; font-size: 10.5px; color: #6b6862; }}
+    Menlo, Consolas, monospace; font-size: 11px; color: #6b6862; }}
   .school-entry {{ padding: 5px 0 7px; border-bottom: 1px solid #EDEBE3; }}
-  .district-wechat {{ margin: 5px 0 10px; color: #8a877e; font-size: 11px;
+  .district-wechat {{ margin: 5px 0 10px; color: #77736b; font-size: 12px;
     line-height: 1.8; }}
   .district-wechat b {{ color: #31586E; font-weight: 600; margin-right: 5px; }}
-  .open-hint {{ font-size: 11px; color: #a5a29a; padding: 2px 2px 0; }}
+  .open-hint {{ font-size: 12px; color: #77736b; padding: 2px 2px 0; }}
 
-  footer {{ margin-top: 40px; padding-top: 12px; border-top: 1px solid #E3E1D8;
-    font-size: 12px; color: #a5a29a; line-height: 1.9; }}
+  footer {{ margin-top: 44px; padding-top: 12px; border-top: 1px solid #E3E1D8;
+    font-size: 12.5px; color: #77736b; line-height: 1.9; }}
 </style>
 </head>
 <body>
@@ -1195,24 +1195,42 @@ header {{ display: flex; justify-content: space-between; align-items: flex-end;
 """
 
 
-def item_li(it: dict, prev_keys: set) -> str:
+def item_li(it: dict, prev_keys: set, show_kind: bool = True) -> str:
     is_new = (it.get("id") or it.get("link")) not in prev_keys
     new = '<span class="n-new">NEW</span>' if is_new else ""
-    kind = it.get("tag", "")
+    # 连续同类条目只在首行显示栏目标签，空占位保持列对齐。
+    kind = f'<span class="kind">{it["tag"]}</span>' if show_kind and it.get("tag") else '<span class="kind"></span>'
     date = f'<span class="date">{it["date"]}</span>' if it.get("date") else ""
     return (
-        f'<li>{new}<span class="kind">{kind}</span>'
+        f'<li>{new}{kind}'
         f'<a href="{it["link"]}" target="_blank">{it["title"]}</a>{date}</li>'
     )
+
+
+def _kind_flags(items: list) -> list:
+    """同一列表内，栏目与上一条相同则不再重复显示。"""
+    flags = []
+    previous = None
+    for it in items:
+        current = it.get("tag")
+        flags.append(current != previous)
+        previous = current
+    return flags
 
 
 def section(title: str, items: list, prev_keys: set, max_show: int = 5) -> str:
     if not items:
         return f'<div class="school-sec"><h4>{title}</h4><ul><li class="empty">暂无数据</li></ul></div>'
-    top_lis = "".join(item_li(it, prev_keys) for it in items[:max_show])
+    flags = _kind_flags(items)
+    top_lis = "".join(
+        item_li(it, prev_keys, show_kind=flags[index]) for index, it in enumerate(items[:max_show])
+    )
     more = ""
     if len(items) > max_show:
-        rest_lis = "".join(item_li(it, prev_keys) for it in items[max_show:])
+        rest_lis = "".join(
+            item_li(it, prev_keys, show_kind=flags[index])
+            for index, it in enumerate(items[max_show:], start=max_show)
+        )
         more = f'<li style="display:block"><details><summary class="open-hint" style="cursor:pointer">其余 {len(items) - max_show} 条</summary><ul style="margin-top:4px">{rest_lis}</ul></details></li>'
     return f'<div class="school-sec"><h4>{title} · {len(items)} 条</h4><ul>{top_lis}{more}</ul></div>'
 
@@ -1348,22 +1366,51 @@ def community_view(community_data: dict, community_status: dict = None) -> str:
                 title = escape(str(item.get("title") or "无标题"))
                 date = escape(str(item.get("published_at") or "日期未知"))
                 source = escape(str(item.get("source") or "未标注社区"))
-                stage_label = "、".join(stage_texts) or "其他阶段"
+                # 标签墙改小徽章：学段全量、事件与区县截断计数，完整清单放 title 提示。
+                stage_chips = "".join(
+                    f'<span class="chip chip--stage">{escape(str(stage))}</span>'
+                    for stage in (stage_texts or ["其他阶段"])
+                )
                 events = item.get("event_type") or []
                 if isinstance(events, str):
                     events = [events]
-                event_label = "、".join(str(value) for value in events) or "无"
+                event_texts = [str(value) for value in events]
+                shown_events = event_texts[:4]
+                event_chips = "".join(
+                    f'<span class="chip">{escape(value)}</span>' for value in shown_events
+                )
+                if len(event_texts) > len(shown_events):
+                    full_events = escape("、".join(event_texts), quote=True)
+                    event_chips += (
+                        f'<span class="chip" title="{full_events}">等 {len(event_texts)} 项</span>'
+                    )
                 districts = item.get("district_candidates") or []
                 if isinstance(districts, str):
                     districts = [districts]
-                district_label = "、".join(str(value) for value in districts) or "—"
+                district_texts = [str(value) for value in districts]
+                shown_districts = district_texts[:3]
+                district_label = "、".join(shown_districts)
+                if len(district_texts) > len(shown_districts):
+                    district_label += f' 等 {len(district_texts)} 区'
+                geo = ""
+                if district_texts:
+                    geo_label = escape(district_label)
+                    if len(district_texts) > len(shown_districts):
+                        full_districts = escape("、".join(district_texts), quote=True)
+                        geo = (
+                            f'<span class="community-geo" title="{full_districts}">'
+                            f'{geo_label}</span>'
+                        )
+                    else:
+                        geo = f'<span class="community-geo">{geo_label}</span>'
                 rows.append(
                     f'<article class="community-item"><a href="{link}" target="_blank" rel="noopener">{title}</a>'
-                    f'<div class="community-item-meta">来源：{source} · {date} · 待官方核验</div>'
-                    f'<div class="community-item-tags">学段标签：{escape(stage_label)} · 事件标签：{escape(event_label)} · 区县：{escape(district_label)}</div></article>'
+                    f'<div class="community-item-meta">来源：{source} · {date} · <span class="chip chip--verify">待官方核验</span></div>'
+                    f'<div class="community-item-tags">{stage_chips}{event_chips}{geo}</div></article>'
                 )
             type_html.append(
-                f'<section class="community-type"><h4>{escape(content_type)} · {len(items)} 条</h4>{"".join(rows)}</section>'
+                f'<section class="community-type"><h4>{escape(content_type)} · {len(items)} 条</h4>'
+                f'<div class="community-items">{"".join(rows)}</div></section>'
             )
         if type_html:
             total = sum(len(groups[phase][content_type]) for content_type in type_order)
@@ -1407,10 +1454,15 @@ def build_page(data: dict, prev_keys: set, built_at: str, community_data: dict =
         if items:
             top = items[0]
             top_new = '<span class="n-new">NEW</span>' if top["link"] not in prev_keys else ""
+            city_flags = _kind_flags(items[1:6])
+            city_lis = "".join(
+                item_li(it, prev_keys, show_kind=city_flags[index])
+                for index, it in enumerate(items[1:6])
+            )
             parts.append(
                 f'<div><h3>{name_link} · {len(items)} 条</h3>'
                 f'<div class="headline">{top_new}<a href="{top["link"]}" target="_blank">{top["title"]}</a></div>'
-                f'<ul>{"".join(item_li(it, prev_keys) for it in items[1:6])}</ul></div>'
+                f'<ul>{city_lis}</ul></div>'
             )
         else:
             parts.append(f'<div><h3>{name_link}</h3><ul><li class="empty">拉取失败</li></ul></div>')

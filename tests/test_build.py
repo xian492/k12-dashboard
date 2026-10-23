@@ -613,10 +613,13 @@ class RssFeedTests(unittest.TestCase):
         self.assertLess(html.index("幼升小"), html.index("小升初"))
         self.assertIn('class="community-stage"', html)
         self.assertIn('class="community-type"', html)
-        self.assertIn("事件标签：分班", html)
-        self.assertIn("事件标签：报名、入学", html)
+        self.assertIn('<span class="chip">分班</span>', html)
+        self.assertIn('<span class="chip">报名</span><span class="chip">入学</span>', html)
+        self.assertIn('<span class="community-geo">海淀区</span>', html)
+        self.assertIn('<span class="community-geo">朝阳区</span>', html)
         self.assertIn("来源：社区甲", html)
         self.assertIn("来源：社区乙", html)
+        self.assertIn('class="chip chip--verify">待官方核验', html)
 
     def test_community_view_groups_by_school_phase_with_stage_labels(self):
         community = {
@@ -657,9 +660,9 @@ class RssFeedTests(unittest.TestCase):
         self.assertIn("小学 · 1 条", html)
         self.assertIn("中学 · 1 条", html)
         self.assertIn("高中 · 1 条", html)
-        self.assertIn("学段标签：小升初", html)
-        self.assertIn("学段标签：中考", html)
-        self.assertIn("学段标签：高考", html)
+        self.assertIn('<span class="chip chip--stage">小升初</span>', html)
+        self.assertIn('<span class="chip chip--stage">中考</span>', html)
+        self.assertIn('<span class="chip chip--stage">高考</span>', html)
 
     def test_community_view_renders_multi_stage_record_once(self):
         community = {
@@ -683,7 +686,12 @@ class RssFeedTests(unittest.TestCase):
 
         self.assertEqual(html.count("community.example/multi-stage"), 1)
         self.assertIn("幼儿园 · 1 条", html)
-        self.assertIn("学段标签：幼升小、小升初、中考", html)
+        self.assertIn(
+            '<span class="chip chip--stage">幼升小</span>'
+            '<span class="chip chip--stage">小升初</span>'
+            '<span class="chip chip--stage">中考</span>',
+            html,
+        )
         self.assertNotIn("中学 · ", html)
 
     def test_community_view_maps_forum_board_tags_to_school_phases(self):
@@ -728,8 +736,37 @@ class RssFeedTests(unittest.TestCase):
         self.assertIn("小学 · 1 条", html)
         self.assertIn("中学 · 1 条", html)
         self.assertIn("高中 · 1 条", html)
-        self.assertIn("学段标签：幼儿园", html)
-        self.assertIn("学段标签：初中", html)
+        self.assertIn('<span class="chip chip--stage">幼儿园</span>', html)
+        self.assertIn('<span class="chip chip--stage">初中</span>', html)
+
+    def test_community_view_caps_long_tag_lists_with_overflow_hints(self):
+        community = {
+            "status": "success",
+            "generated_at": "2026-10-22T12:00:00+08:00",
+            "records": [
+                {
+                    "title": "全区通用报名流程汇总",
+                    "link": "https://community.example/capped",
+                    "source": "社区甲",
+                    "published_at": "2026-10-22",
+                    "content_type": "政策与流程",
+                    "stage": ["小升初"],
+                    "event_type": ["报名", "入学", "派位", "摇号", "划片", "学区", "招生"],
+                    "district_candidates": [
+                        "海淀区", "西城区", "东城区", "朝阳区", "丰台区", "通州区",
+                    ],
+                },
+            ],
+        }
+
+        html = build.community_view(community)
+
+        self.assertIn('<span class="chip" title="报名、入学、派位、摇号、划片、学区、招生">等 7 项</span>', html)
+        self.assertIn("等 6 区", html)
+        # 超出截断的部分不整串渲染，完整清单保留在 title 提示里。
+        self.assertNotIn("区县：海淀区、西城区、东城区、朝阳区、丰台区、通州区", html)
+        self.assertIn('title="海淀区、西城区、东城区、朝阳区、丰台区、通州区"', html)
+        self.assertIn("海淀区、西城区、东城区 等 6 区", html)
 
     def test_community_view_has_a_matching_directory_for_rendered_phases(self):
         community = {
