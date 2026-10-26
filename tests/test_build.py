@@ -342,14 +342,30 @@ class SchoolHomepageTests(unittest.TestCase):
             sum(len(schools) for schools in directory.values()),
             114,
         )
+        # 官网已关停的学校降级为纯名称+公众号入口（2026-10-26 复核）。
         self.assertEqual(
             directory["东城区"]["北京市第二中学分校"]["homepage"],
-            "http://www.2zfx.com/",
+            "",
         )
         self.assertEqual(
             directory["东城区"]["北京市第一七一中学"]["homepage"],
-            "http://www.171sch.com/",
+            "",
         )
+        # 海淀死链学校迁入 bjhdedu.cn 统一建站平台。
+        self.assertEqual(
+            directory["海淀区"]["北京市育英学校"]["homepage"],
+            "https://bjsyyxx.bjhdedu.cn/",
+        )
+        self.assertEqual(
+            directory["海淀区"]["北京市中关村中学"]["homepage"],
+            "https://zgczx.bjhdedu.cn/",
+        )
+        self.assertEqual(
+            directory["丰台区"]["北京市第十中学"]["homepage"],
+            "https://bj10z.ftedu.cn/",
+        )
+        # 交大附中原域名被接管，链接必须移除。
+        self.assertEqual(directory["海淀区"]["交大附中"]["homepage"], "")
         self.assertNotIn(
             "xschu.com/qhy/wordBox/",
             " ".join(
@@ -521,9 +537,13 @@ class OfficialHomepageTests(unittest.TestCase):
         self.assertTrue(
             all(url.startswith("https://") for url in build.CITY_HOMEPAGES.values())
         )
-        self.assertTrue(
-            all(url.startswith("https://") for url in build.DISTRICT_HOMEPAGES.values())
-        )
+        # 朝阳/延庆门户 https 通道失效（握手失败/超时），http 可达（2026-10-26 复核）。
+        http_only = {"朝阳区", "延庆区"}
+        for district, url in build.DISTRICT_HOMEPAGES.items():
+            if district in http_only:
+                self.assertTrue(url.startswith("http://"))
+            else:
+                self.assertTrue(url.startswith("https://"))
 
     def test_city_labels_and_district_names_link_to_official_sites(self):
         html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")
