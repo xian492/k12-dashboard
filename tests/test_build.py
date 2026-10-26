@@ -461,6 +461,39 @@ class SchoolHomepageTests(unittest.TestCase):
         self.assertIn("rdfz1950", html)
         self.assertNotIn("人大附中 · 暂无有效动态", html)
 
+    def test_multi_section_school_renders_entry_link_once(self):
+        districts = {
+            name: {"政策": [], "动态": None, "通用信息": [], "学校": {}}
+            for name in build.DISTRICTS
+        }
+        # 人大附中两个栏目 + 亦庄实验中学跨两个区（大兴区目录与经开区属地）。
+        districts["海淀区"]["学校"] = {
+            "人大附中": {
+                "通知公告": [{"title": "通知一", "link": "https://www.rdfz.cn/a", "tag": "通知公告", "date": "2026-10-22"}],
+                "招生资讯": [{"title": "招生一", "link": "https://www.rdfz.cn/b", "tag": "招生资讯", "date": "2026-10-22"}],
+            },
+        }
+        districts["大兴区"]["学校"] = {"北京亦庄实验中学": {"官方学校信息": [{"title": "大兴条目", "link": "https://dx.gov.cn/x", "tag": "信息", "date": "2026-10-22"}]}}
+        districts["经济技术开发区"]["学校"] = {"北京亦庄实验中学": {"官方学校信息": [{"title": "经开区条目", "link": "https://kfq.gov.cn/y", "tag": "信息", "date": "2026-10-22"}]}}
+        data = {
+            "市教委": [],
+            "教育部": [],
+            "市级学校信息": [],
+            "区级": districts,
+        }
+
+        html = build.build_page(data, set(), "2026-10-22 12:00")
+
+        import re as _re
+
+        rdfz_links = _re.findall(r'class="school-homepage"[^>]*>人大附中<', html)
+        yizhuang_links = _re.findall(r'class="school-homepage"[^>]*>北京亦庄实验中学<', html)
+        self.assertEqual(len(rdfz_links), 1)
+        self.assertEqual(len(yizhuang_links), 1)
+        # 两个栏目、两个区条目本身都还在。
+        self.assertIn("招生资讯", html)
+        self.assertIn("经开区条目", html)
+
     def test_district_wechat_ids_render_in_the_official_column(self):
         districts = {
             name: {"政策": [], "动态": None, "通用信息": [], "学校": {}}

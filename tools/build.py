@@ -1256,9 +1256,13 @@ def school_homepage_link(school_name: str) -> str:
     )
 
 
-def school_identity(school_name: str) -> str:
-    """学校官网入口及来源页列出的微信公众号。"""
-    identity = school_homepage_link(school_name)
+def school_identity(school_name: str, linked: bool = True) -> str:
+    """学校官网入口及来源页列出的微信公众号。
+
+    多栏目的学校只在首个栏目渲染带链接的校名入口，后续栏目用纯文本，
+    避免同一学校的官网链接在一页里重复出现。
+    """
+    identity = school_homepage_link(school_name) if linked else school_name
     wechats = SCHOOL_WECHATS.get(school_name, ())
     if not wechats:
         return identity
@@ -1552,6 +1556,9 @@ def build_page(data: dict, prev_keys: set, built_at: str, community_data: dict =
 
     # 区台账
     parts.append('<h2>分区台账</h2><div class="ledger">')
+    # 跨区出现的同一所学校（如亦庄实验中学同时在大兴区目录与经开区属地），
+    # 官网入口链接只在首次出现时渲染，后续条目纯文本，避免同页链接重复。
+    linked_schools = set()
     for district_index, (区名, fid) in enumerate(DISTRICTS.items(), start=1):
         d = data["区级"][区名]
         policies = d["政策"]
@@ -1570,12 +1577,19 @@ def build_page(data: dict, prev_keys: set, built_at: str, community_data: dict =
             official_sections += section("区级学校信息", general, prev_keys, max_show=4)
         school_sections = ""
         for 校名, 栏目 in schools.items():
-            校名入口 = school_identity(校名)
+            already_linked = 校名 in linked_schools
+            校名入口 = school_identity(校名, linked=not already_linked)
+            if not already_linked:
+                linked_schools.add(校名)
             if not 栏目:
                 school_sections += f'<div class="school-sec school-entry"><h4>{校名入口}</h4></div>'
                 continue
+            first_section = True
             for 栏名, items in 栏目.items():
-                school_sections += section(f"{校名入口} · {栏名}", items, prev_keys, max_show=4)
+                # 首栏带官网入口链接，后续栏目纯文本校名，避免链接重复。
+                heading = 校名入口 if first_section else school_identity(校名, linked=False)
+                school_sections += section(f"{heading} · {栏名}", items, prev_keys, max_show=4)
+                first_section = False
         if not school_sections:
             school_sections = '<p class="column-empty">暂无学校动态</p>'
 
