@@ -139,6 +139,20 @@ class SchoolFeedTests(unittest.TestCase):
         self.assertIsNotNone(match)
         self.assertIn("房山中学", match.group("title"))
 
+    def test_item_titles_strip_embedded_body_text_and_entities(self):
+        # 部分学校站把"标题 日期 正文"拼进一个字段；标题中夹 HTML 实体。
+        long_title = (
+            "潞河中学2026年\"1+3\"培养实验面试安排 2026-07-24 "
+            "2026年潞河中学\"1+3\"培养实验面试时间为7月25日（周六），请学生携带身份证。"
+        )
+        cleaned = build.clean_item_title(long_title)
+        self.assertEqual(cleaned, "潞河中学2026年\"1+3\"培养实验面试安排")
+        # 超长标题截断到 42 字加省略号。
+        self.assertTrue(len(build.clean_item_title("标" * 100)) <= 42)
+        self.assertTrue(build.clean_item_title("标" * 100).endswith("…"))
+        # HTML 实体解码后再输出，不会双重转义。
+        self.assertEqual(build.clean_item_title("公告&quot;要点&quot;"), "公告\"要点\"")
+
     def test_parser_discards_non_education_administrative_links(self):
         markup = """
         <a href="news.html">学校举办科技节活动</a>

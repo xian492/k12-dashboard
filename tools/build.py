@@ -11,6 +11,7 @@ import json
 import re
 import asyncio
 import sys
+import html as _htmlmod
 from html import escape
 import importlib.util
 import ssl
@@ -1261,15 +1262,37 @@ header {{ display: flex; justify-content: space-between; align-items: flex-end;
 """
 
 
+_EMBEDDED_DATE_RE = re.compile(r"\s\d{4}-\d{2}-\d{2}\s")
+_HTML_ENTITY_RE = re.compile(r"&(?:[a-zA-Z][a-zA-Z0-9]{1,9}|#\d{1,7});")
+
+
+def clean_item_title(title: str, limit: int = 42) -> str:
+    """条目标题清理：部分学校站把标题、日期、正文摘要拼在一个字段里。
+
+    标题中间夹着完整日期（YYYY-MM-DD）的，日期起视为正文开始，只保留前面的
+    标题；无论结构如何，超过 limit 字的标题截断加省略号。
+    """
+    title = re.sub(r"\s+", " ", str(title)).strip()
+    # 部分爬虫源把 HTML 实体原样存进 title，先解码一次避免渲染层双重转义。
+    title = _HTML_ENTITY_RE.sub(lambda m: _htmlmod.unescape(m.group(0)), title)
+    m = _EMBEDDED_DATE_RE.search(title)
+    if m and m.start() >= 8:
+        title = title[: m.start()].strip()
+    if len(title) > limit:
+        title = title[: limit - 1].rstrip("，。、；：！？ ")+ "…"
+    return title
+
+
 def item_li(it: dict, prev_keys: set, show_kind: bool = True) -> str:
     is_new = (it.get("id") or it.get("link")) not in prev_keys
     new = '<span class="n-new">NEW</span>' if is_new else ""
     # 连续同类条目只在首行显示栏目标签，空占位保持列对齐。
     kind = f'<span class="kind">{it["tag"]}</span>' if show_kind and it.get("tag") else '<span class="kind"></span>'
     date = f'<span class="date">{it["date"]}</span>' if it.get("date") else ""
+    title = escape(clean_item_title(it["title"]))
     return (
         f'<li>{new}{kind}'
-        f'<a href="{it["link"]}" target="_blank">{it["title"]}</a>{date}</li>'
+        f'<a href="{it["link"]}" target="_blank">{title}</a>{date}</li>'
     )
 
 
@@ -1328,7 +1351,7 @@ def school_card(school_name: str, sections: dict, prev_keys: set, linked: bool) 
     flat.sort(key=lambda pair: _school_item_rank(pair[1]), reverse=True)
     total = len(flat)
     latest = flat[0][1] if flat else {}
-    latest_title = escape(re.sub(r"\s+", " ", str(latest.get("title", ""))).strip()[:46])
+    latest_title = escape(clean_item_title(latest.get("title", "")))
     校名入口 = school_identity(school_name, linked=linked)
     # 展开体：按栏目分组渲染，栏目内保持原顺序。
     groups_html = []
@@ -1717,8 +1740,8 @@ def build_page(data: dict, prev_keys: set, built_at: str, community_data: dict =
                         if best is None or rank > best[0]:
                             best = (rank, items[0])
             if best:
-                school_latest = best[1].get("title", "")
-        summary_latest = school_latest or latest
+                school_latest = clean_item_title(best[1].get("title", ""))
+        summary_latest = school_latest or clean_item_title(latest)
         parts.append(
             f'<details id="district-{district_index:02d}" class="row"><summary>'
             f'<span class="d-name">{official_homepage_link(区名, DISTRICT_HOMEPAGES[区名])}</span>'
