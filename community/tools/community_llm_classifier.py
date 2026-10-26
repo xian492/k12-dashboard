@@ -70,6 +70,23 @@ def _save_cache(cache: dict) -> None:
     )
 
 
+def _apply_cache(records: list[dict], cache: dict) -> int:
+    """把缓存中的分类写回记录；返回应用条数。"""
+    applied = 0
+    for record in records:
+        hit = cache.get(_content_hash(record))
+        if not hit or not hit.get("content_type"):
+            continue
+        record["content_type"] = hit["content_type"]
+        if hit.get("stage"):
+            record["stage"] = [hit["stage"]]
+        if hit.get("events") is not None:
+            record["event_type"] = hit["events"]
+        record["llm_classified"] = True
+        applied += 1
+    return applied
+
+
 def _api_config() -> tuple[str, str, str] | None:
     base = os.environ.get("LLM_CLASSIFY_API_BASE", "").rstrip("/")
     key = os.environ.get("LLM_CLASSIFY_API_KEY", "")
@@ -127,18 +144,22 @@ def _parse_response(text: str, expected_ids: list[str]) -> dict[str, dict]:
     return out
 
 
-def classify_records(records: list[dict]) -> tuple[list[dict], str]:
+def classify_records(records: list[dict], call_api: bool = True) -> tuple[list[dict], str]:
     """LLM 补充分类。
 
     只处理调用方传入的低置信条目；每条注入 llm_classified 标记与
     llm_reason 字段（可解释性要求，见设计方案 §4）。
     返回 (更新后的记录列表, 状态描述)。
     """
-    config = _api_config()
-    if not config:
-        return records, "skipped: LLM_CLASSIFY_* 环境变量未设置"
-    base, key, model = config
     cache = _load_cache()
+    # 先应用缓存（即使未配 API：缓存里的人工/历史分类仍生效）。
+    config = _api_config() if call_api else None
+    if not config:
+        applied = _apply_cache(records, cache)
+        return records, f"cache applied {applied}/{len(records)}" + (
+            "; api disabled" if not call_api else "; api unconfigured"
+        )
+    base, key, model = config
     # 只分类低置信且未命中缓存的条目；调用方传全量列表也安全。
     pending = [
         r for r in records
@@ -173,19 +194,7 @@ def classify_records(records: list[dict]) -> tuple[list[dict], str]:
             _pending_index(pending, record), {"content_type": None}
         )
     _save_cache(cache)
-    # 应用到记录
-    applied = 0
-    for record in records:
-        hit = cache.get(_content_hash(record))
-        if not hit or not hit.get("content_type"):
-            continue
-        record["content_type"] = hit["content_type"]
-        if hit.get("stage"):
-            record["stage"] = [hit["stage"]]
-        if hit.get("events") is not None:
-            record["event_type"] = hit["events"]
-        record["llm_classified"] = True
-        applied += 1
+    applied = _apply_cache(records, cache)
     return records, f"applied {applied}/{len(records)} (cache {len(cache)})"
 
 

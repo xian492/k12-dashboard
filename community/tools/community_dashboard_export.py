@@ -21,6 +21,7 @@ DISPLAY_FIELDS = (
     "content_type",
     "stage",
     "event_type",
+    "llm_classified",
 )
 
 

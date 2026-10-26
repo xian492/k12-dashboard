@@ -62,7 +62,7 @@ def run_source_jobs(source_jobs: dict[str, Callable[[], list[dict]]]) -> tuple[l
     return results, errors
 
 
-def _llm_classify_inplace(enriched_input: Path) -> str:
+def _llm_classify_inplace(enriched_input: Path, call_api: bool = True) -> str:
     """LLM 补充分类：只处理规则法低置信条目，就地更新 enriched 快照。
 
     API 未配置或调用失败时静默跳过，管线不受影响；结果按内容哈希缓存，
@@ -84,9 +84,7 @@ def _llm_classify_inplace(enriched_input: Path) -> str:
         if isinstance(records, dict):
             records = records.get("records", [])
         targets = [r for r in records if needs_llm(r)]
-        if not targets:
-            return "llm: no low-confidence records"
-        _, status = classify_records(targets)
+        _, status = classify_records(targets, call_api=call_api)
         enriched_input.write_text(
             json.dumps(records, ensure_ascii=False, indent=1), encoding="utf-8"
         )
@@ -101,9 +99,8 @@ def run_community_pipeline(
     llm_classify: bool = True,
 ) -> dict:
     generated_at = generated_at or datetime.now(timezone.utc).isoformat()
-    llm_status = (
-        _llm_classify_inplace(enriched_input) if llm_classify else "llm: disabled"
-    )
+    # llm_classify=False 只关闭 API 调用；缓存中的历史/人工分类始终应用。
+    llm_status = _llm_classify_inplace(enriched_input, call_api=llm_classify)
     print(llm_status)
     try:
         payload = _exporter().export_file(enriched_input, output_path, generated_at)
