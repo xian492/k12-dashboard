@@ -244,7 +244,7 @@ class DashboardLayoutTests(unittest.TestCase):
         official_start = html.index('<section class="district-column district-column--official">')
         school_start = html.index('<section class="district-column district-column--schools">')
         official_column = html[official_start:school_start]
-        school_column = html[school_start:html.index("</details>", school_start)]
+        school_column = html[school_start:html.index("</section>", school_start)]
 
         self.assertIn('<h3 class="column-title">区级信息</h3>', official_column)
         self.assertIn("区级政策示例", official_column)
@@ -253,8 +253,10 @@ class DashboardLayoutTests(unittest.TestCase):
         self.assertNotIn("学校动态示例", official_column)
         self.assertIn('<h3 class="column-title">学校入口与动态</h3>', school_column)
         self.assertIn("学校动态示例", school_column)
+        # 有动态学校渲染成卡片；无动态学校收进名录折叠条（含校名）。
+        self.assertIn('class="school-card"', school_column)
         self.assertIn("待更新中学", school_column)
-        self.assertNotIn("待更新中学 · 暂无有效动态", school_column)
+        self.assertIn("学校名录", school_column)
 
     def test_citywide_school_information_is_rendered_at_city_level(self):
         html = build.build_page(self.make_data(), set(), "2026-10-22 12:00")

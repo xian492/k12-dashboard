@@ -1195,6 +1195,46 @@ header {{ display: flex; justify-content: space-between; align-items: flex-end;
   .school-entry {{ padding: 5px 0 7px; border-bottom: 1px solid #EDEBE3; }}
   .school-entry + .school-sec {{ margin-top: 2px; }}
   .school-entry + .school-sec h4 {{ color: #6b6862; font-weight: 500; }}
+
+  /* ── 学校卡片网格 ──────────── */
+  .school-cards {{ display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }}
+  @media (max-width: 760px) {{ .school-cards {{ grid-template-columns: 1fr; }} }}
+  details.school-card {{ border: 1px solid #E3E1D8; padding: 0; }}
+  details.school-card[open] {{ grid-column: 1 / -1; border-color: #B9B5AA; }}
+  details.school-card summary {{
+    list-style: none; cursor: pointer; display: grid;
+    grid-template-columns: 1fr auto; gap: 2px 10px; padding: 9px 11px 8px;
+    align-items: baseline;
+  }}
+  details.school-card summary::-webkit-details-marker {{ display: none; }}
+  details.school-card summary::before {{
+    content: "+"; grid-column: 1 / -1; grid-row: 1; justify-self: end;
+    color: #B9B5AA; font-size: 13px; line-height: 1; align-self: start;
+  }}
+  details.school-card[open] summary::before {{ content: "−"; }}
+  details.school-card summary:hover {{ background: #F3F1EC; }}
+  .school-card-head {{ font-family: "Songti SC", "Noto Serif SC", serif;
+    font-weight: 700; font-size: 14.5px; grid-column: 1; grid-row: 2; }}
+  .school-card-count {{ font-size: 11.5px; color: #77736b; white-space: nowrap;
+    grid-column: 2; grid-row: 2; }}
+  .school-card-latest {{ grid-column: 1 / -1; grid-row: 3; font-size: 12px;
+    color: #6b6862; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }}
+  .school-card-body {{ padding: 2px 11px 10px; border-top: 1px solid #EDEBE3; }}
+  .school-card-body .school-sec {{ margin-top: 6px; }}
+  .school-card-body .school-sec:first-child {{ margin-top: 2px; }}
+
+  /* ── 无动态学校收拢名录 ───── */
+  details.school-roster {{ margin-top: 10px; border-top: 1px solid #E3E1D8;
+    border-bottom: 1px solid #E3E1D8; }}
+  details.school-roster summary {{ list-style: none; cursor: pointer;
+    padding: 7px 2px; font-size: 12.5px; color: #77736b; font-weight: 600; }}
+  details.school-roster summary::-webkit-details-marker {{ display: none; }}
+  details.school-roster summary:hover {{ background: #F3F1EC; }}
+  details.school-roster summary::before {{ content: "▸ "; color: #B9B5AA; }}
+  details.school-roster[open] summary::before {{ content: "▾ "; }}
+  .school-roster-body {{ column-count: 2; column-gap: 34px; padding: 2px 2px 12px; }}
+  .school-roster-body .school-entry {{ break-inside: avoid; }}
+  @media (max-width: 760px) {{ .school-roster-body {{ column-count: 1; }} }}
   .district-wechat {{ margin: 5px 0 10px; color: #77736b; font-size: 12px;
     line-height: 1.8; }}
   .district-wechat b {{ color: #31586E; font-weight: 600; margin-right: 5px; }}
@@ -1259,6 +1299,66 @@ def section(title: str, items: list, prev_keys: set, max_show: int = 5) -> str:
         )
         more = f'<li style="display:block"><details><summary class="open-hint" style="cursor:pointer">其余 {len(items) - max_show} 条</summary><ul style="margin-top:4px">{rest_lis}</ul></details></li>'
     return f'<div class="school-sec"><h4>{title} · {len(items)} 条</h4><ul>{top_lis}{more}</ul></div>'
+
+
+def _school_item_rank(it: dict) -> tuple:
+    """跨栏目排序键：完整日期降序优先，部分日期（MM-DD）按当年，无日期垫底。
+
+    标题过短（如与栏目名同名的残缺条目）视为低质量，同等条件下排在正常条目后。
+    """
+    date = str(it.get("date", ""))
+    quality = 1 if len(str(it.get("title", ""))) >= 8 else 0
+    if len(date) == 10 and date.count("-") == 2:
+        return (2, date, quality)
+    if date:
+        return (1, date, quality)
+    return (0, "", quality)
+
+
+def school_card(school_name: str, sections: dict, prev_keys: set, linked: bool) -> str:
+    """有动态的学校卡片：校名+条数+最新一条预览，点击原地展开条目列表。
+
+    条目按日期倒序合并各栏目，展开后按所属栏目分组显示。
+    """
+    flat = [
+        (栏名, it)
+        for 栏名, items in sections.items()
+        for it in items
+    ]
+    flat.sort(key=lambda pair: _school_item_rank(pair[1]), reverse=True)
+    total = len(flat)
+    latest = flat[0][1] if flat else {}
+    latest_title = escape(re.sub(r"\s+", " ", str(latest.get("title", ""))).strip()[:46])
+    校名入口 = school_identity(school_name, linked=linked)
+    # 展开体：按栏目分组渲染，栏目内保持原顺序。
+    groups_html = []
+    for 栏名, items in sections.items():
+        if items:
+            groups_html.append(section(栏名, items, prev_keys, max_show=4))
+    return (
+        f'<details class="school-card"><summary>'
+        f'<span class="school-card-head">{校名入口}</span>'
+        f'<span class="school-card-count">{total} 条</span>'
+        f'<span class="school-card-latest">{latest_title}</span>'
+        f'</summary><div class="school-card-body">{"".join(groups_html)}</div></details>'
+    )
+
+
+def school_roster(schools: dict, linked_schools: set) -> str:
+    """无动态学校的收拢名录：一行折叠，展开后是纯文字校名+公众号目录。"""
+    empty = [(校名, 栏目) for 校名, 栏目 in schools.items() if not 栏目]
+    if not empty:
+        return ""
+    entries = []
+    for 校名, _ in empty:
+        already_linked = 校名 in linked_schools
+        linked_schools.add(校名)
+        entries.append(school_identity(校名, linked=not already_linked))
+    return (
+        f'<details class="school-roster"><summary>学校名录 · 其余 {len(empty)} 所'
+        f'<span class="open-hint">（暂无线上动态，含公众号）</span></summary>'
+        f'<div class="school-roster-body">{"".join(entries)}</div></details>'
+    )
 
 
 def school_homepage_link(school_name: str) -> str:
@@ -1583,7 +1683,8 @@ def build_page(data: dict, prev_keys: set, built_at: str, community_data: dict =
         schools = d["学校"]
         n_new = sum(1 for it in policies if (it.get("id") or it.get("link")) not in prev_keys)
         latest = policies[0]["title"] if policies else "（无数据）"
-        school_label = f"{len(schools)} 校" if schools else ""
+        with_updates = [(校名, 栏目) for 校名, 栏目 in schools.items() if 栏目]
+        school_label = f"{len(with_updates)} 校有动态" if with_updates else ""
         new_badge = f'<span class="n-new">{n_new} 新</span>' if n_new else ""
         official_sections = section("区招生政策", policies, prev_keys, max_show=4)
         if gov:
@@ -1591,30 +1692,38 @@ def build_page(data: dict, prev_keys: set, built_at: str, community_data: dict =
             official_sections += section(f"{name} · 教育动态", items, prev_keys, max_show=4)
         if general:
             official_sections += section("区级学校信息", general, prev_keys, max_show=4)
-        school_sections = ""
-        for 校名, 栏目 in schools.items():
+        # 学校列：有动态的学校做成卡片网格，点击原地展开；无动态的收进名录折叠条。
+        cards = []
+        for 校名, 栏目 in with_updates:
             already_linked = 校名 in linked_schools
             if not already_linked:
                 linked_schools.add(校名)
-            # 校名+公众号作为分组头只出现一次，多个栏目挂在其下，
-            # 避免每个栏目都重复渲染整块校名信息。
-            校名入口 = school_identity(校名, linked=not already_linked)
-            if not 栏目:
-                school_sections += f'<div class="school-sec school-entry"><h4>{校名入口}</h4></div>'
-                continue
-            school_sections += f'<div class="school-sec school-entry"><h4>{校名入口}</h4></div>'
-            for 栏名, items in 栏目.items():
-                school_sections += section(栏名, items, prev_keys, max_show=4)
-                first_section = False
-        if not school_sections:
-            school_sections = '<p class="column-empty">暂无学校动态</p>'
+            cards.append(school_card(校名, 栏目, prev_keys, linked=not already_linked))
+        roster = school_roster(schools, linked_schools)
+        school_sections = (
+            f'<div class="school-cards">{"".join(cards)}</div>{roster}'
+            if cards
+            else (roster or '<p class="column-empty">暂无学校动态</p>')
+        )
 
+        # 摘要行：政策数 + 有动态校数 + 最新学校动态标题（替代原来纯政策标题）。
+        school_latest = ""
+        if with_updates:
+            best = None
+            for 校名, 栏目 in with_updates:
+                for items in 栏目.values():
+                    if items:
+                        rank = _school_item_rank(items[0])
+                        if best is None or rank > best[0]:
+                            best = (rank, items[0])
+            if best:
+                school_latest = best[1].get("title", "")
+        summary_latest = school_latest or latest
         parts.append(
-            f'<details id="district-{district_index:02d}" class="row"'
-            f'{" open" if (schools or n_new) else ""}><summary>'
+            f'<details id="district-{district_index:02d}" class="row"><summary>'
             f'<span class="d-name">{official_homepage_link(区名, DISTRICT_HOMEPAGES[区名])}</span>'
             f'<span class="d-count">{len(policies)} 条</span>'
-            f'<span class="d-latest">{latest}</span>'
+            f'<span class="d-latest">{escape(str(summary_latest))}</span>'
             f'<span class="d-side">{new_badge}{school_label}</span>'
             f"</summary>"
             f'<div class="row-body"><div class="district-columns">'
