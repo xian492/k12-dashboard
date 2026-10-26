@@ -62,11 +62,49 @@ def run_source_jobs(source_jobs: dict[str, Callable[[], list[dict]]]) -> tuple[l
     return results, errors
 
 
+def _llm_classify_inplace(enriched_input: Path) -> str:
+    """LLM 补充分类：只处理规则法低置信条目，就地更新 enriched 快照。
+
+    API 未配置或调用失败时静默跳过，管线不受影响；结果按内容哈希缓存，
+    重跑管线不重复计费。"""
+    try:
+        import json
+
+        import importlib.util as _ilu
+
+        _spec = _ilu.spec_from_file_location(
+            "community_llm_classifier",
+            Path(__file__).with_name("community_llm_classifier.py"),
+        )
+        _mod = _ilu.module_from_spec(_spec)
+        _spec.loader.exec_module(_mod)
+        classify_records, needs_llm = _mod.classify_records, _mod.needs_llm
+
+        records = json.loads(enriched_input.read_text(encoding="utf-8"))
+        if isinstance(records, dict):
+            records = records.get("records", [])
+        targets = [r for r in records if needs_llm(r)]
+        if not targets:
+            return "llm: no low-confidence records"
+        _, status = classify_records(targets)
+        enriched_input.write_text(
+            json.dumps(records, ensure_ascii=False, indent=1), encoding="utf-8"
+        )
+        return f"llm: {status}"
+    except Exception as exc:  # LLM 层任何失败都不阻断导出
+        return f"llm: skipped ({type(exc).__name__}: {str(exc)[:60]})"
+
+
 def run_community_pipeline(
     *, enriched_input: Path, output_path: Path, generated_at: str | None = None,
     entry_pages: int = 6, detail_pages_attempted: int | None = None,
+    llm_classify: bool = True,
 ) -> dict:
     generated_at = generated_at or datetime.now(timezone.utc).isoformat()
+    llm_status = (
+        _llm_classify_inplace(enriched_input) if llm_classify else "llm: disabled"
+    )
+    print(llm_status)
     try:
         payload = _exporter().export_file(enriched_input, output_path, generated_at)
         return {
@@ -75,6 +113,7 @@ def run_community_pipeline(
             "entry_pages": entry_pages,
             "detail_pages_attempted": detail_pages_attempted or 0,
             "valid_records": payload["record_count"],
+            "llm": llm_status,
             "errors": [],
             "output_path": str(output_path),
         }
@@ -99,6 +138,7 @@ def main() -> None:
     parser.add_argument("--cap-output", type=Path)
     parser.add_argument("--entry-pages", type=int, default=6)
     parser.add_argument("--detail-pages-attempted", type=int, default=0)
+    parser.add_argument("--no-llm", action="store_true", help="跳过 LLM 补充分类")
     args = parser.parse_args()
     if args.cap_input or args.cap_output:
         if not args.cap_input or not args.cap_output:
@@ -110,6 +150,7 @@ def main() -> None:
         output_path=args.output,
         entry_pages=args.entry_pages,
         detail_pages_attempted=args.detail_pages_attempted,
+        llm_classify=not args.no_llm,
     )
     args.status_output.parent.mkdir(parents=True, exist_ok=True)
     args.status_output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

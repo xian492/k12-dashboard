@@ -31,3 +31,10 @@ community/data/community_merged_enriched.json
 
 # 本地刷新日志
 tools/*.log
+
+# 微信爬取本地数据与登录态（tools/wechat_crawler.py 生成，含登录态不入库）
+wechat/
+
+# 评测专用数据与标注（本地实验，不入库；方法与结论写进 docs/research）
+eval/
+llm_classify_cache.json

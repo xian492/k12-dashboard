@@ -1533,7 +1533,7 @@ def community_view(community_data: dict, community_status: dict = None) -> str:
             return "小学"
         return "综合"
 
-    type_order = ("政策与流程", "学校动态", "家长经验", "其他类型")
+    type_order = ("政策与流程", "学校动态", "家长经验", "亲子生活", "其他类型")
     city_anchors = {"北京": "beijing", "上海": "shanghai", "广州": "guangzhou", "深圳": "shenzhen"}
     # 城市 → 学段 → 类型；同一城市内学段按 phase_order 排序。
     city_groups = {}

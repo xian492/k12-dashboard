@@ -39,6 +39,21 @@ bash tools/local_refresh.sh                # 定时脚本：抓取+护栏+提交
 纯前端改动：本地跑 `--offline` 重出页面后提交，推送由
 `frontend-build.yml` 轻量部署，不触发全量抓取。
 
+## 社区信源 LLM 补充分类
+
+社区帖子的学段/类型分类以规则法为主，规则低置信（“其他”/无学段）的条目由 LLM 补充分类
+（`community/tools/community_llm_classifier.py`）。接入任一 OpenAI 兼容 API：
+
+```bash
+export LLM_CLASSIFY_API_BASE="https://api.deepseek.com/v1"   # 或 DashScope/OpenAI
+export LLM_CLASSIFY_API_KEY="sk-..."
+export LLM_CLASSIFY_MODEL="deepseek-chat"                    # 或 qwen-plus / gpt-4o-mini
+```
+
+- 只在本地管线运行（`community_pipeline.py` 导出前），不进 CI，不影响看板零依赖构建
+- 结果按内容哈希缓存（`community/data/llm_classify_cache.json`），重跑不计费
+- API 未配置/失败时自动回落规则分类，管线永不因 LLM 中断；`--no-llm` 可显式关闭
+
 ## 社区信源工作区
 
 论坛、家长社区和地方生活论坛的采集与分析独立放在 [`community/`](community/)，
