@@ -281,7 +281,7 @@ TAIXING_SCHOOL_DIRECTORY = {
         "北京市第二十二中学": _school("", "gh_be67aa40fc21"),
         "北京市第一六六中学": _school("", "bj166z"),
         "北京市东直门中学": _school("", "bjsdzmzx"),
-        "北京市第六十五中学": _school("http://www.bj65z.com/"),
+        "北京市第六十五中学": _school(""),  # 原域名被体育直播站接管（2026-10-26 复核）
         "北京市第二十五中学": _school("http://www.bj25schooledu.com.cn/", "bj25schooledu"),
         "北京市第一七一中学": _school("", "bjsdyqyzx"),
         "北京市第五十五中学": _school("http://www.bj55.cn/", "bj55hs"),
@@ -722,16 +722,29 @@ _GENERIC_SCHOOL_INFO = re.compile(
 )
 _NOISE_LINK = re.compile(r"javascript:|beian\.miit\.gov\.cn|beian\.mps\.gov\.cn", re.I)
 
+# 被接管的学校域名常挂职业体育/影视内容农场。校队新闻（"我校/校园/学生"等词与校名）
+# 必须放行，只拦纯职业赛事与娱乐内容。
+_PRO_SPORTS_NOISE = re.compile(
+    r"英超|西甲|意甲|德甲|法甲|欧冠|欧联|中超|NBA|CBA|世界杯|欧洲杯|亚洲杯|"
+    r"皇马|巴萨|曼联|曼城|利物浦|阿森纳|切尔西|拜仁|国米|尤文|米兰|"
+    r"湖人|勇士|篮网|快船|雄鹿|太阳|凯尔特人|掘金|"
+    r"直播|无插件|高清观看|在线观看|免费观看|集锦|首发阵容|赛后|惨败|绝杀|逆转取胜",
+)
+_SCHOOL_CONTEXT = re.compile(r"我校|我校师生|校园|学校|中学|学生|教师|同学们|开学|校|班|年级|校队|社团")
+
 
 def useful_school_item(item: dict) -> bool:
-    """只保留具体学校内容，排除页脚、导航和共享学校目录。"""
+    """只保留具体学校内容，排除页脚、导航、共享学校目录与被接管域名的垃圾内容。"""
     title = re.sub(r"\s+", " ", item.get("title", "")).strip()
     link = item.get("link", "")
-    return not (
-        _SCHOOL_ITEM_NOISE.search(title)
-        or _GENERIC_SCHOOL_INFO.search(title)
-        or _NOISE_LINK.search(link)
-    )
+    if _SCHOOL_ITEM_NOISE.search(title) or _GENERIC_SCHOOL_INFO.search(title):
+        return False
+    if _NOISE_LINK.search(link):
+        return False
+    # 职业体育/娱乐垃圾（域名被接管的内容农场）：标题含赛事词且无校园语境。
+    if _PRO_SPORTS_NOISE.search(title) and not _SCHOOL_CONTEXT.search(title):
+        return False
+    return True
 
 
 def parse_spec(spec: dict) -> list:
@@ -1178,7 +1191,10 @@ header {{ display: flex; justify-content: space-between; align-items: flex-end;
     font-size: 11.5px; font-weight: 400; }}
   .school-wechat code, .district-wechat code {{ font-family: ui-monospace, SFMono-Regular,
     Menlo, Consolas, monospace; font-size: 11px; color: #6b6862; }}
+  /* 校名分组头：一个学校一块，栏目小标题挂其下，不再每栏重复校名。 */
   .school-entry {{ padding: 5px 0 7px; border-bottom: 1px solid #EDEBE3; }}
+  .school-entry + .school-sec {{ margin-top: 2px; }}
+  .school-entry + .school-sec h4 {{ color: #6b6862; font-weight: 500; }}
   .district-wechat {{ margin: 5px 0 10px; color: #77736b; font-size: 12px;
     line-height: 1.8; }}
   .district-wechat b {{ color: #31586E; font-weight: 600; margin-right: 5px; }}
@@ -1578,17 +1594,17 @@ def build_page(data: dict, prev_keys: set, built_at: str, community_data: dict =
         school_sections = ""
         for 校名, 栏目 in schools.items():
             already_linked = 校名 in linked_schools
-            校名入口 = school_identity(校名, linked=not already_linked)
             if not already_linked:
                 linked_schools.add(校名)
+            # 校名+公众号作为分组头只出现一次，多个栏目挂在其下，
+            # 避免每个栏目都重复渲染整块校名信息。
+            校名入口 = school_identity(校名, linked=not already_linked)
             if not 栏目:
                 school_sections += f'<div class="school-sec school-entry"><h4>{校名入口}</h4></div>'
                 continue
-            first_section = True
+            school_sections += f'<div class="school-sec school-entry"><h4>{校名入口}</h4></div>'
             for 栏名, items in 栏目.items():
-                # 首栏带官网入口链接，后续栏目纯文本校名，避免链接重复。
-                heading = 校名入口 if first_section else school_identity(校名, linked=False)
-                school_sections += section(f"{heading} · {栏名}", items, prev_keys, max_show=4)
+                school_sections += section(栏名, items, prev_keys, max_show=4)
                 first_section = False
         if not school_sections:
             school_sections = '<p class="column-empty">暂无学校动态</p>'

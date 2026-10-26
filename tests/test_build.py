@@ -490,8 +490,12 @@ class SchoolHomepageTests(unittest.TestCase):
         yizhuang_links = _re.findall(r'class="school-homepage"[^>]*>北京亦庄实验中学<', html)
         self.assertEqual(len(rdfz_links), 1)
         self.assertEqual(len(yizhuang_links), 1)
-        # 两个栏目、两个区条目本身都还在。
-        self.assertIn("招生资讯", html)
+        # 校名块（含公众号）只出现一次；栏目以纯栏名子标题挂在校名块下。
+        self.assertEqual(html.count(">人大附中<"), 1)
+        self.assertEqual(html.count("rdfz1950"), 1)
+        self.assertIn("招生资讯 · 1 条", html)
+        self.assertIn("通知公告 · 1 条", html)
+        # 两个区条目本身都还在。
         self.assertIn("经开区条目", html)
 
     def test_district_wechat_ids_render_in_the_official_column(self):
